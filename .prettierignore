@@ -1,0 +1,6 @@
+node_modules
+.next
+drizzle
+dist
+pnpm-lock.yaml
+next-env.d.ts
