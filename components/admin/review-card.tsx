@@ -9,6 +9,7 @@ interface CourseRow {
   courseName: string;
   stream: string;
   aiSafetyTag: string;
+  aiSafetyReasoning: string | null;
   description: string;
   tenureYears: string;
   eligibilityCriteria: string;
@@ -30,6 +31,7 @@ export function ReviewCard({ course }: { course: CourseRow }) {
     courseName: course.courseName,
     description: course.description,
     aiSafetyTag: course.aiSafetyTag,
+    aiSafetyReasoning: course.aiSafetyReasoning ?? "",
     careerClusters: course.careerClusters.join(", "),
     eligibilityCriteria: course.eligibilityCriteria,
     entranceExams: course.entranceExams.join(", "),
@@ -45,6 +47,7 @@ export function ReviewCard({ course }: { course: CourseRow }) {
       courseName: draft.courseName,
       description: draft.description,
       aiSafetyTag: draft.aiSafetyTag,
+      aiSafetyReasoning: draft.aiSafetyReasoning.trim() || null,
       careerClusters: draft.careerClusters
         .split(",")
         .map((s) => s.trim())
@@ -177,6 +180,14 @@ export function ReviewCard({ course }: { course: CourseRow }) {
                   <option value="ai_risk">ai_risk</option>
                 </select>
               </Field>
+              <Field label="AI safety reasoning" full>
+                <textarea
+                  rows={3}
+                  className="w-full rounded-md border bg-background px-2 py-1 text-sm"
+                  value={draft.aiSafetyReasoning}
+                  onChange={(e) => setDraft({ ...draft, aiSafetyReasoning: e.target.value })}
+                />
+              </Field>
               <Field label="Career clusters (comma-separated)" full>
                 <input
                   className="w-full rounded-md border bg-background px-2 py-1 text-sm"
@@ -218,6 +229,11 @@ export function ReviewCard({ course }: { course: CourseRow }) {
             </>
           ) : (
             <>
+              {course.aiSafetyReasoning ? (
+                <Field label="AI safety reasoning" full>
+                  <p className="whitespace-pre-line text-sm">{course.aiSafetyReasoning}</p>
+                </Field>
+              ) : null}
               <Field label="Eligibility" full>
                 <p className="text-sm">{course.eligibilityCriteria}</p>
               </Field>

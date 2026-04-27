@@ -51,6 +51,20 @@ pnpm create-admin                                          # seed first admin
 pnpm dev                                                   # http://localhost:3000
 ```
 
+> Password hashing uses Node's built-in `crypto.scrypt` — no native binding,
+> works on Windows / macOS / Linux / WSL with paths containing spaces. If you
+> previously hit `Failed to load native binding` on `@node-rs/argon2`, just
+> `pnpm install` after pulling and the issue is gone.
+
+### Pulling latest
+
+```bash
+git pull
+pnpm install      # picks up the new lockfile
+pnpm db:migrate   # applies any new migrations
+pnpm dev
+```
+
 ## Full stack via Docker
 
 ```bash
@@ -67,7 +81,9 @@ docker compose up --build                                  # db + app, migration
 | `pnpm start` | Run production build |
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm lint` | `next lint` |
-| `pnpm check` | typecheck + lint + drizzle check |
+| `pnpm check` | typecheck + lint + drizzle check + tests |
+| `pnpm test` | Vitest unit tests |
+| `pnpm test:watch` | Vitest in watch mode |
 | `pnpm db:generate` | Generate migration from schema |
 | `pnpm db:migrate` | Apply migrations |
 | `pnpm db:push` | Push schema (dev only) |
@@ -78,6 +94,8 @@ docker compose up --build                                  # db + app, migration
 ## What works in M2
 
 - `/admin` dashboard shows live counts (published, pending, rejected, archived), career-cluster coverage, and last AI fetch timestamp.
+- AI fetch is rate-limited at 10 requests / minute per admin (in-memory token bucket; Redis swap-in deferred to multi-replica deploys).
+- The AI's `aiSafetyReasoning` for each course is captured at fetch time, displayed in the review card, and editable before publish — admins always see the model's justification, not just its label.
 - `/admin/fetch` runs an AI fetch against the configured provider, validates the JSON against a Zod schema, and saves to `pending_review`. Existing course names are passed to the prompt as an exclusion list; `>85%` near-duplicates raise a warning rather than an auto-reject.
 - `/admin/review` lists pending courses with inline edit, Save & Publish, and Reject (with reason). Publish enforces required fields (`description ≥ 150 chars`, eligibility, tenure, clusters).
 - `/admin/courses/new` is a manual course form (same review/publish flow, `source = manual`).

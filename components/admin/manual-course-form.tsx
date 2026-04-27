@@ -190,6 +190,16 @@ export function ManualCourseForm() {
         <div className="mt-1 text-xs text-muted-foreground">{form.description.length}/150</div>
       </Field>
 
+      <Field label="AI safety reasoning (1-2 sentences)" full>
+        <textarea
+          rows={2}
+          className={inputCls}
+          value={form.aiSafetyReasoning}
+          onChange={(e) => update("aiSafetyReasoning", e.target.value)}
+          placeholder="Why this AI safety tag? Defaults to 'Manually entered.' if blank."
+        />
+      </Field>
+
       <Field label="Entrance exams (comma-separated)">
         <input
           className={inputCls}

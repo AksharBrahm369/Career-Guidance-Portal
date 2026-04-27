@@ -51,6 +51,7 @@ export default async function AdminReviewPage() {
               courseName: course.courseName,
               stream: course.stream,
               aiSafetyTag: course.aiSafetyTag,
+              aiSafetyReasoning: course.aiSafetyReasoning,
               description: course.description,
               tenureYears: course.tenureYears,
               eligibilityCriteria: course.eligibilityCriteria,

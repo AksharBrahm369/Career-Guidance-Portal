@@ -14,6 +14,7 @@ const PatchBody = z
     stream: z.enum(["science", "commerce", "arts", "vocational"]).optional(),
     careerClusters: z.array(z.string()).min(1).max(8).optional(),
     aiSafetyTag: z.enum(["ai_safe", "ai_augmented", "ai_risk"]).optional(),
+    aiSafetyReasoning: z.string().min(1).max(2000).nullable().optional(),
     description: z.string().min(150).optional(),
     tenureYears: z.number().positive().optional(),
     eligibilityCriteria: z.string().min(1).optional(),
@@ -74,6 +75,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (body.stream !== undefined) update.stream = body.stream;
   if (body.careerClusters !== undefined) update.careerClusters = body.careerClusters;
   if (body.aiSafetyTag !== undefined) update.aiSafetyTag = body.aiSafetyTag;
+  if (body.aiSafetyReasoning !== undefined) update.aiSafetyReasoning = body.aiSafetyReasoning;
   if (body.description !== undefined) update.description = body.description;
   if (body.tenureYears !== undefined) update.tenureYears = String(body.tenureYears);
   if (body.eligibilityCriteria !== undefined) update.eligibilityCriteria = body.eligibilityCriteria;

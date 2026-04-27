@@ -9,7 +9,7 @@ import {
   type NewInstitute,
 } from "@/db/schema";
 import { logAudit } from "@/lib/audit";
-import { slugify, uniqueSlug } from "@/lib/slug";
+import { uniqueSlug } from "@/lib/slug";
 import type { CourseFetchResult } from "@/lib/ai/safe-fetch";
 
 export interface PersistContext {
@@ -25,57 +25,49 @@ export interface PersistResult {
   instituteIds: string[];
 }
 
-/**
- * Persists a fetched (or manually-built) course into pending_review state and links institutes.
- * Pure write — caller is responsible for auth.
- */
 export async function persistFetchedCourse(
   data: CourseFetchResult,
   ctx: PersistContext,
 ): Promise<PersistResult> {
-  const allCourseSlugs = await db.select({ slug: courses.slug }).from(courses);
-  const slugSet = new Set(allCourseSlugs.map((r) => r.slug));
-  const slug = uniqueSlug(data.courseName, slugSet);
+  const result = await db.transaction(async (tx) => {
+    const allCourseSlugs = await tx.select({ slug: courses.slug }).from(courses);
+    const slugSet = new Set(allCourseSlugs.map((r) => r.slug));
+    const slug = uniqueSlug(data.courseName, slugSet);
 
-  const newCourse: NewCourse = {
-    slug,
-    courseName: data.courseName,
-    courseCode: data.courseCode ?? null,
-    stream: data.stream,
-    careerClusters: data.careerClusters,
-    aiSafetyTag: data.aiSafetyTag,
-    aiSafetyTagAi: ctx.source === "ai_fetch" ? data.aiSafetyTag : null,
-    description: data.description,
-    tenureYears: String(data.tenureYears),
-    eligibilityCriteria: data.eligibilityCriteria,
-    entranceExams: data.entranceExams,
-    feesMinInr: data.feesMinInr != null ? String(data.feesMinInr) : null,
-    feesMaxInr: data.feesMaxInr != null ? String(data.feesMaxInr) : null,
-    sourceUrls: data.sourceUrls,
-    status: "pending_review",
-    source: ctx.source,
-    createdByAdminId: ctx.adminId,
-    fetchedAt: ctx.source === "ai_fetch" ? new Date() : null,
-  };
+    const newCourse: NewCourse = {
+      slug,
+      courseName: data.courseName,
+      courseCode: data.courseCode ?? null,
+      stream: data.stream,
+      careerClusters: data.careerClusters,
+      aiSafetyTag: data.aiSafetyTag,
+      aiSafetyTagAi: ctx.source === "ai_fetch" ? data.aiSafetyTag : null,
+      aiSafetyReasoning: data.aiSafetyReasoning,
+      description: data.description,
+      tenureYears: String(data.tenureYears),
+      eligibilityCriteria: data.eligibilityCriteria,
+      entranceExams: data.entranceExams,
+      feesMinInr: data.feesMinInr != null ? String(data.feesMinInr) : null,
+      feesMaxInr: data.feesMaxInr != null ? String(data.feesMaxInr) : null,
+      sourceUrls: data.sourceUrls,
+      status: "pending_review",
+      source: ctx.source,
+      createdByAdminId: ctx.adminId,
+      fetchedAt: ctx.source === "ai_fetch" ? new Date() : null,
+    };
 
-  const [insertedCourse] = await db.insert(courses).values(newCourse).returning({
-    id: courses.id,
-    slug: courses.slug,
-  });
-  if (!insertedCourse) throw new Error("Failed to insert course");
+    const [insertedCourse] = await tx.insert(courses).values(newCourse).returning({
+      id: courses.id,
+      slug: courses.slug,
+    });
+    if (!insertedCourse) throw new Error("Failed to insert course");
 
-  // Upsert institutes by slug + city.
-  const instituteIds: string[] = [];
-  for (const inst of data.institutes) {
-    const baseSlug = slugify(`${inst.name} ${inst.city}`);
-    const existing = baseSlug
-      ? await db.query.institutes.findFirst({ where: eq(institutes.slug, baseSlug) })
-      : undefined;
+    const usedSlugs = new Set<string>();
+    const instituteIds: string[] = [];
 
-    let instituteId: string;
-    if (existing) {
-      instituteId = existing.id;
-    } else {
+    for (const inst of data.institutes) {
+      const baseSlug = uniqueSlug(`${inst.name} ${inst.city}`, usedSlugs);
+
       const newInst: NewInstitute = {
         slug: baseSlug,
         name: inst.name,
@@ -87,33 +79,55 @@ export async function persistFetchedCourse(
         websiteUrl: inst.websiteUrl ?? null,
         status: "pending_review",
       };
-      const [created] = await db.insert(institutes).values(newInst).returning({ id: institutes.id });
-      if (!created) throw new Error("Failed to insert institute");
-      instituteId = created.id;
+
+      const [created] = await tx
+        .insert(institutes)
+        .values(newInst)
+        .onConflictDoNothing({ target: institutes.slug })
+        .returning({ id: institutes.id, slug: institutes.slug });
+
+      let instituteId = created?.id;
+      if (!instituteId) {
+        const existing = await tx.query.institutes.findFirst({
+          where: eq(institutes.slug, baseSlug),
+        });
+        if (!existing) throw new Error(`Institute upsert failed for slug ${baseSlug}`);
+        instituteId = existing.id;
+      }
+      usedSlugs.add(baseSlug);
+      instituteIds.push(instituteId);
     }
-    instituteIds.push(instituteId);
-  }
 
-  if (instituteIds.length > 0) {
-    await db.insert(courseInstitutes).values(
-      instituteIds.map((instituteId) => ({
-        courseId: insertedCourse.id,
-        instituteId,
-      })),
-    );
-  }
+    if (instituteIds.length > 0) {
+      await tx
+        .insert(courseInstitutes)
+        .values(
+          instituteIds.map((instituteId) => ({
+            courseId: insertedCourse.id,
+            instituteId,
+          })),
+        )
+        .onConflictDoNothing();
+    }
 
-  await logAudit({
-    adminId: ctx.adminId,
-    action: ctx.source === "ai_fetch" ? "ai_fetch" : "create",
-    entityType: "course",
-    entityId: insertedCourse.id,
-    newValues: { courseName: data.courseName, slug, instituteCount: instituteIds.length },
-    ip: ctx.ip,
-    userAgent: ctx.userAgent,
+    await logAudit({
+      adminId: ctx.adminId,
+      action: ctx.source === "ai_fetch" ? "ai_fetch" : "create",
+      entityType: "course",
+      entityId: insertedCourse.id,
+      newValues: { courseName: data.courseName, slug, instituteCount: instituteIds.length },
+      ip: ctx.ip,
+      userAgent: ctx.userAgent,
+    });
+
+    return {
+      courseId: insertedCourse.id,
+      slug: insertedCourse.slug,
+      instituteIds,
+    };
   });
 
-  return { courseId: insertedCourse.id, slug: insertedCourse.slug, instituteIds };
+  return result;
 }
 
 export async function getExistingCourseNames(): Promise<string[]> {

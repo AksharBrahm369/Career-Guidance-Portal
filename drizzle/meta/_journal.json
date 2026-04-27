@@ -8,6 +8,13 @@
       "when": 1777017389261,
       "tag": "0000_green_lady_bullseye",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1777286768386,
+      "tag": "0001_tearful_sentry",
+      "breakpoints": true
     }
   ]
 }

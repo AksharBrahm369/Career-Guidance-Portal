@@ -5,6 +5,7 @@ import {
   getExistingCourseNames,
   persistFetchedCourse,
 } from "@/lib/admin/persist-fetched-course";
+import { consume } from "@/lib/rate-limit";
 
 export const runtime = "nodejs";
 export const maxDuration = 120;
@@ -21,6 +22,14 @@ export async function POST(req: Request) {
     admin = await requireAdmin();
   } catch (err) {
     return adminErrorResponse(err) ?? Response.json({ error: "internal" }, { status: 500 });
+  }
+
+  const limit = consume(`fetch:${admin.adminId}`);
+  if (!limit.ok) {
+    return Response.json(
+      { error: "rate_limited", retryAfterSeconds: limit.retryAfterSeconds },
+      { status: 429, headers: { "Retry-After": String(limit.retryAfterSeconds) } },
+    );
   }
 
   let body;
