@@ -10,6 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/hp_career
+      AI_PROVIDER: anthropic
       ANTHROPIC_API_KEY: sk-ant-ci-dummy
       AUTH_SECRET: ci-dummy-secret-change-in-production-xxxxxxxxxxxxx
       NEXTAUTH_URL: http://localhost:3000
