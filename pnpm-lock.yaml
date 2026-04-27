@@ -5333,12 +5333,7 @@ snapshots:
     dependencies:
       '@next/env': 15.5.15
       '@swc/helpers': 0.5.15
-<<<<<<< HEAD
-      busboy: 1.6.0
       caniuse-lite: 1.0.30001791
-=======
-      caniuse-lite: 1.0.30001790
->>>>>>> 1516f0790671dfd180f2edaf9cd5f785f25e726d
       postcss: 8.4.31
       react: 19.2.5
       react-dom: 19.2.5(react@19.2.5)
@@ -6051,7 +6046,7 @@ snapshots:
     dependencies:
       lightningcss: 1.32.0
       picomatch: 4.0.4
-      postcss: 8.5.10
+      postcss: 8.5.12
       rolldown: 1.0.0-rc.17
       tinyglobby: 0.2.16
     optionalDependencies:
