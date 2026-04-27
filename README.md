@@ -144,3 +144,7 @@ scripts/               # migrate.ts, create-admin.ts
 - **M3** — Student catalogue, course detail, AI Q&A streaming (with prompt caching, rate limit, deflection rules).
 - **M4** — Student auth, three profiling modules, algorithm, result screen.
 - **M5** — Smart institute tagging, filtering, dashboard stats, polish.
+
+admin email : sevak@hp.com
+Admin name: HP Sevak
+Password (min 12 chars): HPSevakDas@369
