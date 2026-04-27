@@ -1,16 +1,16 @@
 import { sql } from "drizzle-orm";
 import {
   index,
-  integer,
-  jsonb,
   numeric,
   pgTable,
   text,
   timestamp,
+  uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
 import { admins } from "./admins";
 import { aiSafetyTag, courseSource, courseStatus, streamEnum } from "./enums";
+import { institutes } from "./institutes";
 
 export const courses = pgTable(
   "courses",
@@ -23,6 +23,7 @@ export const courses = pgTable(
     careerClusters: text("career_clusters").array().notNull().default(sql`ARRAY[]::text[]`),
     aiSafetyTag: aiSafetyTag("ai_safety_tag").notNull(),
     aiSafetyTagAi: aiSafetyTag("ai_safety_tag_ai"),
+    aiSafetyReasoning: text("ai_safety_reasoning"),
     description: text("description").notNull(),
     tenureYears: numeric("tenure_years", { precision: 4, scale: 2 }).notNull(),
     eligibilityCriteria: text("eligibility_criteria").notNull(),
@@ -53,12 +54,24 @@ export const courses = pgTable(
   }),
 );
 
-export const courseInstitutes = pgTable("course_institutes", {
-  id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-  courseId: uuid("course_id").notNull(),
-  instituteId: uuid("institute_id").notNull(),
-  createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
-});
+export const courseInstitutes = pgTable(
+  "course_institutes",
+  {
+    id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
+    courseId: uuid("course_id")
+      .notNull()
+      .references(() => courses.id, { onDelete: "cascade" }),
+    instituteId: uuid("institute_id")
+      .notNull()
+      .references(() => institutes.id, { onDelete: "cascade" }),
+    createdAt: timestamp("created_at", { withTimezone: true }).notNull().defaultNow(),
+  },
+  (t) => ({
+    uniqPair: uniqueIndex("course_institutes_pair_uq").on(t.courseId, t.instituteId),
+    courseIdx: index("course_institutes_course_idx").on(t.courseId),
+    instituteIdx: index("course_institutes_institute_idx").on(t.instituteId),
+  }),
+);
 
 export type Course = typeof courses.$inferSelect;
 export type NewCourse = typeof courses.$inferInsert;

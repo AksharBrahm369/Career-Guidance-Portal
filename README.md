@@ -9,7 +9,9 @@ AI is used in exactly two places: admin fetch and per-course student Q&A.
 
 ## Status
 
-**Milestone 1 (Foundation) — scaffolding only.** No business logic for fetch, review, publish, assessment, or Q&A. See `/root/.claude/plans/career-guidance-platform-twinkling-nygaard.md` for the full plan.
+**Milestone 2 (Admin + AI fetch + review queue).** Live: AI-assisted course fetch (pluggable across Anthropic / Google / OpenAI), review queue with inline edits, publish/reject/archive flow, manual course creation, audit log, and admin dashboard with real stats. Student catalogue + Q&A are M3.
+
+See `/root/.claude/plans/career-guidance-platform-twinkling-nygaard.md` for the full plan.
 
 ## Stack
 
@@ -17,8 +19,23 @@ AI is used in exactly two places: admin fetch and per-course student Q&A.
 - Tailwind CSS (mobile-first) + shadcn baseline
 - Postgres via Drizzle ORM (works on local / Neon / Supabase)
 - Auth.js (NextAuth v5) with Drizzle adapter — admin credentials only; student flow TBD (M4)
-- Anthropic SDK (server-side only)
+- Vercel AI SDK 6 — pluggable across Anthropic Claude, Google Gemini, OpenAI GPT
 - Docker with `output: "standalone"` — portable to any cloud
+
+## AI providers
+
+The platform ships with a pluggable AI provider registry (`lib/ai/providers.ts`).
+Default is Anthropic Sonnet 4.6; switch via env without code changes.
+
+| ID | Default model | Env key |
+|---|---|---|
+| `anthropic` | `claude-sonnet-4-6` | `ANTHROPIC_API_KEY` |
+| `google` | `gemini-3.1-pro` | `GOOGLE_GENERATIVE_AI_API_KEY` |
+| `openai` | `gpt-5.5` | `OPENAI_API_KEY` |
+
+Set `AI_PROVIDER` to choose the global default. Optional per-feature
+overrides: `AI_FETCH_PROVIDER` (admin fetch) and `AI_QA_PROVIDER` (course Q&A, M3).
+Only the selected provider's API key is required at runtime.
 
 ## Local development
 
@@ -32,6 +49,20 @@ pnpm db:generate                                           # (only if schema cha
 pnpm db:migrate                                            # apply migrations
 pnpm create-admin                                          # seed first admin
 pnpm dev                                                   # http://localhost:3000
+```
+
+> Password hashing uses Node's built-in `crypto.scrypt` — no native binding,
+> works on Windows / macOS / Linux / WSL with paths containing spaces. If you
+> previously hit `Failed to load native binding` on `@node-rs/argon2`, just
+> `pnpm install` after pulling and the issue is gone.
+
+### Pulling latest
+
+```bash
+git pull
+pnpm install      # picks up the new lockfile
+pnpm db:migrate   # applies any new migrations
+pnpm dev
 ```
 
 ## Full stack via Docker
@@ -50,7 +81,9 @@ docker compose up --build                                  # db + app, migration
 | `pnpm start` | Run production build |
 | `pnpm typecheck` | `tsc --noEmit` |
 | `pnpm lint` | `next lint` |
-| `pnpm check` | typecheck + lint + drizzle check |
+| `pnpm check` | typecheck + lint + drizzle check + tests |
+| `pnpm test` | Vitest unit tests |
+| `pnpm test:watch` | Vitest in watch mode |
 | `pnpm db:generate` | Generate migration from schema |
 | `pnpm db:migrate` | Apply migrations |
 | `pnpm db:push` | Push schema (dev only) |
@@ -58,14 +91,19 @@ docker compose up --build                                  # db + app, migration
 | `pnpm db:check` | Verify schema/migrations not drifted |
 | `pnpm create-admin` | Seed a new admin |
 
-## What works in M1
+## What works in M2
 
-- `/` renders a landing placeholder with links to the three sections.
-- `/admin` → redirects unauthenticated users to `/admin/login` (middleware-guarded).
-- Seed an admin via `pnpm create-admin`, sign in at `/admin/login`, land on `/admin` dashboard ("Coming soon — M2").
-- All student route skeletons (`/assessment`, `/courses`, `/courses/[slug]`) render without errors.
-- `POST /api/courses/[id]/qa` returns one SSE frame then closes — proves streaming plumbing.
-- `docker compose up --build` boots the full stack; migrations apply via entrypoint.
+- `/admin` dashboard shows live counts (published, pending, rejected, archived), career-cluster coverage, and last AI fetch timestamp.
+- AI fetch is rate-limited at 10 requests / minute per admin (in-memory token bucket; Redis swap-in deferred to multi-replica deploys).
+- The AI's `aiSafetyReasoning` for each course is captured at fetch time, displayed in the review card, and editable before publish — admins always see the model's justification, not just its label.
+- `/admin/fetch` runs an AI fetch against the configured provider, validates the JSON against a Zod schema, and saves to `pending_review`. Existing course names are passed to the prompt as an exclusion list; `>85%` near-duplicates raise a warning rather than an auto-reject.
+- `/admin/review` lists pending courses with inline edit, Save & Publish, and Reject (with reason). Publish enforces required fields (`description ≥ 150 chars`, eligibility, tenure, clusters).
+- `/admin/courses/new` is a manual course form (same review/publish flow, `source = manual`).
+- `/admin/catalogue` lists published courses with archive (soft-delete).
+- All admin actions write to `audit_log` (admin id, action, old/new values, IP, user-agent).
+- All endpoints check session + admin role; non-admins get 401.
+
+Student routes (`/assessment/*`, `/courses/*`) still show "Coming soon" — those land in M3 / M4.
 
 ## For Claude Code on the web
 

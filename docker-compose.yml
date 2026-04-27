@@ -27,7 +27,12 @@ services:
     environment:
       NODE_ENV: production
       DATABASE_URL: postgresql://postgres:postgres@db:5432/hp_career
-      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:?set ANTHROPIC_API_KEY in .env}
+      AI_PROVIDER: ${AI_PROVIDER:-anthropic}
+      AI_FETCH_PROVIDER: ${AI_FETCH_PROVIDER:-}
+      AI_QA_PROVIDER: ${AI_QA_PROVIDER:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      GOOGLE_GENERATIVE_AI_API_KEY: ${GOOGLE_GENERATIVE_AI_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
       AUTH_SECRET: ${AUTH_SECRET:?set AUTH_SECRET in .env (openssl rand -base64 32)}
       NEXTAUTH_URL: ${NEXTAUTH_URL:-http://localhost:3000}
     ports:
