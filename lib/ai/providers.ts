@@ -34,10 +34,8 @@ export const PROVIDERS: Record<ProviderId, ProviderSpec> = {
   },
   google: {
     id: "google",
-    // NOTE: "gemini-3.1-pro" does NOT exist. The correct model ID is "gemini-1.5-pro".
-    // Google's API will return a 404 error if an invalid model name is used.
-    label: "Google Gemini 1.5 Pro",
-    modelId: "gemini-1.5-pro",
+    label: "Google Gemini 2.5 Flash",
+    modelId: "gemini-2.5-flash",
     supportsExplicitCacheControl: false,
     build() {
       const google = createGoogleGenerativeAI({ apiKey: env.GOOGLE_GENERATIVE_AI_API_KEY });
@@ -73,13 +71,12 @@ export function ensureProviderConfigured(spec: ProviderSpec): void {
   if (!key) {
     throw new Error(
       `AI provider "${spec.id}" selected but its API key env var is not set. ` +
-        `Set ${
-          spec.id === "anthropic"
-            ? "ANTHROPIC_API_KEY"
-            : spec.id === "google"
-              ? "GOOGLE_GENERATIVE_AI_API_KEY"
-              : "OPENAI_API_KEY"
-        }.`,
+      `Set ${spec.id === "anthropic"
+        ? "ANTHROPIC_API_KEY"
+        : spec.id === "google"
+          ? "GOOGLE_GENERATIVE_AI_API_KEY"
+          : "OPENAI_API_KEY"
+      }.`,
     );
   }
 }
