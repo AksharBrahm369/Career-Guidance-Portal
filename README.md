@@ -9,7 +9,7 @@ AI is used in exactly two places: admin fetch and per-course student Q&A.
 
 ## Status
 
-**Milestone 2 (Admin + AI fetch + review queue).** Live: AI-assisted course fetch (pluggable across Anthropic / Google / OpenAI), review queue with inline edits, publish/reject/archive flow, manual course creation, audit log, and admin dashboard with real stats. Student catalogue + Q&A are M3.
+**Milestone 3 (Student catalogue + course detail + AI Q&A streaming).** Live on top of M2: a mobile-first browse experience at `/courses` with search + stream/AI-safety filters + pagination; a full course detail page at `/courses/[slug]` with institutes, AI-exposure reasoning, sources, and related courses; a streaming AI Q&A widget per course (provider-pluggable, system prompt cached on Anthropic, deflection rules for off-topic questions, 20-message session cap via cookie).
 
 See `/root/.claude/plans/career-guidance-platform-twinkling-nygaard.md` for the full plan.
 
@@ -103,7 +103,16 @@ docker compose up --build                                  # db + app, migration
 - All admin actions write to `audit_log` (admin id, action, old/new values, IP, user-agent).
 - All endpoints check session + admin role; non-admins get 401.
 
-Student routes (`/assessment/*`, `/courses/*`) still show "Coming soon" — those land in M3 / M4.
+Student routes (`/assessment/*`) still show "Coming soon" — those land in M4.
+
+## What works in M3
+
+- `/courses` lists published courses with text search, stream filter, AI-safety filter, and pagination (12/page). Cards show stream, tenure, AI-safety chip, lead cluster, and institute count.
+- `/courses/[slug]` renders the full course: description, AI-exposure reasoning explained to the student, eligibility, entrance exams, fees, an institutes table with website links, source URLs, and related courses (matched by `arrayOverlaps` on `career_clusters`).
+- `POST /api/courses/[id|slug]/qa` streams an answer from the configured AI provider. The system prompt is split so the course-context block carries `cacheControl: ephemeral` on Anthropic and is sent flat on Google/OpenAI (which cache automatically).
+- Anonymous Q&A sessions: an `HttpOnly` `qa_sid` cookie scopes a 20-message budget per (course × session). Calls past the cap return 429 with `limit` in the body. Students reload to start a fresh session.
+- Per-message length cap (600 chars) and history cap (10 turns) keep prompt size predictable.
+- Off-topic deflection is enforced by the system instructions: the assistant refuses + offers two example on-topic questions instead.
 
 ## For Claude Code on the web
 
