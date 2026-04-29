@@ -12,14 +12,14 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "db:generate": "drizzle-kit generate",
-    "db:migrate": "tsx scripts/migrate.ts",
+    "db:migrate": "tsx -r tsconfig-paths/register scripts/migrate.ts",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:check": "drizzle-kit check",
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "pnpm typecheck && pnpm lint && pnpm db:check && pnpm test",
-    "create-admin": "tsx scripts/create-admin.ts"
+    "create-admin": "tsx -r tsconfig-paths/register scripts/create-admin.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.71",

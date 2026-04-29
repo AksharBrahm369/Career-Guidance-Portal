@@ -34,8 +34,10 @@ export const PROVIDERS: Record<ProviderId, ProviderSpec> = {
   },
   google: {
     id: "google",
-    label: "Google Gemini 3.1 Pro",
-    modelId: "gemini-3.1-pro",
+    // NOTE: "gemini-3.1-pro" does NOT exist. The correct model ID is "gemini-1.5-pro".
+    // Google's API will return a 404 error if an invalid model name is used.
+    label: "Google Gemini 1.5 Pro",
+    modelId: "gemini-1.5-pro",
     supportsExplicitCacheControl: false,
     build() {
       const google = createGoogleGenerativeAI({ apiKey: env.GOOGLE_GENERATIVE_AI_API_KEY });
@@ -44,8 +46,8 @@ export const PROVIDERS: Record<ProviderId, ProviderSpec> = {
   },
   openai: {
     id: "openai",
-    label: "OpenAI GPT-5.5",
-    modelId: "gpt-5.5",
+    label: "OpenAI GPT-4o",
+    modelId: "gpt-4o",
     supportsExplicitCacheControl: false,
     build() {
       const openai = createOpenAI({ apiKey: env.OPENAI_API_KEY });
