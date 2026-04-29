@@ -34,8 +34,8 @@ export const PROVIDERS: Record<ProviderId, ProviderSpec> = {
   },
   google: {
     id: "google",
-    label: "Google Gemini 3.1 Pro",
-    modelId: "gemini-3.1-pro",
+    label: "Google Gemini 2.5 Flash",
+    modelId: "gemini-2.5-flash",
     supportsExplicitCacheControl: false,
     build() {
       const google = createGoogleGenerativeAI({ apiKey: env.GOOGLE_GENERATIVE_AI_API_KEY });
@@ -44,8 +44,8 @@ export const PROVIDERS: Record<ProviderId, ProviderSpec> = {
   },
   openai: {
     id: "openai",
-    label: "OpenAI GPT-5.5",
-    modelId: "gpt-5.5",
+    label: "OpenAI GPT-4o",
+    modelId: "gpt-4o",
     supportsExplicitCacheControl: false,
     build() {
       const openai = createOpenAI({ apiKey: env.OPENAI_API_KEY });
@@ -71,13 +71,12 @@ export function ensureProviderConfigured(spec: ProviderSpec): void {
   if (!key) {
     throw new Error(
       `AI provider "${spec.id}" selected but its API key env var is not set. ` +
-        `Set ${
-          spec.id === "anthropic"
-            ? "ANTHROPIC_API_KEY"
-            : spec.id === "google"
-              ? "GOOGLE_GENERATIVE_AI_API_KEY"
-              : "OPENAI_API_KEY"
-        }.`,
+      `Set ${spec.id === "anthropic"
+        ? "ANTHROPIC_API_KEY"
+        : spec.id === "google"
+          ? "GOOGLE_GENERATIVE_AI_API_KEY"
+          : "OPENAI_API_KEY"
+      }.`,
     );
   }
 }
