@@ -1,5 +1,8 @@
+import { config } from "dotenv";
 import { defineConfig } from "drizzle-kit";
 import { env } from "./lib/env";
+
+config(); // Load .env file
 
 export default defineConfig({
   schema: "./db/schema/index.ts",
