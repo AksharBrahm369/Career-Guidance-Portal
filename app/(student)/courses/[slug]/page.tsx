@@ -41,9 +41,8 @@ export default async function CourseDetailPage({
         <div className="flex flex-wrap items-start justify-between gap-2">
           <h1 className="text-2xl font-semibold sm:text-3xl">{course.courseName}</h1>
           <span
-            className={`shrink-0 rounded px-2 py-1 text-xs font-medium ${
-              TAG_TONE[course.aiSafetyTag] ?? "bg-muted"
-            }`}
+            className={`shrink-0 rounded px-2 py-1 text-xs font-medium ${TAG_TONE[course.aiSafetyTag] ?? "bg-muted"
+              }`}
           >
             {TAG_LABEL[course.aiSafetyTag] ?? course.aiSafetyTag}
           </span>
