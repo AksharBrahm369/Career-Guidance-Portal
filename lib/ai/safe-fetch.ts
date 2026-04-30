@@ -37,7 +37,7 @@ export const CourseFetchResult = z.object({
   feesMinInr: z.number().nonnegative().optional(),
   feesMaxInr: z.number().nonnegative().optional(),
   institutes: z.array(FetchedInstitute).min(1).max(15),
-  sourceUrls: z.array(z.string().url()).max(8).default([]),
+  sourceUrls: z.array(z.string().url()).min(1).max(8),
 });
 
 export type CourseFetchResult = z.infer<typeof CourseFetchResult>;
@@ -64,13 +64,13 @@ Hard rules:
 - entranceExams: only list real Indian entrance exams (e.g. NEET, JEE Main, CLAT, CUET, NATA). Empty if none required.
 - careerClusters: short broad labels like "Healthcare", "Engineering & Technology", "Architecture & Design", "Research & Applied Sciences", "Law & Public Policy".
 - Stream maps to: science (PCM/PCB), commerce, arts, vocational.
+- sourceUrls: MUST provide at least 1-3 valid source URLs (e.g. official UGC/AICTE pages, university domains, or reputable education portals) confirming the course details. This is strictly required for every course.
 
 Critical: if a requested course already exists in the EXCLUSION LIST below, do not return it. Return genuinely distinct courses.`;
 
 export interface SafeFetchOptions {
   query: string;
   excludeNames: string[];
-  scope?: "course" | "institute" | "both";
 }
 
 export interface SafeFetchResult {

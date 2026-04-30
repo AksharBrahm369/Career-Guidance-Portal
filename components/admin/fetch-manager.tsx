@@ -100,7 +100,6 @@ function CourseCard({ item, index }: { item: FetchedCourse; index?: number }) {
 
 export function FetchManager() {
   const [query, setQuery] = useState("");
-  const [scope, setScope] = useState<"course" | "institute" | "both">("course");
   const [override, setOverride] = useState(false);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -117,7 +116,7 @@ export function FetchManager() {
       const res = await fetch("/api/admin/fetch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim(), scope, override }),
+        body: JSON.stringify({ query: query.trim(), override }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -158,19 +157,6 @@ export function FetchManager() {
         </label>
 
         <div className="flex flex-wrap gap-3">
-          <label className="flex flex-col gap-1 text-xs">
-            Scope
-            <select
-              value={scope}
-              onChange={(e) => setScope(e.target.value as typeof scope)}
-              className="rounded-md border border-input bg-background px-2 py-1.5 text-sm"
-            >
-              <option value="course">Course only</option>
-              <option value="institute">Institute only</option>
-              <option value="both">Both</option>
-            </select>
-          </label>
-
           <label className="flex items-center gap-2 self-end text-xs">
             <input
               type="checkbox"

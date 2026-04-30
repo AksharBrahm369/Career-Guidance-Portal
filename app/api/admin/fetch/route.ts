@@ -12,7 +12,6 @@ export const maxDuration = 300;
 
 const Body = z.object({
   query: z.string().min(2).max(200),
-  scope: z.enum(["course", "institute", "both"]).default("course"),
   override: z.boolean().default(false),
 });
 
@@ -53,7 +52,6 @@ export async function POST(req: Request) {
     const { results, failures } = await safeFetchCourseBatch({
       query: body.query,
       excludeNames,
-      scope: body.scope,
     });
 
     if (results.length === 0) {
