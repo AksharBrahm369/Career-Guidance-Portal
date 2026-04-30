@@ -13,8 +13,9 @@ export default function AdminFetchPage() {
         </Link>
       </div>
       <p className="text-sm text-muted-foreground">
-        AI fetches a single course per call and saves it as <code>pending_review</code>. Existing
-        published &amp; pending courses are excluded automatically (use override to bypass).
+        AI fetches one or more courses and saves each as <code>pending_review</code>. Set{" "}
+        <strong>Number of courses</strong> to fetch multiple distinct variations in one click.
+        Existing published &amp; pending courses are excluded automatically (use override to bypass).
       </p>
       <FetchManager />
     </div>
