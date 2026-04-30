@@ -99,7 +99,9 @@ docker compose up --build                                  # db + app, migration
 - `/admin/fetch` runs an AI fetch against the configured provider, validates the JSON against a Zod schema, and saves to `pending_review`. Existing course names are passed to the prompt as an exclusion list; `>85%` near-duplicates raise a warning rather than an auto-reject.
 - `/admin/review` lists pending courses with inline edit, Save & Publish, and Reject (with reason). Publish enforces required fields (`description ≥ 150 chars`, eligibility, tenure, clusters).
 - `/admin/courses/new` is a manual course form (same review/publish flow, `source = manual`).
-- `/admin/catalogue` lists published courses with archive (soft-delete).
+- `/admin/catalogue` is the unified courses index: status tabs (`Published / Pending review / Rejected / Archived`) with live counts, server-side pagination (20/page, `?page=N`), and per-status row actions — Archive, Open in review, Reopen for review (clears `rejection_reason`), Restore to published.
+- `/admin/review` paginates pending courses (10/page).
+- Source URLs are verified at AI-fetch time and on manual create: dead URLs (4xx/5xx) are dropped with a warning; transient `unknown` (timeouts) are kept. Admins can edit source URLs in the review card and click "Verify all" to re-check on demand.
 - All admin actions write to `audit_log` (admin id, action, old/new values, IP, user-agent).
 - All endpoints check session + admin role; non-admins get 401.
 

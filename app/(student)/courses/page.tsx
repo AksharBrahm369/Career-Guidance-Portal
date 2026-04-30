@@ -1,6 +1,6 @@
-import Link from "next/link";
 import { CatalogueFilters } from "@/components/student/catalogue-filters";
 import { CourseCard } from "@/components/student/course-card";
+import { Pagination } from "@/components/pagination";
 import {
   listPublishedCourses,
   type AiSafetyFilter,
@@ -38,18 +38,15 @@ export default async function CoursesCataloguePage({ searchParams }: PageProps) 
 
   const data = await listPublishedCourses({ q, stream, aiSafety, cluster, page });
 
-  const queryString = (override: Record<string, string | null>) => {
+  const hrefForPage = (target: number) => {
     const out = new URLSearchParams();
     if (q) out.set("q", q);
     if (stream) out.set("stream", stream);
     if (aiSafety) out.set("ai", aiSafety);
     if (cluster) out.set("cluster", cluster);
-    for (const [k, v] of Object.entries(override)) {
-      if (v == null) out.delete(k);
-      else out.set(k, v);
-    }
+    if (target > 1) out.set("page", String(target));
     const s = out.toString();
-    return s ? `?${s}` : "";
+    return `/courses${s ? `?${s}` : ""}`;
   };
 
   return (
@@ -87,33 +84,12 @@ export default async function CoursesCataloguePage({ searchParams }: PageProps) 
         </div>
       )}
 
-      {data.pageCount > 1 ? (
-        <nav className="mt-2 flex items-center justify-between text-sm" aria-label="Pagination">
-          {data.page > 1 ? (
-            <Link
-              href={`/courses${queryString({ page: String(data.page - 1) })}`}
-              className="rounded-md border px-3 py-1.5"
-            >
-              ← Previous
-            </Link>
-          ) : (
-            <span />
-          )}
-          <span className="text-xs text-muted-foreground">
-            Page {data.page} / {data.pageCount}
-          </span>
-          {data.page < data.pageCount ? (
-            <Link
-              href={`/courses${queryString({ page: String(data.page + 1) })}`}
-              className="rounded-md border px-3 py-1.5"
-            >
-              Next →
-            </Link>
-          ) : (
-            <span />
-          )}
-        </nav>
-      ) : null}
+      <Pagination
+        page={data.page}
+        pageCount={data.pageCount}
+        hrefForPage={hrefForPage}
+        className="mt-2"
+      />
     </div>
   );
 }

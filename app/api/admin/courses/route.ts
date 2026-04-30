@@ -5,6 +5,7 @@ import { db } from "@/lib/db";
 import { courses } from "@/db/schema";
 import { CourseFetchResult } from "@/lib/ai/safe-fetch";
 import { persistFetchedCourse } from "@/lib/admin/persist-fetched-course";
+import { verifyUrls } from "@/lib/url-verify";
 
 export const runtime = "nodejs";
 
@@ -73,6 +74,15 @@ export async function POST(req: Request) {
   const ip = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? null;
   const userAgent = req.headers.get("user-agent") ?? null;
 
+  const warnings: string[] = [];
+  if (parsed.sourceUrls.length > 0) {
+    const verification = await verifyUrls(parsed.sourceUrls);
+    for (const dead of verification.dead) {
+      warnings.push(`Dropped source URL that returned 4xx/5xx: ${dead}`);
+    }
+    parsed.sourceUrls = [...verification.ok, ...verification.unknown];
+  }
+
   const persisted = await persistFetchedCourse(parsed, {
     adminId: admin.adminId,
     source: "manual",
@@ -80,5 +90,8 @@ export async function POST(req: Request) {
     userAgent,
   });
 
-  return Response.json({ courseId: persisted.courseId, slug: persisted.slug }, { status: 201 });
+  return Response.json(
+    { courseId: persisted.courseId, slug: persisted.slug, warnings },
+    { status: 201 },
+  );
 }

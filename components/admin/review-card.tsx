@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { SourceUrlsEditor } from "@/components/admin/source-urls-editor";
 
 interface CourseRow {
   id: string;
@@ -17,6 +18,7 @@ interface CourseRow {
   entranceExams: string[];
   feesMinInr: string | null;
   feesMaxInr: string | null;
+  sourceUrls: string[];
   source: string;
   createdAt: string | Date;
 }
@@ -35,6 +37,7 @@ export function ReviewCard({ course }: { course: CourseRow }) {
     careerClusters: course.careerClusters.join(", "),
     eligibilityCriteria: course.eligibilityCriteria,
     entranceExams: course.entranceExams.join(", "),
+    sourceUrls: course.sourceUrls,
   });
 
   function refresh() {
@@ -57,6 +60,7 @@ export function ReviewCard({ course }: { course: CourseRow }) {
         .split(",")
         .map((s) => s.trim())
         .filter(Boolean),
+      sourceUrls: draft.sourceUrls,
     };
     const res = await fetch(`/api/admin/courses/${course.id}`, {
       method: "PATCH",
@@ -218,6 +222,14 @@ export function ReviewCard({ course }: { course: CourseRow }) {
                 />
               </Field>
               <div className="sm:col-span-2">
+                <SourceUrlsEditor
+                  courseId={course.id}
+                  initialUrls={draft.sourceUrls}
+                  editing
+                  onChange={(urls) => setDraft((d) => ({ ...d, sourceUrls: urls }))}
+                />
+              </div>
+              <div className="sm:col-span-2">
                 <button
                   onClick={save}
                   className="rounded-md bg-secondary px-3 py-1 text-xs"
@@ -245,6 +257,14 @@ export function ReviewCard({ course }: { course: CourseRow }) {
               <Field label="Description" full>
                 <p className="whitespace-pre-line text-sm">{course.description}</p>
               </Field>
+              <div className="sm:col-span-2">
+                <SourceUrlsEditor
+                  courseId={course.id}
+                  initialUrls={course.sourceUrls}
+                  editing={false}
+                  onChange={() => {}}
+                />
+              </div>
             </>
           )}
         </div>

@@ -2,6 +2,7 @@ import "server-only";
 import { generateText, Output } from "ai";
 import { z } from "zod";
 import { getModel } from "./client";
+import { verifyUrls } from "@/lib/url-verify";
 
 export const StreamEnum = z.enum(["science", "commerce", "arts", "vocational"]);
 export const AiSafetyTagEnum = z.enum(["ai_safe", "ai_augmented", "ai_risk"]);
@@ -120,6 +121,17 @@ ${exclusionBlock}`;
       );
       break;
     }
+  }
+
+  // Verify source URLs and drop dead ones; keep "unknown" (transient blips).
+  if (fetched.sourceUrls.length > 0) {
+    const verification = await verifyUrls(fetched.sourceUrls);
+    if (verification.dead.length > 0) {
+      for (const dead of verification.dead) {
+        warnings.push(`Dropped source URL that returned 4xx/5xx: ${dead}`);
+      }
+    }
+    fetched.sourceUrls = [...verification.ok, ...verification.unknown];
   }
 
   return { course: fetched, provider: providerLabel, warnings };
