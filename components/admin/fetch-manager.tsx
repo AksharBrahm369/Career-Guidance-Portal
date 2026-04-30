@@ -102,7 +102,6 @@ export function FetchManager() {
   const [query, setQuery] = useState("");
   const [scope, setScope] = useState<"course" | "institute" | "both">("course");
   const [override, setOverride] = useState(false);
-  const [count, setCount] = useState(5);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [response, setResponse] = useState<FetchResponse | null>(null);
@@ -118,7 +117,7 @@ export function FetchManager() {
       const res = await fetch("/api/admin/fetch", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: query.trim(), scope, override, count }),
+        body: JSON.stringify({ query: query.trim(), scope, override }),
       });
       const data = await res.json();
       if (!res.ok) {
@@ -172,18 +171,6 @@ export function FetchManager() {
             </select>
           </label>
 
-          <label className="flex flex-col gap-1 text-xs">
-            Number of courses
-            <input
-              type="number"
-              min={1}
-              max={20}
-              value={count}
-              onChange={(e) => setCount(Math.max(1, Math.min(20, Number(e.target.value))))}
-              className="w-20 rounded-md border border-input bg-background px-2 py-1.5 text-sm"
-            />
-          </label>
-
           <label className="flex items-center gap-2 self-end text-xs">
             <input
               type="checkbox"
@@ -199,13 +186,7 @@ export function FetchManager() {
           disabled={loading || query.trim().length < 2}
           className="self-start rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
-          {loading
-            ? count > 1
-              ? `Fetching ${count} courses with AI…`
-              : "Fetching with AI…"
-            : count > 1
-              ? `Fetch ${count} courses with AI`
-              : "Fetch with AI"}
+          {loading ? "Fetching all matches with AI…" : "Fetch all matches with AI"}
         </button>
       </form>
 

@@ -1,6 +1,6 @@
 import { z } from "zod";
 import { adminErrorResponse, requireAdmin } from "@/lib/auth/require-admin";
-import { FetchFailedError, safeFetchCourse, safeFetchCourses } from "@/lib/ai/safe-fetch";
+import { FetchFailedError, safeFetchCourseBatch } from "@/lib/ai/safe-fetch";
 import {
   getExistingCourseNames,
   persistFetchedCourse,
@@ -14,8 +14,6 @@ const Body = z.object({
   query: z.string().min(2).max(200),
   scope: z.enum(["course", "institute", "both"]).default("course"),
   override: z.boolean().default(false),
-  /** How many distinct courses to fetch. 1 = original behaviour. Max 20. */
-  count: z.number().int().min(1).max(20).default(5),
 });
 
 export async function POST(req: Request) {
@@ -51,95 +49,69 @@ export async function POST(req: Request) {
   const ip = req.headers.get("x-forwarded-for") ?? req.headers.get("x-real-ip") ?? null;
   const userAgent = req.headers.get("user-agent") ?? null;
 
-  // ─── Single-course path (original behaviour) ────────────────────────────────
-  if (body.count === 1) {
-    let result;
-    try {
-      result = await safeFetchCourse({
-        query: body.query,
-        excludeNames,
-        scope: body.scope,
-      });
-    } catch (err) {
-      if (err instanceof FetchFailedError) {
-        return Response.json({ error: "fetch_failed", message: err.message }, { status: 502 });
-      }
-      console.error("AI fetch error:", err);
+  try {
+    const { results, failures } = await safeFetchCourseBatch({
+      query: body.query,
+      excludeNames,
+      scope: body.scope,
+    });
+
+    if (results.length === 0) {
       return Response.json(
-        { error: "ai_provider_error", message: err instanceof Error ? err.message : String(err) },
+        {
+          error: "fetch_failed",
+          message: "AI provider returned no valid courses.",
+          failures,
+        },
         { status: 502 },
       );
     }
 
-    const persisted = await persistFetchedCourse(result.course, {
-      adminId: admin.adminId,
-      source: "ai_fetch",
-      ip,
-      userAgent,
-    });
+    const persisted: Array<{
+      courseId: string;
+      slug: string;
+      provider: string;
+      warnings: string[];
+      course: (typeof results)[number]["course"];
+    }> = [];
+
+    for (const r of results) {
+      try {
+        const p = await persistFetchedCourse(r.course, {
+          adminId: admin.adminId,
+          source: "ai_fetch",
+          ip,
+          userAgent,
+        });
+        persisted.push({
+          courseId: p.courseId,
+          slug: p.slug,
+          provider: r.provider,
+          warnings: r.warnings,
+          course: r.course,
+        });
+      } catch (persistErr) {
+        console.error("Failed to persist course:", r.course.courseName, persistErr);
+        failures.push(
+          `Persist failed for "${r.course.courseName}": ${persistErr instanceof Error ? persistErr.message : String(persistErr)}`,
+        );
+      }
+    }
 
     return Response.json({
-      mode: "single",
-      courseId: persisted.courseId,
-      slug: persisted.slug,
-      provider: result.provider,
-      warnings: result.warnings,
-      course: result.course,
+      mode: "batch",
+      total: persisted.length,
+      failures,
+      courses: persisted,
     });
-  }
-
-  // ─── Multi-course path ───────────────────────────────────────────────────────
-  const { results, failures } = await safeFetchCourses(
-    { query: body.query, excludeNames, scope: body.scope },
-    body.count,
-  );
-
-  if (results.length === 0) {
+  } catch (err) {
+    if (err instanceof FetchFailedError) {
+      return Response.json({ error: "fetch_failed", message: err.message }, { status: 502 });
+    }
+    console.error("AI fetch error:", err);
     return Response.json(
-      {
-        error: "fetch_failed",
-        message: "All fetch iterations failed.",
-        failures,
-      },
+      { error: "ai_provider_error", message: err instanceof Error ? err.message : String(err) },
       { status: 502 },
     );
   }
-
-  const persisted: Array<{
-    courseId: string;
-    slug: string;
-    provider: string;
-    warnings: string[];
-    course: (typeof results)[number]["course"];
-  }> = [];
-
-  for (const r of results) {
-    try {
-      const p = await persistFetchedCourse(r.course, {
-        adminId: admin.adminId,
-        source: "ai_fetch",
-        ip,
-        userAgent,
-      });
-      persisted.push({
-        courseId: p.courseId,
-        slug: p.slug,
-        provider: r.provider,
-        warnings: r.warnings,
-        course: r.course,
-      });
-    } catch (persistErr) {
-      console.error("Failed to persist course:", r.course.courseName, persistErr);
-      failures.push(
-        `Persist failed for "${r.course.courseName}": ${persistErr instanceof Error ? persistErr.message : String(persistErr)}`,
-      );
-    }
-  }
-
-  return Response.json({
-    mode: "batch",
-    total: persisted.length,
-    failures,
-    courses: persisted,
-  });
 }

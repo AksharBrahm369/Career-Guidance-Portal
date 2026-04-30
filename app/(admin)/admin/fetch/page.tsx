@@ -13,8 +13,7 @@ export default function AdminFetchPage() {
         </Link>
       </div>
       <p className="text-sm text-muted-foreground">
-        AI fetches one or more courses and saves each as <code>pending_review</code>. Set{" "}
-        <strong>Number of courses</strong> to fetch multiple distinct variations in one click.
+        AI automatically fetches all relevant variations for a query (minimum 5 if available) and saves each as <code>pending_review</code>. 
         Existing published &amp; pending courses are excluded automatically (use override to bypass).
       </p>
       <FetchManager />

@@ -45,12 +45,15 @@ export type FetchedInstitute = z.infer<typeof FetchedInstitute>;
 
 const SYSTEM_PROMPT = `You are a career guidance research assistant for an Indian education platform.
 
-Your task is to research ONE academic course offered in India and return structured data about it.
+Your task is to research academic courses offered in India based on the user's query and return a structured list of them.
 Focus exclusively on courses available at Indian institutes for students who completed grades 10–12.
 
 Hard rules:
-- Return exactly ONE course per call. Do not invent multiple courses in a single response.
-- When queried broadly (e.g. "All BSc IT courses"), each call will cover a distinct variation or specialization — your job is to pick the BEST match that is NOT already in the exclusion list.
+- Return ALL relevant courses matching the query. Do NOT limit to a single course unless explicitly requested.
+- Ensure a minimum of 5 distinct courses when available (if fewer exist, return all of them).
+- If more than 5 are available, return the full set (no artificial limit).
+- For specific course queries (e.g. "BSc IT"), return all related variations and equivalent programs.
+- Do not return duplicate courses.
 - description must be at least 150 words and explain what the course covers, typical career outcomes, and who it suits.
 - aiSafetyTag classifies how exposed careers from this course are to AI automation:
   - ai_safe: human skills are core, automation risk low (e.g. surgery, social work, primary teaching)
@@ -62,7 +65,7 @@ Hard rules:
 - careerClusters: short broad labels like "Healthcare", "Engineering & Technology", "Architecture & Design", "Research & Applied Sciences", "Law & Public Policy".
 - Stream maps to: science (PCM/PCB), commerce, arts, vocational.
 
-Critical: if the requested course already exists in the EXCLUSION LIST below, return a course that is genuinely distinct (different specialization or sub-field). Do NOT return a near-duplicate.`;
+Critical: if a requested course already exists in the EXCLUSION LIST below, do not return it. Return genuinely distinct courses.`;
 
 export interface SafeFetchOptions {
   query: string;
@@ -78,11 +81,16 @@ export interface SafeFetchResult {
 
 export interface SafeFetchBatchResult {
   results: SafeFetchResult[];
-  /** Names that failed to be fetched (e.g. AI returned no output on that iteration) */
   failures: string[];
 }
 
-export async function safeFetchCourse(options: SafeFetchOptions): Promise<SafeFetchResult> {
+export const CoursesBatchOutput = z.object({
+  courses: z.array(CourseFetchResult).describe("Array of relevant courses"),
+});
+
+export async function safeFetchCourseBatch(
+  options: SafeFetchOptions,
+): Promise<SafeFetchBatchResult> {
   const { query, excludeNames } = options;
   const { model, providerLabel } = getModel("fetch");
 
@@ -94,7 +102,7 @@ export async function safeFetchCourse(options: SafeFetchOptions): Promise<SafeFe
           .map((n, i) => `  ${i + 1}. ${n}`)
           .join("\n");
 
-  const userPrompt = `Research this course query and return one structured course entry.
+  const userPrompt = `Research this course query and return ALL matching courses.
 
 QUERY: ${query}
 
@@ -105,88 +113,59 @@ ${exclusionBlock}`;
     model,
     system: SYSTEM_PROMPT,
     prompt: userPrompt,
-    experimental_output: Output.object({ schema: CourseFetchResult }),
+    experimental_output: Output.object({ schema: CoursesBatchOutput }),
     temperature: 0.4,
     maxRetries: 2,
   });
 
-  if (!experimental_output) {
+  if (!experimental_output || !experimental_output.courses || experimental_output.courses.length === 0) {
     throw new FetchFailedError(
       `AI provider returned no structured output (finishReason: ${finishReason}).`,
     );
   }
 
-  const warnings: string[] = [];
-  const fetched = experimental_output;
-
-  // Soft duplicate warning — don't reject, just flag.
-  const lowered = fetched.courseName.trim().toLowerCase();
-  for (const existing of excludeNames) {
-    if (similarityScore(lowered, existing.trim().toLowerCase()) > 0.85) {
-      warnings.push(
-        `AI returned "${fetched.courseName}" which is >85% similar to existing "${existing}".`,
-      );
-      break;
-    }
-  }
-
-  // Verify source URLs and drop dead ones; keep "unknown" (transient blips).
-  if (fetched.sourceUrls.length > 0) {
-    const verification = await verifyUrls(fetched.sourceUrls);
-    if (verification.dead.length > 0) {
-      for (const dead of verification.dead) {
-        warnings.push(`Dropped source URL that returned 4xx/5xx: ${dead}`);
-      }
-    }
-    fetched.sourceUrls = [...verification.ok, ...verification.unknown];
-  }
-
-  return { course: fetched, provider: providerLabel, warnings };
-}
-
-/**
- * Fetches multiple distinct courses by calling safeFetchCourse in sequence.
- * Each iteration adds the previously fetched course to the exclusion list so
- * the AI is forced to return a genuinely different variation.
- *
- * @param options - Same as SafeFetchOptions but with an additional `count`.
- * @param count   - How many courses to fetch (1–20).
- * @param onEach  - Optional callback invoked after each successful fetch (for streaming UX).
- */
-export async function safeFetchCourses(
-  options: SafeFetchOptions,
-  count: number,
-  onEach?: (result: SafeFetchResult, index: number) => void,
-): Promise<SafeFetchBatchResult> {
-  const clampedCount = Math.max(1, Math.min(20, count));
   const results: SafeFetchResult[] = [];
   const failures: string[] = [];
+  
+  // We'll maintain a local exclusion list to prevent duplicate returns in the same payload
+  const currentExcludes = [...excludeNames];
 
-  // Start with the caller-supplied exclusion list and grow it as we fetch.
-  const runningExcludes = [...options.excludeNames];
-
-  for (let i = 0; i < clampedCount; i++) {
-    try {
-      const result = await safeFetchCourse({
-        ...options,
-        excludeNames: runningExcludes,
-      });
-      results.push(result);
-      // Add the fetched course name so the next call won't return the same one.
-      runningExcludes.push(result.course.courseName);
-      onEach?.(result, i);
-    } catch (err) {
-      const label =
-        err instanceof FetchFailedError
-          ? `Iteration ${i + 1}: ${err.message}`
-          : `Iteration ${i + 1}: ${err instanceof Error ? err.message : String(err)}`;
-      failures.push(label);
-      // Continue so we still try the remaining iterations.
+  for (const fetched of experimental_output.courses) {
+    const warnings: string[] = [];
+    const lowered = fetched.courseName.trim().toLowerCase();
+    
+    let isDuplicate = false;
+    for (const existing of currentExcludes) {
+      if (similarityScore(lowered, existing.trim().toLowerCase()) > 0.85) {
+        warnings.push(
+          `AI returned "${fetched.courseName}" which is >85% similar to existing "${existing}".`,
+        );
+        // If it's too similar to something we already have or just parsed, skip it if you want, 
+        // but let's just flag it for now, as was the previous behavior.
+        break;
+      }
     }
+
+    currentExcludes.push(fetched.courseName);
+
+    // Verify source URLs
+    if (fetched.sourceUrls && fetched.sourceUrls.length > 0) {
+      const verification = await verifyUrls(fetched.sourceUrls);
+      if (verification.dead.length > 0) {
+        for (const dead of verification.dead) {
+          warnings.push(`Dropped source URL that returned 4xx/5xx: ${dead}`);
+        }
+      }
+      fetched.sourceUrls = [...verification.ok, ...verification.unknown];
+    }
+
+    results.push({ course: fetched, provider: providerLabel, warnings });
   }
 
   return { results, failures };
 }
+
+
 
 export class FetchFailedError extends Error {
   constructor(msg: string) {
