@@ -7,6 +7,11 @@ import { ClusterDefinition } from "@/lib/admin/clusters/cluster-schema";
 
 export const runtime = "nodejs";
 
+const PartialCluster = ClusterDefinition.partial().refine(
+  (d) => Object.keys(d).length > 0,
+  { message: "no fields to update" },
+);
+
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   let admin;
   try {
@@ -17,7 +22,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const { id } = await params;
   let body;
   try {
-    body = ClusterDefinition.partial().parse(await req.json());
+    body = PartialCluster.parse(await req.json());
   } catch (err) {
     return Response.json({ error: "invalid_body", detail: String(err) }, { status: 400 });
   }
