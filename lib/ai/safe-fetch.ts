@@ -134,7 +134,6 @@ ${exclusionBlock}`;
     const warnings: string[] = [];
     const lowered = fetched.courseName.trim().toLowerCase();
     
-    let isDuplicate = false;
     for (const existing of currentExcludes) {
       if (similarityScore(lowered, existing.trim().toLowerCase()) > 0.85) {
         warnings.push(
