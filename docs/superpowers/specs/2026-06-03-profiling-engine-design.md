@@ -14,7 +14,7 @@ The four lenses are evidence-selected (validated against the career-assessment l
 
 | Lens | Measures | How captured | Seed source (public domain) |
 |---|---|---|---|
-| **Aptitude** | What he *can* do (ability) | Scored test, 4 sub-abilities, soft-timed | **ICAR** |
+| **Aptitude** | What he *can* do (ability) | Scored test, 4 sub-abilities, soft-timed | **Per-sub-ability blend** (§9) |
 | **Interests** | What he's *drawn to* | RIASEC items + subject grid | **O*NET Interest Profiler** |
 | **Work-style** | *How* he likes to work | 5-trait self-report | **IPIP** |
 | **Marks** | Demonstrated performance + eligibility | Self-entered subject marks | Self-authored (India) |
@@ -191,17 +191,25 @@ Seed from **validated, public-domain instruments** — credible, free, ownable, 
 
 | Lens | Source | License | Coverage |
 |---|---|---|---|
-| Aptitude | **ICAR** (International Cognitive Ability Resource) | Public domain | Matrix reasoning, verbal reasoning, letter-number series, 3-D rotation → Logical/Verbal/Numerical/Spatial; answer keys included |
+| Aptitude | **Per-sub-ability blend** (detailed below) | Mostly free / public domain | Numerical, Verbal, Logical/Abstract, Spatial — best free source per sub-ability |
 | Interests | **O*NET Interest Profiler** (US DOL) | Free (O*NET Career Exploration Tools License); manual CC-BY 4.0 | 60-item RIASEC (+ 30-item Mini, widget/API) |
 | Work-style | **IPIP** (Oregon Research Institute) | Public domain (no fee/permission) | Big-Five facets → 5 work-style traits |
 | Subjects/marks | Self-authored | — | India subject lists; marks are data entry |
+
+**Aptitude — per-sub-ability blend (best free source per ability):**
+- **Numerical / quantitative →** India **NTA released papers** (CUET General/Quantitative, NATA, NCET) — real, India-relevant, answer-keyed. ⚠️ confirm reuse/commercial terms for government exam content before seeding.
+- **Verbal →** **Open Psychometrics** Vocabulary IQ test (free, validated) + **ICAR** verbal reasoning.
+- **Logical / abstract →** **Sandia Matrices** free static sets (Raven-like; open cousins MaRs-IB, Hagen Matrices).
+- **Spatial →** **ICAR** 3-D rotation (figural — needs hosted image assets).
+- **Phase-2 exposure-proofing:** rule-based generators — **Sandia SGMT** (matrices) and **IMak** (figural analogies). These are *Automatic Item Generation* (deterministic, validated, difficulty-predictable) — **not** LLM-generated — yielding unlimited, retake-safe items. Added once the curated blend is live.
+- **ETS Kit of Factor-Referenced Cognitive Tests** considered but rejected for v1 (royalty license + dated 1976 content → no true ownership).
 
 - **Paid providers rejected:** they license access to *their* test; you can't extract items to own/seed a master bank. Public-domain sources preserve ownership and the USP.
 - **India localization:** matrix/spatial/number-series are culture-fair; verbal items + O*NET activity statements get a **light India-English human review** (not AI) before seeding.
 - **Attribution:** O*NET requires attribution + a "not endorsed" note; ICAR/IPIP courtesy-cite. All permit commercial use + modification — **confirm exact license terms against the official pages before launch.**
 - **Item exposure:** items are publicly findable; acceptable for a low-stakes tool, mitigated by randomized-from-pool draws and rotation over time.
 
-Sources: O*NET Interest Profiler (onetcenter.org/IP.html); ICAR (icar-project.com; Condon & Revelle, 2014); IPIP (ipip.ori.org).
+Sources: O*NET IP (onetcenter.org/IP.html); IPIP (ipip.ori.org); ICAR (icar-project.com / .org; Condon & Revelle, 2014); Sandia Matrices (scholarworks.bgsu.edu/pad/vol6/iss3/6); IMak (Blum & Holling, 2018); Open Psychometrics (openpsychometrics.org); India NTA released papers (nta.ac.in).
 
 ---
 
@@ -209,7 +217,7 @@ Sources: O*NET Interest Profiler (onetcenter.org/IP.html); ICAR (icar-project.co
 
 **In v1:** full 4-lens assessment (seeded, integrity-protected) · deterministic hybrid engine (gate → per-cluster match → ranked courses) · explainable result (Brain Profile → clusters → courses → institutes, per-course why, full strengths/weaknesses, PDF, deep-links) · account + history + retake-cooldown · admin management of question bank, cluster profiles/weights, course eligibility.
 
-**Deferred:** per §2 (percentile benchmarking, marks verification, weight auto-tuning, ML, i18n, parent view, share links, class 9–10 stream flow).
+**Deferred:** per §2 (percentile benchmarking, marks verification, weight auto-tuning, ML, i18n, parent view, share links, class 9–10 stream flow) **plus rule-based aptitude item generators (Sandia SGMT / IMak) as a phase-2 exposure-proofing upgrade.**
 
 ---
 
