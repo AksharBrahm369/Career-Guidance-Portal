@@ -19,7 +19,9 @@
     "test": "vitest run",
     "test:watch": "vitest",
     "check": "pnpm typecheck && pnpm lint && pnpm db:check && pnpm test",
-    "create-admin": "tsx -r tsconfig-paths/register scripts/create-admin.ts"
+    "create-admin": "tsx -r tsconfig-paths/register scripts/create-admin.ts",
+    "seed:clusters": "tsx -r tsconfig-paths/register scripts/seed-clusters.ts",
+    "seed:question-bank": "tsx -r tsconfig-paths/register --import ./scripts/stubs/register-server-only.mjs scripts/seed-question-bank.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.71",
