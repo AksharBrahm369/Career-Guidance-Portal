@@ -22,6 +22,15 @@ const PatchBody = z
     feesMinInr: z.number().nonnegative().nullable().optional(),
     feesMaxInr: z.number().nonnegative().nullable().optional(),
     sourceUrls: z.array(z.string().url()).max(8).optional(),
+    requiredSubjects: z.array(z.string()).optional(),
+    eligibility: z
+      .object({
+        minAggregate: z.number().min(0).max(100).optional(),
+        minBySubject: z.record(z.number().min(0).max(100)).optional(),
+        requiredStreamSubjects: z.array(z.string()).optional(),
+        entranceExams: z.array(z.string()).optional(),
+      })
+      .optional(),
   })
   .refine((d) => Object.keys(d).length > 0, { message: "no fields to update" });
 
@@ -86,6 +95,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (body.feesMaxInr !== undefined)
     update.feesMaxInr = body.feesMaxInr == null ? null : String(body.feesMaxInr);
   if (body.sourceUrls !== undefined) update.sourceUrls = body.sourceUrls;
+  if (body.requiredSubjects !== undefined) update.requiredSubjects = body.requiredSubjects;
+  if (body.eligibility !== undefined) update.eligibility = body.eligibility;
 
   const [updated] = await db
     .update(courses)
