@@ -35,6 +35,8 @@ export function ManualCourseForm() {
     feesMinInr: "",
     feesMaxInr: "",
     sourceUrls: "",
+    requiredSubjects: "",
+    minAggregate: "",
   });
   const [institutes, setInstitutes] = useState<InstituteDraft[]>([{ ...EMPTY_INSTITUTE }]);
 
@@ -81,6 +83,13 @@ export function ManualCourseForm() {
         .split(/[\s,]+/)
         .map((s) => s.trim())
         .filter(Boolean),
+      requiredSubjects: form.requiredSubjects
+        .split(",")
+        .map((s) => s.trim())
+        .filter(Boolean),
+      ...(form.minAggregate !== ""
+        ? { eligibility: { minAggregate: Number(form.minAggregate) } }
+        : {}),
       institutes: validInstitutes,
     };
 
@@ -232,6 +241,27 @@ export function ManualCourseForm() {
           className={inputCls}
           value={form.feesMaxInr}
           onChange={(e) => update("feesMaxInr", e.target.value)}
+        />
+      </Field>
+
+      <Field label="Required subjects (comma-separated)">
+        <input
+          className={inputCls}
+          value={form.requiredSubjects}
+          onChange={(e) => update("requiredSubjects", e.target.value)}
+          placeholder="Physics, Chemistry, Mathematics"
+        />
+      </Field>
+      <Field label="Minimum aggregate % (optional)">
+        <input
+          type="number"
+          min="0"
+          max="100"
+          step="0.5"
+          className={inputCls}
+          value={form.minAggregate}
+          onChange={(e) => update("minAggregate", e.target.value)}
+          placeholder="e.g. 60"
         />
       </Field>
 
