@@ -10,6 +10,7 @@ export default defineConfig({
   },
   test: {
     environment: "node",
+    setupFiles: ["dotenv/config"],
     include: ["lib/**/*.test.ts"],
     exclude: ["node_modules", ".next", "drizzle"],
     pool: "forks",
