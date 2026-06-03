@@ -42,8 +42,8 @@ export const rankingTag = pgEnum("ranking_tag", [
 
 export const assessmentModule = pgEnum("assessment_module", [
   "aptitude",
-  "innate",
   "interests",
+  "work_style",
 ]);
 
 export const auditAction = pgEnum("audit_action", [
