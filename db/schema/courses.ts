@@ -1,6 +1,7 @@
 import { sql } from "drizzle-orm";
 import {
   index,
+  jsonb,
   numeric,
   pgTable,
   text,
@@ -28,6 +29,13 @@ export const courses = pgTable(
     tenureYears: numeric("tenure_years", { precision: 4, scale: 2 }).notNull(),
     eligibilityCriteria: text("eligibility_criteria").notNull(),
     entranceExams: text("entrance_exams").array().notNull().default(sql`ARRAY[]::text[]`),
+    requiredSubjects: text("required_subjects").array().notNull().default(sql`ARRAY[]::text[]`),
+    eligibility: jsonb("eligibility").$type<{
+      minAggregate?: number;
+      minBySubject?: Record<string, number>;
+      requiredStreamSubjects?: string[];
+      entranceExams?: string[];
+    }>(),
     feesMinInr: numeric("fees_min_inr", { precision: 12, scale: 2 }),
     feesMaxInr: numeric("fees_max_inr", { precision: 12, scale: 2 }),
     sourceUrls: text("source_urls").array().notNull().default(sql`ARRAY[]::text[]`),
