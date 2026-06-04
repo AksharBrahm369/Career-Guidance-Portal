@@ -3,6 +3,7 @@ import { requireStudent } from "@/lib/auth/require-student";
 import { db } from "@/lib/db";
 import { assessments } from "@/db/schema";
 import { getActiveItems } from "@/lib/assessment/items";
+import { isLowSignal } from "@/lib/recommendation";
 import { AssessmentFlow } from "@/components/student/assessment/assessment-flow";
 import { CapturedProfile } from "@/components/student/assessment/captured-profile";
 import type { ClientItem } from "@/components/student/assessment/types";
@@ -33,13 +34,18 @@ export default async function AssessmentEntryPage() {
   ]);
 
   if (latest && latest.status === "completed") {
+    const confidence = (latest.confidence as "high" | "moderate" | "low" | null) ?? null;
+    const recommendedCourses = latest.recommendedCourses ?? [];
     return (
       <CapturedProfile
         interestData={latest.interestData ?? {}}
         workStyleScores={latest.workStyleScores ?? {}}
         aptitudeScores={latest.aptitudeScores ?? {}}
         marks={latest.marks ?? null}
-        confidence={(latest.confidence as "high" | "moderate" | "low" | null) ?? null}
+        confidence={confidence}
+        clusterScores={latest.clusterScores ?? []}
+        recommendedCourses={recommendedCourses}
+        lowSignal={isLowSignal(recommendedCourses, confidence)}
       />
     );
   }

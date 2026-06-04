@@ -1,4 +1,6 @@
 import Link from "next/link";
+import type { ClusterScore, CourseRecommendation } from "@/lib/recommendation/types";
+import { PrintResultButton } from "./result-actions";
 import type { AptitudeScores, Marks, Riasec, WorkStyleScores } from "./types";
 
 interface Props {
@@ -7,6 +9,9 @@ interface Props {
   aptitudeScores: AptitudeScores;
   marks: Marks | null;
   confidence: "high" | "moderate" | "low" | null;
+  clusterScores: ClusterScore[];
+  recommendedCourses: CourseRecommendation[];
+  lowSignal: boolean;
 }
 
 const RIASEC_LABELS: Record<string, string> = {
@@ -67,20 +72,29 @@ export function CapturedProfile({
   aptitudeScores,
   marks,
   confidence,
+  clusterScores,
+  recommendedCourses,
+  lowSignal,
 }: Props) {
   const interestEntries = Object.entries(interestData)
     .map(([k, v]) => [RIASEC_LABELS[k] ?? k, v] as [string, number])
     .sort((a, b) => b[1] - a[1]);
   const workStyleEntries = Object.entries(workStyleScores).sort((a, b) => b[1] - a[1]);
   const aptitudeEntries = Object.entries(aptitudeScores);
+  const clusterEntries = clusterScores
+    .slice(0, 5)
+    .map((c) => [c.name, Math.round(c.score * 100)] as [string, number]);
 
   return (
     <section className="flex flex-col gap-6">
-      <div className="flex flex-col gap-1">
-        <h1 className="text-xl font-semibold">Your Brain Profile</h1>
-        {confidence ? (
-          <p className="text-sm text-muted-foreground">{CONFIDENCE_NOTE[confidence]}</p>
-        ) : null}
+      <div className="flex items-start justify-between gap-3">
+        <div className="flex flex-col gap-1">
+          <h1 className="text-xl font-semibold">Your Brain Profile</h1>
+          {confidence ? (
+            <p className="text-sm text-muted-foreground">{CONFIDENCE_NOTE[confidence]}</p>
+          ) : null}
+        </div>
+        <PrintResultButton />
       </div>
 
       {interestEntries.length > 0 ? (
@@ -142,18 +156,85 @@ export function CapturedProfile({
         </div>
       ) : null}
 
-      <div className="flex flex-col gap-3 rounded-lg border border-dashed bg-muted/40 p-4">
-        <p className="text-sm">
-          <span className="font-medium">Your course recommendations are coming next.</span> We&apos;ll
-          match this profile to career clusters and the courses and institutes that fit you.
-        </p>
-        <Link
-          href="/courses"
-          className="self-start rounded-md border px-3 py-1.5 text-sm hover:border-primary"
-        >
-          Browse courses meanwhile
-        </Link>
-      </div>
+      {recommendedCourses.length === 0 ? (
+        <div className="flex flex-col gap-3 rounded-lg border border-dashed bg-muted/40 p-4">
+          <p className="text-sm">
+            <span className="font-medium">We couldn&apos;t find a confident match yet.</span> That
+            often just means the catalogue is still filling in for your stream. It&apos;s worth
+            talking to a counselor and exploring the full catalogue while we add more courses.
+          </p>
+          <Link
+            href="/courses"
+            className="self-start rounded-md border px-3 py-1.5 text-sm hover:border-primary"
+          >
+            Browse all courses
+          </Link>
+        </div>
+      ) : (
+        <div className="flex flex-col gap-4">
+          <div className="flex flex-col gap-1">
+            <h2 className="text-lg font-semibold">
+              {lowSignal ? "Directions worth exploring" : "Your recommended courses"}
+            </h2>
+            <p className="text-sm text-muted-foreground">
+              {lowSignal
+                ? "Your answers didn't point to one clear path, so treat these as a broad starting set — you can retake the assessment later for a sharper read."
+                : "Ranked by how well each fits your profile. Tap any course for institutes, fees and sources."}
+            </p>
+          </div>
+
+          {clusterEntries.length > 0 ? (
+            <div className="rounded-lg border bg-card p-4">
+              <BarList entries={clusterEntries} label="Career clusters that fit you" />
+            </div>
+          ) : null}
+
+          <ol className="flex flex-col gap-3">
+            {recommendedCourses.map((course, i) => {
+              const isTop = i === 0 && !lowSignal;
+              return (
+                <li key={course.courseId}>
+                  <Link
+                    href={`/courses/${course.slug}`}
+                    className={`flex flex-col gap-2 rounded-lg border bg-card p-4 transition hover:border-primary ${
+                      isTop ? "border-primary ring-1 ring-primary" : ""
+                    }`}
+                  >
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="flex flex-col gap-0.5">
+                        {isTop ? (
+                          <span className="text-[11px] font-medium uppercase tracking-wide text-primary">
+                            Top match
+                          </span>
+                        ) : null}
+                        <h3 className="text-base font-semibold leading-tight">{course.courseName}</h3>
+                      </div>
+                      <span className="shrink-0 rounded bg-secondary px-2 py-0.5 text-xs font-medium tabular-nums">
+                        {course.fitScore}% fit
+                      </span>
+                    </div>
+                    <ul className="flex flex-col gap-1 text-sm text-muted-foreground">
+                      {course.reasons.map((reason) => (
+                        <li key={reason} className="flex gap-1.5">
+                          <span aria-hidden className="text-primary">
+                            ·
+                          </span>
+                          {reason}
+                        </li>
+                      ))}
+                    </ul>
+                    {course.crossStream ? (
+                      <span className="self-start rounded bg-amber-100 px-1.5 py-0.5 text-[11px] font-medium text-amber-900">
+                        Cross-stream
+                      </span>
+                    ) : null}
+                  </Link>
+                </li>
+              );
+            })}
+          </ol>
+        </div>
+      )}
     </section>
   );
 }
