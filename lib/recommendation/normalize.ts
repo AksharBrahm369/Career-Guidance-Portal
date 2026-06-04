@@ -22,23 +22,22 @@ export function marksAggregate(marks: StudentProfile["marks"]): number {
   return vals.reduce((a, b) => a + b, 0) / vals.length / 100;
 }
 
-/** Cosine similarity restricted to the target's keys (0..1 for non-negative vectors). */
+/**
+ * Magnitude-aware fit over the dimensions the target emphasizes: a weighted
+ * average of the student's normalized strength on those dims (weights = the
+ * target's emphasis). Unlike cosine, this rewards *how strong* the student is
+ * on what the cluster wants — a weak-but-proportional profile scores low, so
+ * clusters differentiate honestly. Range 0..1 (student inputs are normalized).
+ */
 export function patternMatch(
   student: Record<string, number>,
   target: Record<string, number>,
 ): number {
-  const keys = Object.keys(target);
-  if (keys.length === 0) return 0;
-  let dot = 0,
-    sumT = 0,
-    sumS = 0;
-  for (const k of keys) {
-    const s = student[k] ?? 0;
-    const t = target[k]!; // k is from Object.keys(target)
-    dot += s * t;
-    sumT += t * t;
-    sumS += s * s;
+  let num = 0,
+    den = 0;
+  for (const [k, t] of Object.entries(target)) {
+    num += (student[k] ?? 0) * t;
+    den += t;
   }
-  if (sumS === 0 || sumT === 0) return 0;
-  return dot / (Math.sqrt(sumS) * Math.sqrt(sumT));
+  return den === 0 ? 0 : num / den;
 }

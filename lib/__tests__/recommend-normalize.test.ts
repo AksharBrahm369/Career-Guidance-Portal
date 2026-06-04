@@ -43,10 +43,14 @@ describe("marksAggregate", () => {
 });
 
 describe("patternMatch", () => {
-  it("is 1 for perfectly aligned vectors over the target's keys", () => {
-    expect(patternMatch({ I: 1, R: 0.5, A: 0.2 }, { I: 1, R: 0.5 })).toBeCloseTo(1);
+  it("is 1 when the student is saturated on every emphasized dim", () => {
+    expect(patternMatch({ I: 1, R: 1, A: 0.2 }, { I: 1, R: 0.5 })).toBeCloseTo(1);
   });
   it("is 0 when the student has no signal on the target's keys", () => {
     expect(patternMatch({ A: 1 }, { I: 1, R: 0.5 })).toBe(0);
+  });
+  it("scores a weak-but-proportional profile low (magnitude-aware)", () => {
+    // emphasis-weighted average of 0.2 across the target dims
+    expect(patternMatch({ I: 0.2, R: 0.2 }, { I: 1, R: 0.5 })).toBeCloseTo(0.2);
   });
 });
