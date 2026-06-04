@@ -11,9 +11,11 @@ export const assessments = pgTable(
       .notNull()
       .references(() => students.id, { onDelete: "cascade" }),
     status: assessmentStatus("status").notNull().default("in_progress"),
-    aptitudeScores: jsonb("aptitude_scores").$type<Record<string, number>>(),
+    aptitudeScores: jsonb("aptitude_scores").$type<
+      Record<string, { raw: number; total: number; band: "strong" | "moderate" | "developing" }>
+    >(),
     workStyleScores: jsonb("work_style_scores").$type<Record<string, number>>(),
-    interestData: jsonb("interest_data").$type<Record<string, unknown>>(),
+    interestData: jsonb("interest_data").$type<Record<string, number>>(),
     knownStream: text("known_stream"),
     careerClustersRanked: text("career_clusters_ranked")
       .array()
