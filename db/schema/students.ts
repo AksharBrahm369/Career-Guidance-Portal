@@ -6,6 +6,7 @@ export const students = pgTable("students", {
   email: text("email").unique(),
   phone: text("phone").unique(),
   name: text("name").notNull(),
+  passwordHash: text("password_hash").notNull(),
   grade: integer("grade"),
   cooldownOverride: boolean("cooldown_override").notNull().default(false),
   lastAssessmentAt: timestamp("last_assessment_at", { withTimezone: true }),

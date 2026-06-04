@@ -43,6 +43,13 @@
       "when": 1780518356380,
       "tag": "0005_majestic_susan_delgado",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1780560706613,
+      "tag": "0006_cool_skin",
+      "breakpoints": true
     }
   ]
 }
