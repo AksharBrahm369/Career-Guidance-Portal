@@ -1,5 +1,6 @@
 import { sql } from "drizzle-orm";
 import { index, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
+import type { ClusterScore, CourseRecommendation } from "@/lib/recommendation/types";
 import { assessmentStatus } from "./enums";
 import { students } from "./students";
 
@@ -24,6 +25,8 @@ export const assessments = pgTable(
     responses: jsonb("responses").$type<Record<string, unknown>>().notNull().default(sql`'{}'::jsonb`),
     marks: jsonb("marks").$type<{ board: string; stream: string; subjects: Record<string, number>; strengths: string[] }>(),
     confidence: text("confidence"),
+    clusterScores: jsonb("cluster_scores").$type<ClusterScore[]>(),
+    recommendedCourses: jsonb("recommended_courses").$type<CourseRecommendation[]>(),
     startedAt: timestamp("started_at", { withTimezone: true }).notNull().defaultNow(),
     completedAt: timestamp("completed_at", { withTimezone: true }),
   },
