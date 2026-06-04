@@ -19,9 +19,18 @@ export default auth((req) => {
     }
   }
 
+  if (pathname === "/assessment" || pathname.startsWith("/assessment/")) {
+    const role = (req.auth?.user as { role?: string } | undefined)?.role;
+    if (!req.auth || role !== "student") {
+      const url = req.nextUrl.clone();
+      url.pathname = "/student/login";
+      return NextResponse.redirect(url);
+    }
+  }
+
   return NextResponse.next();
 });
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*"],
+  matcher: ["/admin", "/admin/:path*", "/assessment", "/assessment/:path*"],
 };
