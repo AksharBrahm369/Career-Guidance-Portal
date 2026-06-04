@@ -46,6 +46,8 @@ export const assessmentModule = pgEnum("assessment_module", [
   "work_style",
 ]);
 
+export const assessmentStatus = pgEnum("assessment_status", ["in_progress", "completed"]);
+
 export const auditAction = pgEnum("audit_action", [
   "create",
   "update",
