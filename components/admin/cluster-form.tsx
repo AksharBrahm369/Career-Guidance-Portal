@@ -3,12 +3,13 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 
+const TEMPLATE =
+  '{\n  "key": "engineering-technology",\n  "name": "Engineering & Technology",\n  "targetProfile": {"interests":{"I":0.9},"aptitude":{"numerical":0.8},"workStyle":{"Analytical":0.8}},\n  "lensWeights": {"interests":0.3,"aptitude":0.3,"marks":0.3,"workStyle":0.1}\n}';
+
 export function ClusterForm() {
   const router = useRouter();
   const [pending, start] = useTransition();
-  const [json, setJson] = useState(
-    '{\n  "key": "engineering-technology",\n  "name": "Engineering & Technology",\n  "targetProfile": {"interests":{"I":0.9},"aptitude":{"numerical":0.8},"workStyle":{"Analytical":0.8}},\n  "lensWeights": {"interests":0.3,"aptitude":0.3,"marks":0.3,"workStyle":0.1}\n}',
-  );
+  const [json, setJson] = useState(TEMPLATE);
   const [error, setError] = useState<string | null>(null);
 
   async function submit() {
@@ -31,13 +32,15 @@ export function ClusterForm() {
       return;
     }
     setError(null);
+    setJson(TEMPLATE);
     start(() => router.refresh());
   }
 
   return (
     <div className="flex flex-col gap-2 rounded-md border bg-card p-3">
-      <label className="text-sm font-medium">New cluster (JSON)</label>
+      <label htmlFor="cluster-json" className="text-sm font-medium">New cluster (JSON)</label>
       <textarea
+        id="cluster-json"
         value={json}
         onChange={(e) => setJson(e.target.value)}
         rows={8}

@@ -15,6 +15,7 @@ export default async function ClustersPage() {
           <li key={c.id} className="p-3 text-sm">
             <span className="font-medium">{c.name}</span>{" "}
             <span className="text-muted-foreground">({c.key})</span>
+            {!c.active && <span className="ml-1 text-muted-foreground">· inactive</span>}
             <pre className="mt-1 overflow-x-auto text-xs text-muted-foreground">
               weights: {JSON.stringify(c.lensWeights)}
             </pre>

@@ -4,7 +4,7 @@ import { questionBank } from "@/db/schema";
 export const dynamic = "force-dynamic";
 
 export default async function QuestionBankPage() {
-  const items = await db.select().from(questionBank).limit(500);
+  const items = await db.select().from(questionBank).orderBy(questionBank.module, questionBank.dimension).limit(500);
   return (
     <div className="flex flex-col gap-4">
       <h1 className="text-2xl font-semibold">Question Bank ({items.length})</h1>

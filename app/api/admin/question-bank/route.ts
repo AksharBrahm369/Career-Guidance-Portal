@@ -21,6 +21,7 @@ export async function GET(req: Request) {
     .select()
     .from(questionBank)
     .where(conds.length ? and(...conds) : undefined)
+    .orderBy(questionBank.module, questionBank.dimension)
     .limit(500);
   return Response.json({ items: rows });
 }

@@ -6,6 +6,7 @@ export const ClusterDefinition = z.object({
   key: z.string().min(1).regex(/^[a-z0-9-]+$/, "key must be kebab-case"),
   name: z.string().min(1),
   description: z.string().optional(),
+  active: z.boolean().optional(),
   targetProfile: z.object({
     interests: WeightMap,
     aptitude: WeightMap,
