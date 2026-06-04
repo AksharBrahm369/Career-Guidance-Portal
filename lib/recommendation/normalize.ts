@@ -34,7 +34,7 @@ export function patternMatch(
     sumS = 0;
   for (const k of keys) {
     const s = student[k] ?? 0;
-    const t = target[k];
+    const t = target[k]!; // k is from Object.keys(target)
     dot += s * t;
     sumT += t * t;
     sumS += s * s;
