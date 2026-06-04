@@ -4,6 +4,8 @@ import { db } from "@/lib/db";
 import { assessments, students } from "@/db/schema";
 import { getActiveItems } from "@/lib/assessment/items";
 import { scoreAssessment, type AssessmentResponses } from "@/lib/assessment/scoring";
+import { recommend } from "@/lib/recommendation";
+import { getRecommendationInputs } from "@/lib/recommendation/catalogue";
 
 export const runtime = "nodejs";
 
@@ -44,6 +46,22 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
     aptitude,
   });
 
+  // Deterministic recommendation (gate -> cluster match -> ranked courses) over the
+  // active clusters + published catalogue. No LLM in this path (platform invariant).
+  const { clusters, courses } = await getRecommendationInputs();
+  const rec = recommend(
+    {
+      interests: profile.interestData,
+      workStyle: profile.workStyleScores,
+      aptitude: profile.aptitudeScores,
+      marks: profile.marks,
+      knownStream: profile.marks?.stream ?? null,
+      confidence: profile.confidence,
+    },
+    clusters,
+    courses,
+  );
+
   const completedAt = new Date();
   await db.transaction(async (tx) => {
     await tx
@@ -57,6 +75,9 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         marks: profile.marks,
         knownStream: profile.marks?.stream ?? null,
         confidence: profile.confidence,
+        clusterScores: rec.clusterScores,
+        recommendedCourses: rec.recommendedCourses,
+        careerClustersRanked: rec.clusterScores.map((c) => c.clusterKey),
       })
       .where(eq(assessments.id, id));
     await tx
@@ -65,5 +86,5 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       .where(eq(students.id, student.studentId));
   });
 
-  return Response.json({ id, confidence: profile.confidence });
+  return Response.json({ id, confidence: profile.confidence, lowSignal: rec.lowSignal });
 }
