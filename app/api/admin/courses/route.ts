@@ -7,6 +7,22 @@ import { CourseFetchResult } from "@/lib/ai/safe-fetch";
 import { persistFetchedCourse } from "@/lib/admin/persist-fetched-course";
 import { verifyUrls } from "@/lib/url-verify";
 
+/** Extra fields accepted only on the manual-create path. */
+const ManualExtrasSchema = z.object({
+  requiredSubjects: z.array(z.string()).optional(),
+  eligibility: z
+    .object({
+      minAggregate: z.number().optional(),
+      minBySubject: z.record(z.number()).optional(),
+      requiredStreamSubjects: z.array(z.string()).optional(),
+      entranceExams: z.array(z.string()).optional(),
+    })
+    .optional()
+    .nullable(),
+});
+
+const ManualCourseBody = CourseFetchResult.and(ManualExtrasSchema);
+
 export const runtime = "nodejs";
 
 const ALLOWED_STATUS = [
@@ -66,7 +82,7 @@ export async function POST(req: Request) {
   let parsed;
   try {
     const json = await req.json();
-    parsed = CourseFetchResult.parse(json);
+    parsed = ManualCourseBody.parse(json);
   } catch (err) {
     return Response.json({ error: "invalid_body", detail: String(err) }, { status: 400 });
   }

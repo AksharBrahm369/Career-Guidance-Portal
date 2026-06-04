@@ -12,6 +12,19 @@ import { logAudit } from "@/lib/audit";
 import { uniqueSlug } from "@/lib/slug";
 import type { CourseFetchResult } from "@/lib/ai/safe-fetch";
 
+/** Extra fields accepted on the manual-create path; absent on AI-fetch. */
+export interface ManualExtras {
+  requiredSubjects?: string[];
+  eligibility?: {
+    minAggregate?: number;
+    minBySubject?: Record<string, number>;
+    requiredStreamSubjects?: string[];
+    entranceExams?: string[];
+  } | null;
+}
+
+export type PersistData = CourseFetchResult & ManualExtras;
+
 export interface PersistContext {
   adminId: string;
   source: "ai_fetch" | "manual";
@@ -26,7 +39,7 @@ export interface PersistResult {
 }
 
 export async function persistFetchedCourse(
-  data: CourseFetchResult,
+  data: PersistData,
   ctx: PersistContext,
 ): Promise<PersistResult> {
   const result = await db.transaction(async (tx) => {
@@ -49,6 +62,8 @@ export async function persistFetchedCourse(
       entranceExams: data.entranceExams,
       feesMinInr: data.feesMinInr != null ? String(data.feesMinInr) : null,
       feesMaxInr: data.feesMaxInr != null ? String(data.feesMaxInr) : null,
+      requiredSubjects: data.requiredSubjects ?? [],
+      eligibility: data.eligibility ?? null,
       sourceUrls: data.sourceUrls,
       status: "pending_review",
       source: ctx.source,
