@@ -26,11 +26,11 @@ const student: StudentProfile = {
 describe("scoreClusters", () => {
   it("ranks the aligned cluster above the misaligned one", () => {
     const ranked = scoreClusters(student, [eng, arts]);
-    expect(ranked[0].clusterKey).toBe("engineering-technology");
-    expect(ranked[0].score).toBeGreaterThan(ranked[1].score);
+    expect(ranked[0]!.clusterKey).toBe("engineering-technology");
+    expect(ranked[0]!.score).toBeGreaterThan(ranked[1]!.score);
   });
   it("returns a per-lens breakdown and a 0..1 score", () => {
-    const [top] = scoreClusters(student, [eng]);
+    const top = scoreClusters(student, [eng])[0]!;
     expect(top.score).toBeGreaterThan(0);
     expect(top.score).toBeLessThanOrEqual(1);
     expect(top.breakdown).toHaveProperty("interests");
