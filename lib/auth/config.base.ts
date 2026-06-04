@@ -16,6 +16,7 @@ export const authConfigBase: NextAuthConfig = {
       if (user) {
         token.role = (user as { role?: string }).role ?? "admin";
         token.adminId = (user as { adminId?: string }).adminId;
+        token.studentId = (user as { studentId?: string }).studentId;
       }
       return token;
     },
@@ -23,6 +24,7 @@ export const authConfigBase: NextAuthConfig = {
       if (session.user) {
         (session.user as unknown as Record<string, unknown>).role = token.role;
         (session.user as unknown as Record<string, unknown>).adminId = token.adminId;
+        (session.user as unknown as Record<string, unknown>).studentId = token.studentId;
       }
       return session;
     },

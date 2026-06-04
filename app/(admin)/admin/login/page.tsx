@@ -13,7 +13,7 @@ export default async function AdminLoginPage({
 
   async function login(formData: FormData) {
     "use server";
-    await signIn("credentials", {
+    await signIn("admin", {
       email: formData.get("email"),
       password: formData.get("password"),
       redirectTo: "/admin",
