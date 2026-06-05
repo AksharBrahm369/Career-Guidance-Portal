@@ -1,0 +1,2762 @@
+[
+  {
+    "module": "interests",
+    "dimension": "R",
+    "questionText": "Build kitchen cabinets",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "R": 1
+      },
+      "2": {
+        "R": 2
+      },
+      "3": {
+        "R": 3
+      },
+      "4": {
+        "R": 4
+      },
+      "5": {
+        "R": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "R",
+    "questionText": "Lay brick or tile",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "R": 1
+      },
+      "2": {
+        "R": 2
+      },
+      "3": {
+        "R": 3
+      },
+      "4": {
+        "R": 4
+      },
+      "5": {
+        "R": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "R",
+    "questionText": "Repair household appliances",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "R": 1
+      },
+      "2": {
+        "R": 2
+      },
+      "3": {
+        "R": 3
+      },
+      "4": {
+        "R": 4
+      },
+      "5": {
+        "R": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "R",
+    "questionText": "Raise fish in a fish hatchery",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "R": 1
+      },
+      "2": {
+        "R": 2
+      },
+      "3": {
+        "R": 3
+      },
+      "4": {
+        "R": 4
+      },
+      "5": {
+        "R": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "R",
+    "questionText": "Assemble electronic parts",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "R": 1
+      },
+      "2": {
+        "R": 2
+      },
+      "3": {
+        "R": 3
+      },
+      "4": {
+        "R": 4
+      },
+      "5": {
+        "R": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "R",
+    "questionText": "Drive a truck to deliver packages to offices and homes",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "R": 1
+      },
+      "2": {
+        "R": 2
+      },
+      "3": {
+        "R": 3
+      },
+      "4": {
+        "R": 4
+      },
+      "5": {
+        "R": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "R",
+    "questionText": "Test the quality of parts before shipment",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "R": 1
+      },
+      "2": {
+        "R": 2
+      },
+      "3": {
+        "R": 3
+      },
+      "4": {
+        "R": 4
+      },
+      "5": {
+        "R": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "R",
+    "questionText": "Repair and install locks",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "R": 1
+      },
+      "2": {
+        "R": 2
+      },
+      "3": {
+        "R": 3
+      },
+      "4": {
+        "R": 4
+      },
+      "5": {
+        "R": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "R",
+    "questionText": "Set up and operate machines to make products",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "R": 1
+      },
+      "2": {
+        "R": 2
+      },
+      "3": {
+        "R": 3
+      },
+      "4": {
+        "R": 4
+      },
+      "5": {
+        "R": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "R",
+    "questionText": "Put out forest fires",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "R": 1
+      },
+      "2": {
+        "R": 2
+      },
+      "3": {
+        "R": 3
+      },
+      "4": {
+        "R": 4
+      },
+      "5": {
+        "R": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "I",
+    "questionText": "Develop a new medicine",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "I": 1
+      },
+      "2": {
+        "I": 2
+      },
+      "3": {
+        "I": 3
+      },
+      "4": {
+        "I": 4
+      },
+      "5": {
+        "I": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "I",
+    "questionText": "Study ways to reduce water pollution",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "I": 1
+      },
+      "2": {
+        "I": 2
+      },
+      "3": {
+        "I": 3
+      },
+      "4": {
+        "I": 4
+      },
+      "5": {
+        "I": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "I",
+    "questionText": "Conduct chemical experiments",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "I": 1
+      },
+      "2": {
+        "I": 2
+      },
+      "3": {
+        "I": 3
+      },
+      "4": {
+        "I": 4
+      },
+      "5": {
+        "I": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "I",
+    "questionText": "Study the movement of planets",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "I": 1
+      },
+      "2": {
+        "I": 2
+      },
+      "3": {
+        "I": 3
+      },
+      "4": {
+        "I": 4
+      },
+      "5": {
+        "I": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "I",
+    "questionText": "Examine blood samples using a microscope",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "I": 1
+      },
+      "2": {
+        "I": 2
+      },
+      "3": {
+        "I": 3
+      },
+      "4": {
+        "I": 4
+      },
+      "5": {
+        "I": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "I",
+    "questionText": "Investigate the cause of a fire",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "I": 1
+      },
+      "2": {
+        "I": 2
+      },
+      "3": {
+        "I": 3
+      },
+      "4": {
+        "I": 4
+      },
+      "5": {
+        "I": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "I",
+    "questionText": "Develop a way to better predict the weather",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "I": 1
+      },
+      "2": {
+        "I": 2
+      },
+      "3": {
+        "I": 3
+      },
+      "4": {
+        "I": 4
+      },
+      "5": {
+        "I": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "I",
+    "questionText": "Work in a biology lab",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "I": 1
+      },
+      "2": {
+        "I": 2
+      },
+      "3": {
+        "I": 3
+      },
+      "4": {
+        "I": 4
+      },
+      "5": {
+        "I": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "I",
+    "questionText": "Invent a replacement for sugar",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "I": 1
+      },
+      "2": {
+        "I": 2
+      },
+      "3": {
+        "I": 3
+      },
+      "4": {
+        "I": 4
+      },
+      "5": {
+        "I": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "I",
+    "questionText": "Do laboratory tests to identify diseases",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "I": 1
+      },
+      "2": {
+        "I": 2
+      },
+      "3": {
+        "I": 3
+      },
+      "4": {
+        "I": 4
+      },
+      "5": {
+        "I": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "A",
+    "questionText": "Write books or plays",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "A": 1
+      },
+      "2": {
+        "A": 2
+      },
+      "3": {
+        "A": 3
+      },
+      "4": {
+        "A": 4
+      },
+      "5": {
+        "A": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "A",
+    "questionText": "Play a musical instrument",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "A": 1
+      },
+      "2": {
+        "A": 2
+      },
+      "3": {
+        "A": 3
+      },
+      "4": {
+        "A": 4
+      },
+      "5": {
+        "A": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "A",
+    "questionText": "Compose or arrange music",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "A": 1
+      },
+      "2": {
+        "A": 2
+      },
+      "3": {
+        "A": 3
+      },
+      "4": {
+        "A": 4
+      },
+      "5": {
+        "A": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "A",
+    "questionText": "Draw pictures",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "A": 1
+      },
+      "2": {
+        "A": 2
+      },
+      "3": {
+        "A": 3
+      },
+      "4": {
+        "A": 4
+      },
+      "5": {
+        "A": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "A",
+    "questionText": "Create special effects for movies",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "A": 1
+      },
+      "2": {
+        "A": 2
+      },
+      "3": {
+        "A": 3
+      },
+      "4": {
+        "A": 4
+      },
+      "5": {
+        "A": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "A",
+    "questionText": "Paint sets for plays",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "A": 1
+      },
+      "2": {
+        "A": 2
+      },
+      "3": {
+        "A": 3
+      },
+      "4": {
+        "A": 4
+      },
+      "5": {
+        "A": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "A",
+    "questionText": "Write scripts for movies or television shows",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "A": 1
+      },
+      "2": {
+        "A": 2
+      },
+      "3": {
+        "A": 3
+      },
+      "4": {
+        "A": 4
+      },
+      "5": {
+        "A": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "A",
+    "questionText": "Perform jazz or tap dance",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "A": 1
+      },
+      "2": {
+        "A": 2
+      },
+      "3": {
+        "A": 3
+      },
+      "4": {
+        "A": 4
+      },
+      "5": {
+        "A": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "A",
+    "questionText": "Sing in a band",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "A": 1
+      },
+      "2": {
+        "A": 2
+      },
+      "3": {
+        "A": 3
+      },
+      "4": {
+        "A": 4
+      },
+      "5": {
+        "A": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "A",
+    "questionText": "Edit movies",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "A": 1
+      },
+      "2": {
+        "A": 2
+      },
+      "3": {
+        "A": 3
+      },
+      "4": {
+        "A": 4
+      },
+      "5": {
+        "A": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "S",
+    "questionText": "Teach an individual an exercise routine",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "S": 1
+      },
+      "2": {
+        "S": 2
+      },
+      "3": {
+        "S": 3
+      },
+      "4": {
+        "S": 4
+      },
+      "5": {
+        "S": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "S",
+    "questionText": "Help people with personal or emotional problems",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "S": 1
+      },
+      "2": {
+        "S": 2
+      },
+      "3": {
+        "S": 3
+      },
+      "4": {
+        "S": 4
+      },
+      "5": {
+        "S": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "S",
+    "questionText": "Give career guidance to people",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "S": 1
+      },
+      "2": {
+        "S": 2
+      },
+      "3": {
+        "S": 3
+      },
+      "4": {
+        "S": 4
+      },
+      "5": {
+        "S": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "S",
+    "questionText": "Perform rehabilitation therapy",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "S": 1
+      },
+      "2": {
+        "S": 2
+      },
+      "3": {
+        "S": 3
+      },
+      "4": {
+        "S": 4
+      },
+      "5": {
+        "S": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "S",
+    "questionText": "Do volunteer work at a non-profit organization",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "S": 1
+      },
+      "2": {
+        "S": 2
+      },
+      "3": {
+        "S": 3
+      },
+      "4": {
+        "S": 4
+      },
+      "5": {
+        "S": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "S",
+    "questionText": "Teach children how to play sports",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "S": 1
+      },
+      "2": {
+        "S": 2
+      },
+      "3": {
+        "S": 3
+      },
+      "4": {
+        "S": 4
+      },
+      "5": {
+        "S": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "S",
+    "questionText": "Teach sign language to people who are deaf or hard of hearing",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "S": 1
+      },
+      "2": {
+        "S": 2
+      },
+      "3": {
+        "S": 3
+      },
+      "4": {
+        "S": 4
+      },
+      "5": {
+        "S": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "S",
+    "questionText": "Help conduct a group therapy session",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "S": 1
+      },
+      "2": {
+        "S": 2
+      },
+      "3": {
+        "S": 3
+      },
+      "4": {
+        "S": 4
+      },
+      "5": {
+        "S": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "S",
+    "questionText": "Take care of children at a day-care center",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "S": 1
+      },
+      "2": {
+        "S": 2
+      },
+      "3": {
+        "S": 3
+      },
+      "4": {
+        "S": 4
+      },
+      "5": {
+        "S": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "S",
+    "questionText": "Teach a high-school class",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "S": 1
+      },
+      "2": {
+        "S": 2
+      },
+      "3": {
+        "S": 3
+      },
+      "4": {
+        "S": 4
+      },
+      "5": {
+        "S": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "E",
+    "questionText": "Buy and sell stocks and bonds",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "E": 1
+      },
+      "2": {
+        "E": 2
+      },
+      "3": {
+        "E": 3
+      },
+      "4": {
+        "E": 4
+      },
+      "5": {
+        "E": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "E",
+    "questionText": "Manage a retail store",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "E": 1
+      },
+      "2": {
+        "E": 2
+      },
+      "3": {
+        "E": 3
+      },
+      "4": {
+        "E": 4
+      },
+      "5": {
+        "E": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "E",
+    "questionText": "Operate a beauty salon or barber shop",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "E": 1
+      },
+      "2": {
+        "E": 2
+      },
+      "3": {
+        "E": 3
+      },
+      "4": {
+        "E": 4
+      },
+      "5": {
+        "E": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "E",
+    "questionText": "Manage a department within a large company",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "E": 1
+      },
+      "2": {
+        "E": 2
+      },
+      "3": {
+        "E": 3
+      },
+      "4": {
+        "E": 4
+      },
+      "5": {
+        "E": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "E",
+    "questionText": "Start your own business",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "E": 1
+      },
+      "2": {
+        "E": 2
+      },
+      "3": {
+        "E": 3
+      },
+      "4": {
+        "E": 4
+      },
+      "5": {
+        "E": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "E",
+    "questionText": "Negotiate business contracts",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "E": 1
+      },
+      "2": {
+        "E": 2
+      },
+      "3": {
+        "E": 3
+      },
+      "4": {
+        "E": 4
+      },
+      "5": {
+        "E": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "E",
+    "questionText": "Represent a client in a lawsuit",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "E": 1
+      },
+      "2": {
+        "E": 2
+      },
+      "3": {
+        "E": 3
+      },
+      "4": {
+        "E": 4
+      },
+      "5": {
+        "E": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "E",
+    "questionText": "Market a new line of clothing",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "E": 1
+      },
+      "2": {
+        "E": 2
+      },
+      "3": {
+        "E": 3
+      },
+      "4": {
+        "E": 4
+      },
+      "5": {
+        "E": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "E",
+    "questionText": "Sell merchandise at a department store",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "E": 1
+      },
+      "2": {
+        "E": 2
+      },
+      "3": {
+        "E": 3
+      },
+      "4": {
+        "E": 4
+      },
+      "5": {
+        "E": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "E",
+    "questionText": "Manage a clothing store",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "E": 1
+      },
+      "2": {
+        "E": 2
+      },
+      "3": {
+        "E": 3
+      },
+      "4": {
+        "E": 4
+      },
+      "5": {
+        "E": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "C",
+    "questionText": "Develop a spreadsheet using computer software",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "C": 1
+      },
+      "2": {
+        "C": 2
+      },
+      "3": {
+        "C": 3
+      },
+      "4": {
+        "C": 4
+      },
+      "5": {
+        "C": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "C",
+    "questionText": "Proofread records or forms",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "C": 1
+      },
+      "2": {
+        "C": 2
+      },
+      "3": {
+        "C": 3
+      },
+      "4": {
+        "C": 4
+      },
+      "5": {
+        "C": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "C",
+    "questionText": "Install software across computers on a large network",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "C": 1
+      },
+      "2": {
+        "C": 2
+      },
+      "3": {
+        "C": 3
+      },
+      "4": {
+        "C": 4
+      },
+      "5": {
+        "C": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "C",
+    "questionText": "Operate a calculator",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "C": 1
+      },
+      "2": {
+        "C": 2
+      },
+      "3": {
+        "C": 3
+      },
+      "4": {
+        "C": 4
+      },
+      "5": {
+        "C": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "C",
+    "questionText": "Keep shipping and receiving records",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "C": 1
+      },
+      "2": {
+        "C": 2
+      },
+      "3": {
+        "C": 3
+      },
+      "4": {
+        "C": 4
+      },
+      "5": {
+        "C": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "C",
+    "questionText": "Calculate the wages of employees",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "C": 1
+      },
+      "2": {
+        "C": 2
+      },
+      "3": {
+        "C": 3
+      },
+      "4": {
+        "C": 4
+      },
+      "5": {
+        "C": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "C",
+    "questionText": "Inventory supplies using a hand-held computer",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "C": 1
+      },
+      "2": {
+        "C": 2
+      },
+      "3": {
+        "C": 3
+      },
+      "4": {
+        "C": 4
+      },
+      "5": {
+        "C": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "C",
+    "questionText": "Record rent payments",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "C": 1
+      },
+      "2": {
+        "C": 2
+      },
+      "3": {
+        "C": 3
+      },
+      "4": {
+        "C": 4
+      },
+      "5": {
+        "C": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "C",
+    "questionText": "Keep inventory records",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "C": 1
+      },
+      "2": {
+        "C": 2
+      },
+      "3": {
+        "C": 3
+      },
+      "4": {
+        "C": 4
+      },
+      "5": {
+        "C": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  },
+  {
+    "module": "interests",
+    "dimension": "C",
+    "questionText": "Stamp, sort, and distribute mail for an organization",
+    "options": [
+      {
+        "id": "1",
+        "text": "Strongly dislike"
+      },
+      {
+        "id": "2",
+        "text": "Dislike"
+      },
+      {
+        "id": "3",
+        "text": "Unsure"
+      },
+      {
+        "id": "4",
+        "text": "Like"
+      },
+      {
+        "id": "5",
+        "text": "Strongly like"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "C": 1
+      },
+      "2": {
+        "C": 2
+      },
+      "3": {
+        "C": 3
+      },
+      "4": {
+        "C": 4
+      },
+      "5": {
+        "C": 5
+      }
+    },
+    "source": "ONET_IP",
+    "license": "O*NET Career Exploration Tools License (CC BY 4.0)"
+  }
+]

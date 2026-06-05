@@ -1,0 +1,1382 @@
+[
+  {
+    "module": "work_style",
+    "dimension": "PeopleOriented",
+    "questionText": "Am interested in people",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "PeopleOriented": 1
+      },
+      "2": {
+        "PeopleOriented": 2
+      },
+      "3": {
+        "PeopleOriented": 3
+      },
+      "4": {
+        "PeopleOriented": 4
+      },
+      "5": {
+        "PeopleOriented": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "PeopleOriented",
+    "questionText": "Sympathize with others' feelings",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "PeopleOriented": 1
+      },
+      "2": {
+        "PeopleOriented": 2
+      },
+      "3": {
+        "PeopleOriented": 3
+      },
+      "4": {
+        "PeopleOriented": 4
+      },
+      "5": {
+        "PeopleOriented": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "PeopleOriented",
+    "questionText": "Have a soft heart",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "PeopleOriented": 1
+      },
+      "2": {
+        "PeopleOriented": 2
+      },
+      "3": {
+        "PeopleOriented": 3
+      },
+      "4": {
+        "PeopleOriented": 4
+      },
+      "5": {
+        "PeopleOriented": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "PeopleOriented",
+    "questionText": "Take time out for others",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "PeopleOriented": 1
+      },
+      "2": {
+        "PeopleOriented": 2
+      },
+      "3": {
+        "PeopleOriented": 3
+      },
+      "4": {
+        "PeopleOriented": 4
+      },
+      "5": {
+        "PeopleOriented": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "PeopleOriented",
+    "questionText": "Feel others' emotions",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "PeopleOriented": 1
+      },
+      "2": {
+        "PeopleOriented": 2
+      },
+      "3": {
+        "PeopleOriented": 3
+      },
+      "4": {
+        "PeopleOriented": 4
+      },
+      "5": {
+        "PeopleOriented": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "PeopleOriented",
+    "questionText": "Make people feel at ease",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "PeopleOriented": 1
+      },
+      "2": {
+        "PeopleOriented": 2
+      },
+      "3": {
+        "PeopleOriented": 3
+      },
+      "4": {
+        "PeopleOriented": 4
+      },
+      "5": {
+        "PeopleOriented": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "PeopleOriented",
+    "questionText": "Feel little concern for others",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "PeopleOriented": 5
+      },
+      "2": {
+        "PeopleOriented": 4
+      },
+      "3": {
+        "PeopleOriented": 3
+      },
+      "4": {
+        "PeopleOriented": 2
+      },
+      "5": {
+        "PeopleOriented": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "PeopleOriented",
+    "questionText": "Insult people",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "PeopleOriented": 5
+      },
+      "2": {
+        "PeopleOriented": 4
+      },
+      "3": {
+        "PeopleOriented": 3
+      },
+      "4": {
+        "PeopleOriented": 2
+      },
+      "5": {
+        "PeopleOriented": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "PeopleOriented",
+    "questionText": "Am not interested in other people's problems",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "PeopleOriented": 5
+      },
+      "2": {
+        "PeopleOriented": 4
+      },
+      "3": {
+        "PeopleOriented": 3
+      },
+      "4": {
+        "PeopleOriented": 2
+      },
+      "5": {
+        "PeopleOriented": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "PeopleOriented",
+    "questionText": "Am not really interested in others",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "PeopleOriented": 5
+      },
+      "2": {
+        "PeopleOriented": 4
+      },
+      "3": {
+        "PeopleOriented": 3
+      },
+      "4": {
+        "PeopleOriented": 2
+      },
+      "5": {
+        "PeopleOriented": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Structured",
+    "questionText": "Am always prepared",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Structured": 1
+      },
+      "2": {
+        "Structured": 2
+      },
+      "3": {
+        "Structured": 3
+      },
+      "4": {
+        "Structured": 4
+      },
+      "5": {
+        "Structured": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Structured",
+    "questionText": "Pay attention to details",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Structured": 1
+      },
+      "2": {
+        "Structured": 2
+      },
+      "3": {
+        "Structured": 3
+      },
+      "4": {
+        "Structured": 4
+      },
+      "5": {
+        "Structured": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Structured",
+    "questionText": "Get chores done right away",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Structured": 1
+      },
+      "2": {
+        "Structured": 2
+      },
+      "3": {
+        "Structured": 3
+      },
+      "4": {
+        "Structured": 4
+      },
+      "5": {
+        "Structured": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Structured",
+    "questionText": "Like order",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Structured": 1
+      },
+      "2": {
+        "Structured": 2
+      },
+      "3": {
+        "Structured": 3
+      },
+      "4": {
+        "Structured": 4
+      },
+      "5": {
+        "Structured": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Structured",
+    "questionText": "Follow a schedule",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Structured": 1
+      },
+      "2": {
+        "Structured": 2
+      },
+      "3": {
+        "Structured": 3
+      },
+      "4": {
+        "Structured": 4
+      },
+      "5": {
+        "Structured": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Structured",
+    "questionText": "Am exacting in my work",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Structured": 1
+      },
+      "2": {
+        "Structured": 2
+      },
+      "3": {
+        "Structured": 3
+      },
+      "4": {
+        "Structured": 4
+      },
+      "5": {
+        "Structured": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Structured",
+    "questionText": "Leave my belongings around",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Structured": 5
+      },
+      "2": {
+        "Structured": 4
+      },
+      "3": {
+        "Structured": 3
+      },
+      "4": {
+        "Structured": 2
+      },
+      "5": {
+        "Structured": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Structured",
+    "questionText": "Make a mess of things",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Structured": 5
+      },
+      "2": {
+        "Structured": 4
+      },
+      "3": {
+        "Structured": 3
+      },
+      "4": {
+        "Structured": 2
+      },
+      "5": {
+        "Structured": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Structured",
+    "questionText": "Often forget to put things back in their proper place",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Structured": 5
+      },
+      "2": {
+        "Structured": 4
+      },
+      "3": {
+        "Structured": 3
+      },
+      "4": {
+        "Structured": 2
+      },
+      "5": {
+        "Structured": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Structured",
+    "questionText": "Shirk my duties",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Structured": 5
+      },
+      "2": {
+        "Structured": 4
+      },
+      "3": {
+        "Structured": 3
+      },
+      "4": {
+        "Structured": 2
+      },
+      "5": {
+        "Structured": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Analytical",
+    "questionText": "Have a rich vocabulary",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Analytical": 1
+      },
+      "2": {
+        "Analytical": 2
+      },
+      "3": {
+        "Analytical": 3
+      },
+      "4": {
+        "Analytical": 4
+      },
+      "5": {
+        "Analytical": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Analytical",
+    "questionText": "Am quick to understand things",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Analytical": 1
+      },
+      "2": {
+        "Analytical": 2
+      },
+      "3": {
+        "Analytical": 3
+      },
+      "4": {
+        "Analytical": 4
+      },
+      "5": {
+        "Analytical": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Analytical",
+    "questionText": "Use difficult words",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Analytical": 1
+      },
+      "2": {
+        "Analytical": 2
+      },
+      "3": {
+        "Analytical": 3
+      },
+      "4": {
+        "Analytical": 4
+      },
+      "5": {
+        "Analytical": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Analytical",
+    "questionText": "Spend time reflecting on things",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Analytical": 1
+      },
+      "2": {
+        "Analytical": 2
+      },
+      "3": {
+        "Analytical": 3
+      },
+      "4": {
+        "Analytical": 4
+      },
+      "5": {
+        "Analytical": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Analytical",
+    "questionText": "Have difficulty understanding abstract ideas",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Analytical": 5
+      },
+      "2": {
+        "Analytical": 4
+      },
+      "3": {
+        "Analytical": 3
+      },
+      "4": {
+        "Analytical": 2
+      },
+      "5": {
+        "Analytical": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Analytical",
+    "questionText": "Am not interested in abstract ideas",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Analytical": 5
+      },
+      "2": {
+        "Analytical": 4
+      },
+      "3": {
+        "Analytical": 3
+      },
+      "4": {
+        "Analytical": 2
+      },
+      "5": {
+        "Analytical": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Creative",
+    "questionText": "Have a vivid imagination",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Creative": 1
+      },
+      "2": {
+        "Creative": 2
+      },
+      "3": {
+        "Creative": 3
+      },
+      "4": {
+        "Creative": 4
+      },
+      "5": {
+        "Creative": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Creative",
+    "questionText": "Have excellent ideas",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Creative": 1
+      },
+      "2": {
+        "Creative": 2
+      },
+      "3": {
+        "Creative": 3
+      },
+      "4": {
+        "Creative": 4
+      },
+      "5": {
+        "Creative": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Creative",
+    "questionText": "Am full of ideas",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Creative": 1
+      },
+      "2": {
+        "Creative": 2
+      },
+      "3": {
+        "Creative": 3
+      },
+      "4": {
+        "Creative": 4
+      },
+      "5": {
+        "Creative": 5
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  },
+  {
+    "module": "work_style",
+    "dimension": "Creative",
+    "questionText": "Do not have a good imagination",
+    "options": [
+      {
+        "id": "1",
+        "text": "Very inaccurate"
+      },
+      {
+        "id": "2",
+        "text": "Moderately inaccurate"
+      },
+      {
+        "id": "3",
+        "text": "Neither"
+      },
+      {
+        "id": "4",
+        "text": "Moderately accurate"
+      },
+      {
+        "id": "5",
+        "text": "Very accurate"
+      }
+    ],
+    "scoringMap": {
+      "1": {
+        "Creative": 5
+      },
+      "2": {
+        "Creative": 4
+      },
+      "3": {
+        "Creative": 3
+      },
+      "4": {
+        "Creative": 2
+      },
+      "5": {
+        "Creative": 1
+      }
+    },
+    "source": "IPIP",
+    "license": "Public Domain (International Personality Item Pool)"
+  }
+]
