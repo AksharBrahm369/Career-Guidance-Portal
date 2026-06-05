@@ -74,22 +74,31 @@ export function AptitudeModule({ items, initial, onComplete, saving }: Props) {
               // eslint-disable-next-line @next/next/no-img-element
               <img src={item.media.stem} alt="" className="max-h-40 w-auto rounded" />
             ) : null}
-            <div className="flex flex-col gap-1.5">
+            <div className={item.media?.options ? "grid grid-cols-2 gap-2 sm:grid-cols-3" : "flex flex-col gap-1.5"}>
               {item.options.map((opt) => {
                 const selected = answers[item.id] === opt.id;
+                const optImg = item.media?.options?.[opt.id];
                 return (
                   <button
                     key={opt.id}
                     type="button"
                     aria-pressed={selected}
+                    aria-label={optImg ? opt.text : undefined}
                     onClick={() => setAnswers((cur) => ({ ...cur, [item.id]: opt.id }))}
-                    className={`rounded-md border px-3 py-2 text-left text-sm transition ${
+                    className={`rounded-md border text-left text-sm transition ${
+                      optImg ? "flex items-center justify-center p-2" : "px-3 py-2"
+                    } ${
                       selected
                         ? "border-primary bg-primary text-primary-foreground"
                         : "bg-background hover:border-primary"
                     }`}
                   >
-                    {opt.text}
+                    {optImg ? (
+                      // eslint-disable-next-line @next/next/no-img-element
+                      <img src={optImg} alt={opt.text} className="h-16 w-auto" />
+                    ) : (
+                      opt.text
+                    )}
                   </button>
                 );
               })}

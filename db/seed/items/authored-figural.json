@@ -1,0 +1,74 @@
+[
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "Which arrow continues the rotation?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "a",
+    "media": {
+      "stem": "/aptitude/authored-figural/rot-1-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/arrow-up.svg",
+        "b": "/aptitude/authored-figural/arrow-right.svg",
+        "c": "/aptitude/authored-figural/arrow-down.svg",
+        "d": "/aptitude/authored-figural/arrow-left.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-rotation"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "How many dots come next?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "c",
+    "media": {
+      "stem": "/aptitude/authored-figural/seq-1-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/dots-2.svg",
+        "b": "/aptitude/authored-figural/dots-3.svg",
+        "c": "/aptitude/authored-figural/dots-4.svg",
+        "d": "/aptitude/authored-figural/dots-5.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-series"
+  }
+]

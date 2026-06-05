@@ -1,0 +1,362 @@
+[
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "Each step turns 90° clockwise. Which arrow comes next?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "d",
+    "media": {
+      "stem": "/aptitude/authored-figural/sp-rotcw-1-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/sp-rotcw-1-a.svg",
+        "b": "/aptitude/authored-figural/sp-rotcw-1-b.svg",
+        "c": "/aptitude/authored-figural/sp-rotcw-1-c.svg",
+        "d": "/aptitude/authored-figural/sp-rotcw-1-d.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-rotcw"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "Continue the clockwise rotation. Which arrow is next?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "b",
+    "media": {
+      "stem": "/aptitude/authored-figural/sp-rotcw-2-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/sp-rotcw-2-a.svg",
+        "b": "/aptitude/authored-figural/sp-rotcw-2-b.svg",
+        "c": "/aptitude/authored-figural/sp-rotcw-2-c.svg",
+        "d": "/aptitude/authored-figural/sp-rotcw-2-d.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-rotcw"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "Each step turns 90° anticlockwise. Which arrow is next?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "c",
+    "media": {
+      "stem": "/aptitude/authored-figural/sp-rotccw-1-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/sp-rotccw-1-a.svg",
+        "b": "/aptitude/authored-figural/sp-rotccw-1-b.svg",
+        "c": "/aptitude/authored-figural/sp-rotccw-1-c.svg",
+        "d": "/aptitude/authored-figural/sp-rotccw-1-d.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-rotccw"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "Continue the pattern. How many dots are in the next box?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "c",
+    "media": {
+      "stem": "/aptitude/authored-figural/sp-dots-even-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/sp-dots-even-a.svg",
+        "b": "/aptitude/authored-figural/sp-dots-even-b.svg",
+        "c": "/aptitude/authored-figural/sp-dots-even-c.svg",
+        "d": "/aptitude/authored-figural/sp-dots-even-d.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-dots"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "What comes next in this sequence of dots?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "b",
+    "media": {
+      "stem": "/aptitude/authored-figural/sp-dots-odd-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/sp-dots-odd-a.svg",
+        "b": "/aptitude/authored-figural/sp-dots-odd-b.svg",
+        "c": "/aptitude/authored-figural/sp-dots-odd-c.svg",
+        "d": "/aptitude/authored-figural/sp-dots-odd-d.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-dots"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "The shapes gain one side each step. Which shape comes next?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "a",
+    "media": {
+      "stem": "/aptitude/authored-figural/sp-sides-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/sp-sides-a.svg",
+        "b": "/aptitude/authored-figural/sp-sides-b.svg",
+        "c": "/aptitude/authored-figural/sp-sides-c.svg",
+        "d": "/aptitude/authored-figural/sp-sides-d.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-sides"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "The circle grows each step. Which circle comes next?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "b",
+    "media": {
+      "stem": "/aptitude/authored-figural/sp-circ-grow-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/sp-circ-grow-a.svg",
+        "b": "/aptitude/authored-figural/sp-circ-grow-b.svg",
+        "c": "/aptitude/authored-figural/sp-circ-grow-c.svg",
+        "d": "/aptitude/authored-figural/sp-circ-grow-d.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-circ"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "The square shrinks each step. Which square comes next?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "b",
+    "media": {
+      "stem": "/aptitude/authored-figural/sp-sq-shrink-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/sp-sq-shrink-a.svg",
+        "b": "/aptitude/authored-figural/sp-sq-shrink-b.svg",
+        "c": "/aptitude/authored-figural/sp-sq-shrink-c.svg",
+        "d": "/aptitude/authored-figural/sp-sq-shrink-d.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-sq"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "The bar grows taller each step. Which bar comes next?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "b",
+    "media": {
+      "stem": "/aptitude/authored-figural/sp-bar-grow-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/sp-bar-grow-a.svg",
+        "b": "/aptitude/authored-figural/sp-bar-grow-b.svg",
+        "c": "/aptitude/authored-figural/sp-bar-grow-c.svg",
+        "d": "/aptitude/authored-figural/sp-bar-grow-d.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-bar"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "spatial",
+    "questionText": "The triangle rotates 90° clockwise each step. Which comes next?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Option A"
+      },
+      {
+        "id": "b",
+        "text": "Option B"
+      },
+      {
+        "id": "c",
+        "text": "Option C"
+      },
+      {
+        "id": "d",
+        "text": "Option D"
+      }
+    ],
+    "correctOptionId": "d",
+    "media": {
+      "stem": "/aptitude/authored-figural/sp-tri-rot-stem.svg",
+      "options": {
+        "a": "/aptitude/authored-figural/sp-tri-rot-a.svg",
+        "b": "/aptitude/authored-figural/sp-tri-rot-b.svg",
+        "c": "/aptitude/authored-figural/sp-tri-rot-c.svg",
+        "d": "/aptitude/authored-figural/sp-tri-rot-d.svg"
+      }
+    },
+    "source": "authored-figural",
+    "license": "Authored (original)",
+    "poolGroup": "spatial-tri"
+  }
+]

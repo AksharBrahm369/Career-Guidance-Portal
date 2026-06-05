@@ -1,0 +1,752 @@
+[
+  {
+    "module": "aptitude",
+    "dimension": "numerical",
+    "questionText": "A book costs ₹450. After a 10% discount what is the price?",
+    "options": [
+      {
+        "id": "a",
+        "text": "₹400"
+      },
+      {
+        "id": "b",
+        "text": "₹405"
+      },
+      {
+        "id": "c",
+        "text": "₹410"
+      },
+      {
+        "id": "d",
+        "text": "₹415"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "numerical",
+    "questionText": "The sum of three consecutive integers is 72. What is the largest?",
+    "options": [
+      {
+        "id": "a",
+        "text": "23"
+      },
+      {
+        "id": "b",
+        "text": "24"
+      },
+      {
+        "id": "c",
+        "text": "25"
+      },
+      {
+        "id": "d",
+        "text": "26"
+      }
+    ],
+    "correctOptionId": "c",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "numerical",
+    "questionText": "A worker earns ₹15000 per month. What is the annual salary?",
+    "options": [
+      {
+        "id": "a",
+        "text": "₹150000"
+      },
+      {
+        "id": "b",
+        "text": "₹180000"
+      },
+      {
+        "id": "c",
+        "text": "₹200000"
+      },
+      {
+        "id": "d",
+        "text": "₹175000"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "numerical",
+    "questionText": "A pizza is cut into 8 equal slices and 3 are eaten. What fraction remains?",
+    "options": [
+      {
+        "id": "a",
+        "text": "3/8"
+      },
+      {
+        "id": "b",
+        "text": "1/2"
+      },
+      {
+        "id": "c",
+        "text": "5/8"
+      },
+      {
+        "id": "d",
+        "text": "2/3"
+      }
+    ],
+    "correctOptionId": "c",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "numerical",
+    "questionText": "What is the square root of 144?",
+    "options": [
+      {
+        "id": "a",
+        "text": "11"
+      },
+      {
+        "id": "b",
+        "text": "12"
+      },
+      {
+        "id": "c",
+        "text": "13"
+      },
+      {
+        "id": "d",
+        "text": "14"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "numerical",
+    "questionText": "A tank fills at 20 litres per minute. How long to fill 300 litres?",
+    "options": [
+      {
+        "id": "a",
+        "text": "10 min"
+      },
+      {
+        "id": "b",
+        "text": "12 min"
+      },
+      {
+        "id": "c",
+        "text": "15 min"
+      },
+      {
+        "id": "d",
+        "text": "20 min"
+      }
+    ],
+    "correctOptionId": "c",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "numerical",
+    "questionText": "Evaluate 7 × 8 − 6.",
+    "options": [
+      {
+        "id": "a",
+        "text": "48"
+      },
+      {
+        "id": "b",
+        "text": "50"
+      },
+      {
+        "id": "c",
+        "text": "56"
+      },
+      {
+        "id": "d",
+        "text": "62"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "numerical",
+    "questionText": "If 1 USD = ₹80 how many rupees is 5 USD?",
+    "options": [
+      {
+        "id": "a",
+        "text": "₹350"
+      },
+      {
+        "id": "b",
+        "text": "₹400"
+      },
+      {
+        "id": "c",
+        "text": "₹450"
+      },
+      {
+        "id": "d",
+        "text": "₹320"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "numerical",
+    "questionText": "A class has 40 students and 60% are girls. How many boys are there?",
+    "options": [
+      {
+        "id": "a",
+        "text": "14"
+      },
+      {
+        "id": "b",
+        "text": "16"
+      },
+      {
+        "id": "c",
+        "text": "24"
+      },
+      {
+        "id": "d",
+        "text": "20"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "numerical",
+    "questionText": "What is 25% of 360?",
+    "options": [
+      {
+        "id": "a",
+        "text": "80"
+      },
+      {
+        "id": "b",
+        "text": "90"
+      },
+      {
+        "id": "c",
+        "text": "100"
+      },
+      {
+        "id": "d",
+        "text": "120"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "verbal",
+    "questionText": "Choose the word closest in meaning to BRAVE.",
+    "options": [
+      {
+        "id": "a",
+        "text": "Timid"
+      },
+      {
+        "id": "b",
+        "text": "Courageous"
+      },
+      {
+        "id": "c",
+        "text": "Weak"
+      },
+      {
+        "id": "d",
+        "text": "Quiet"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "verbal",
+    "questionText": "Choose the word OPPOSITE in meaning to ANCIENT.",
+    "options": [
+      {
+        "id": "a",
+        "text": "Old"
+      },
+      {
+        "id": "b",
+        "text": "Modern"
+      },
+      {
+        "id": "c",
+        "text": "Historic"
+      },
+      {
+        "id": "d",
+        "text": "Ruined"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "verbal",
+    "questionText": "Bird is to Sky as Fish is to ___.",
+    "options": [
+      {
+        "id": "a",
+        "text": "Net"
+      },
+      {
+        "id": "b",
+        "text": "Water"
+      },
+      {
+        "id": "c",
+        "text": "Scale"
+      },
+      {
+        "id": "d",
+        "text": "Boat"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "verbal",
+    "questionText": "Choose the word closest in meaning to HAPPY.",
+    "options": [
+      {
+        "id": "a",
+        "text": "Sad"
+      },
+      {
+        "id": "b",
+        "text": "Joyful"
+      },
+      {
+        "id": "c",
+        "text": "Angry"
+      },
+      {
+        "id": "d",
+        "text": "Tired"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "verbal",
+    "questionText": "Choose the word OPPOSITE in meaning to VICTORY.",
+    "options": [
+      {
+        "id": "a",
+        "text": "Win"
+      },
+      {
+        "id": "b",
+        "text": "Defeat"
+      },
+      {
+        "id": "c",
+        "text": "Battle"
+      },
+      {
+        "id": "d",
+        "text": "Glory"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "verbal",
+    "questionText": "Choose the correctly spelled word from the four options.",
+    "options": [
+      {
+        "id": "a",
+        "text": "Definately"
+      },
+      {
+        "id": "b",
+        "text": "Definitely"
+      },
+      {
+        "id": "c",
+        "text": "Definitly"
+      },
+      {
+        "id": "d",
+        "text": "Defenitely"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "verbal",
+    "questionText": "Author is to Book as Composer is to ___.",
+    "options": [
+      {
+        "id": "a",
+        "text": "Music"
+      },
+      {
+        "id": "b",
+        "text": "Stage"
+      },
+      {
+        "id": "c",
+        "text": "Audience"
+      },
+      {
+        "id": "d",
+        "text": "Piano"
+      }
+    ],
+    "correctOptionId": "a",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "verbal",
+    "questionText": "Identify the word that does not belong in the group.",
+    "options": [
+      {
+        "id": "a",
+        "text": "Apple"
+      },
+      {
+        "id": "b",
+        "text": "Banana"
+      },
+      {
+        "id": "c",
+        "text": "Carrot"
+      },
+      {
+        "id": "d",
+        "text": "Mango"
+      }
+    ],
+    "correctOptionId": "c",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "verbal",
+    "questionText": "Choose the word closest in meaning to ENORMOUS.",
+    "options": [
+      {
+        "id": "a",
+        "text": "Tiny"
+      },
+      {
+        "id": "b",
+        "text": "Huge"
+      },
+      {
+        "id": "c",
+        "text": "Average"
+      },
+      {
+        "id": "d",
+        "text": "Narrow"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "verbal",
+    "questionText": "She was ___ for her kindness. Choose the correct word.",
+    "options": [
+      {
+        "id": "a",
+        "text": "known"
+      },
+      {
+        "id": "b",
+        "text": "knew"
+      },
+      {
+        "id": "c",
+        "text": "knowing"
+      },
+      {
+        "id": "d",
+        "text": "knows"
+      }
+    ],
+    "correctOptionId": "a",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "logical",
+    "questionText": "Find the next number: 5, 10, 20, 40, ?",
+    "options": [
+      {
+        "id": "a",
+        "text": "60"
+      },
+      {
+        "id": "b",
+        "text": "70"
+      },
+      {
+        "id": "c",
+        "text": "80"
+      },
+      {
+        "id": "d",
+        "text": "100"
+      }
+    ],
+    "correctOptionId": "c",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "logical",
+    "questionText": "Find the next number: 1, 1, 2, 3, 5, 8, ?",
+    "options": [
+      {
+        "id": "a",
+        "text": "11"
+      },
+      {
+        "id": "b",
+        "text": "12"
+      },
+      {
+        "id": "c",
+        "text": "13"
+      },
+      {
+        "id": "d",
+        "text": "15"
+      }
+    ],
+    "correctOptionId": "c",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "logical",
+    "questionText": "Which day comes immediately after Friday?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Thursday"
+      },
+      {
+        "id": "b",
+        "text": "Saturday"
+      },
+      {
+        "id": "c",
+        "text": "Sunday"
+      },
+      {
+        "id": "d",
+        "text": "Monday"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "logical",
+    "questionText": "Which number does NOT belong: 4, 8, 12, 15, 16?",
+    "options": [
+      {
+        "id": "a",
+        "text": "8"
+      },
+      {
+        "id": "b",
+        "text": "12"
+      },
+      {
+        "id": "c",
+        "text": "15"
+      },
+      {
+        "id": "d",
+        "text": "16"
+      }
+    ],
+    "correctOptionId": "c",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "logical",
+    "questionText": "Find the next letter: B, D, F, H, ?",
+    "options": [
+      {
+        "id": "a",
+        "text": "I"
+      },
+      {
+        "id": "b",
+        "text": "J"
+      },
+      {
+        "id": "c",
+        "text": "K"
+      },
+      {
+        "id": "d",
+        "text": "L"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "logical",
+    "questionText": "If + means multiply, what is 3 + 4?",
+    "options": [
+      {
+        "id": "a",
+        "text": "7"
+      },
+      {
+        "id": "b",
+        "text": "12"
+      },
+      {
+        "id": "c",
+        "text": "1"
+      },
+      {
+        "id": "d",
+        "text": "34"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "logical",
+    "questionText": "Find the next number: 100, 50, 25, ?",
+    "options": [
+      {
+        "id": "a",
+        "text": "10"
+      },
+      {
+        "id": "b",
+        "text": "12.5"
+      },
+      {
+        "id": "c",
+        "text": "15"
+      },
+      {
+        "id": "d",
+        "text": "20"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "logical",
+    "questionText": "A man says of a photo: He is the son of my mother. Who is he to the man?",
+    "options": [
+      {
+        "id": "a",
+        "text": "Father"
+      },
+      {
+        "id": "b",
+        "text": "Brother"
+      },
+      {
+        "id": "c",
+        "text": "Son"
+      },
+      {
+        "id": "d",
+        "text": "Uncle"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "logical",
+    "questionText": "Complete the series: AZ, BY, CX, ?",
+    "options": [
+      {
+        "id": "a",
+        "text": "DV"
+      },
+      {
+        "id": "b",
+        "text": "DW"
+      },
+      {
+        "id": "c",
+        "text": "EW"
+      },
+      {
+        "id": "d",
+        "text": "DX"
+      }
+    ],
+    "correctOptionId": "b",
+    "source": "AUTHORED"
+  },
+  {
+    "module": "aptitude",
+    "dimension": "logical",
+    "questionText": "Find the missing number: 2, 4, 8, 16, ?, 64",
+    "options": [
+      {
+        "id": "a",
+        "text": "24"
+      },
+      {
+        "id": "b",
+        "text": "30"
+      },
+      {
+        "id": "c",
+        "text": "32"
+      },
+      {
+        "id": "d",
+        "text": "48"
+      }
+    ],
+    "correctOptionId": "c",
+    "source": "AUTHORED"
+  }
+]
