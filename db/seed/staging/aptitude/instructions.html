@@ -1,0 +1,151 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Aptitude question bank — seeding runbook</title>
+    <style>
+      :root { color-scheme: light dark; }
+      body { font: 15px/1.6 system-ui, sans-serif; max-width: 920px; margin: 2rem auto; padding: 0 1rem; }
+      h1 { font-size: 1.6rem; } h2 { margin-top: 2.2rem; border-bottom: 1px solid #8884; padding-bottom: .3rem; }
+      code, pre { font-family: ui-monospace, monospace; }
+      pre { background: #8881; padding: .8rem 1rem; border-radius: 8px; overflow-x: auto; font-size: 13px; }
+      table { border-collapse: collapse; width: 100%; margin: 1rem 0; font-size: 14px; }
+      th, td { border: 1px solid #8884; padding: .5rem .6rem; text-align: left; vertical-align: top; }
+      th { background: #8882; }
+      .ok { color: #15803d; font-weight: 600; } .warn { color: #b45309; font-weight: 600; } .no { color: #b91c1c; font-weight: 600; }
+      .pill { display: inline-block; padding: 1px 7px; border-radius: 999px; font-size: 12px; font-weight: 600; }
+      .pill.done { background: #15803d22; color: #15803d; } .pill.todo { background: #b4530922; color: #b45309; }
+      blockquote { border-left: 3px solid #b45309; margin: 1rem 0; padding: .3rem 1rem; background: #b4530911; }
+      ul li { margin: .25rem 0; }
+    </style>
+  </head>
+  <body>
+    <h1>Aptitude question bank — seeding runbook</h1>
+    <p>
+      This is the bridge from <strong>raw source material</strong> (dropped under <code>raw/</code>) to
+      <strong>seed-ready JSON</strong> in <code>db/seed/items/</code>. It exists because the remaining aptitude
+      content can't be auto-seeded: some sources are <em>images</em> (need hosting) and some have
+      <em>licensing</em> to confirm. Work a source top-to-bottom; nothing reaches the database until you run
+      the seeder yourself.
+    </p>
+
+    <h2>1. Current status</h2>
+    <table>
+      <tr><th>Module</th><th>Seeded now</th><th>Source</th><th>State</th></tr>
+      <tr><td>Interests</td><td>60 (10 per RIASEC)</td><td>O*NET Interest Profiler SF</td><td><span class="pill done">done</span></td></tr>
+      <tr><td>Work-style</td><td>30 + 6 starter</td><td>IPIP Big-Five markers</td><td><span class="pill done">done</span></td></tr>
+      <tr><td>Aptitude — numerical / verbal / logical</td><td>32 (text)</td><td>Authored (original)</td><td><span class="pill done">usable</span>, can be deepened</td></tr>
+      <tr><td>Aptitude — <strong>spatial / figural</strong></td><td>0</td><td>Sandia / ICAR (images)</td><td><span class="pill todo">pending</span> — this runbook</td></tr>
+      <tr><td>Aptitude — validated text (ICAR/OpenPsych)</td><td>0</td><td>ICAR, Open Psychometrics</td><td><span class="pill todo">pending</span> — this runbook</td></tr>
+    </table>
+
+    <h2>2. Target shape (what the seeder accepts)</h2>
+    <p>
+      Items are validated by <code>lib/admin/question-bank/item-schema.ts</code> before insert. An aptitude item
+      <strong>must</strong> have <code>module: "aptitude"</code>, a <code>dimension</code>, an <code>options</code> array
+      (each <code>{ id, text }</code>), a <code>correctOptionId</code> matching one option id, and a <code>source</code>.
+      Image items add a <code>media</code> object. Copy a starting point from <code>templates/text-item.template.json</code>
+      or <code>templates/figural-item.template.json</code>.
+    </p>
+    <pre>// text item (numerical | verbal | logical)
+{ "module":"aptitude", "dimension":"numerical", "questionText":"…",
+  "options":[{"id":"a","text":"…"},{"id":"b","text":"…"}],
+  "correctOptionId":"a", "source":"ICAR", "license":"…" }
+
+// figural item (spatial | logical) — option labels are text; the pictures live in media
+{ "module":"aptitude", "dimension":"spatial", "questionText":"Which option completes the pattern?",
+  "options":[{"id":"a","text":"Option A"},{"id":"b","text":"Option B"}, …],
+  "correctOptionId":"c",
+  "media":{ "stem":"/aptitude/sandia/mx-001-stem.png",
+            "options":{ "a":"/aptitude/sandia/mx-001-a.png", "b":"…" } },
+  "source":"SANDIA", "license":"…" }</pre>
+    <p>
+      <code>dimension</code> is free text and becomes its own band in scoring (<code>scoreAptitude</code> groups by it).
+      Use <code>numerical</code>, <code>verbal</code>, <code>logical</code>, and add <code>spatial</code> for figural rotation items.
+    </p>
+
+    <h2>3. Sources — license &amp; action</h2>
+    <table>
+      <tr><th>Source</th><th>Covers</th><th>Format</th><th>License</th><th>Action</th></tr>
+      <tr>
+        <td>ICAR (International Cognitive Ability Resource)</td>
+        <td>Letter/Number series, Verbal reasoning (text); Matrix reasoning, 3-D rotation (figural)</td>
+        <td>Text + images</td>
+        <td class="ok">Open / CC — <em>confirm on the source</em></td>
+        <td>Site was unreachable at fetch time. Retry <code>icar-project.com</code> / find the published catalog (Condon &amp; Revelle, 2014). Text items → §4. Figural → §5.</td>
+      </tr>
+      <tr>
+        <td>Sandia Matrices</td>
+        <td>Matrix reasoning (Raven-like)</td>
+        <td>Images</td>
+        <td class="ok">Free for research/education — <em>confirm</em></td>
+        <td>Get the static item set from the open publication (Matzen et al., 2010). Figural → §5.</td>
+      </tr>
+      <tr>
+        <td>Open Psychometrics</td>
+        <td>Vocabulary / verbal</td>
+        <td>Text</td>
+        <td class="warn">Per-test — check each</td>
+        <td>Index returned empty to automated fetch; open in a browser, copy items + keys into <code>raw/openpsych/</code>. Text → §4.</td>
+      </tr>
+      <tr>
+        <td>NTA / CUET released papers</td>
+        <td>India numerical/quantitative</td>
+        <td>PDF</td>
+        <td class="warn">Government content — reuse terms unconfirmed</td>
+        <td><strong>Gate:</strong> confirm reuse/commercial terms before converting. Record the decision in <code>raw/nta/LICENSE.txt</code>.</td>
+      </tr>
+      <tr>
+        <td>Raven's Progressive Matrices &amp; other commercial tests</td>
+        <td>—</td>
+        <td>—</td>
+        <td class="no">Copyrighted (Pearson, etc.)</td>
+        <td><strong>Do not use.</strong> Not redistributable, screenshot or otherwise.</td>
+      </tr>
+    </table>
+
+    <h2>4. Workflow — text items (numerical / verbal / logical)</h2>
+    <ol>
+      <li>Fetch the source page/PDF and save the raw text to <code>raw/&lt;source&gt;/source.txt</code> with the URL + fetch date at the top.</li>
+      <li>Copy the exact license terms into <code>raw/&lt;source&gt;/LICENSE.txt</code>.</li>
+      <li>For each item, write one object per <code>templates/text-item.template.json</code>: stem → <code>questionText</code>, choices → <code>options</code>, the answer key → <code>correctOptionId</code>.</li>
+      <li>Light India-English review (spelling, currency ₹, locale-appropriate names).</li>
+      <li>Save the array as <code>db/seed/items/&lt;source&gt;-aptitude.json</code> and seed (§6).</li>
+    </ol>
+
+    <h2>5. Workflow — figural / image items</h2>
+    <ol>
+      <li>Confirm the source license permits redistribution (§3). If not, stop.</li>
+      <li>Save each item's pictures to <code>raw/&lt;source&gt;/images/</code>: one stem image + one image per option, named <code>&lt;itemId&gt;-stem.png</code>, <code>&lt;itemId&gt;-a.png</code>, … A page screenshot is <em>not</em> enough — each picture must be cropped to its own file.</li>
+      <li>Host them where the app can serve them: copy into <code>public/aptitude/&lt;source&gt;/</code>. Next.js serves <code>public/x.png</code> at <code>/x.png</code>, so the seed <code>media</code> URLs are <code>/aptitude/&lt;source&gt;/&lt;itemId&gt;-stem.png</code> etc. (For many items, prefer object storage / CDN instead of the repo.)</li>
+      <li>Write each item per <code>templates/figural-item.template.json</code>: <code>options[].text</code> are labels ("Option A"); the pictures go in <code>media.stem</code> and <code>media.options[id]</code>; set <code>correctOptionId</code>.</li>
+      <li>The student UI already renders <code>media.stem</code> (see the aptitude module); option-image rendering may need a small UI follow-up if you use <code>media.options</code>.</li>
+      <li>Save as <code>db/seed/items/&lt;source&gt;-figural.json</code> and seed (§6).</li>
+    </ol>
+
+    <h2>6. Seed it</h2>
+    <pre>pnpm seed:question-bank db/seed/items/&lt;your-file&gt;.json</pre>
+    <p>
+      Idempotent: an item is skipped if a row with the same <code>(source, dimension, questionText, version)</code>
+      already exists, so re-running is safe. Verify the counts it prints, then check the bank:
+    </p>
+    <pre>select module, source, count(*) from question_bank group by module, source;</pre>
+
+    <h2>7. Before you seed — manual gates</h2>
+    <ul>
+      <li>☐ License confirmed for this exact source and recorded in <code>raw/&lt;source&gt;/LICENSE.txt</code>.</li>
+      <li>☐ No copyrighted/commercial items included (no Raven's, no paid test banks).</li>
+      <li>☐ Every item has a <code>correctOptionId</code> that matches one of its option ids.</li>
+      <li>☐ Figural images cropped per-item and hosted; <code>media</code> URLs resolve.</li>
+      <li>☐ India-English review done.</li>
+      <li>☐ NTA/CUET content: reuse terms explicitly confirmed, or left out.</li>
+    </ul>
+
+    <blockquote>
+      Why this is staged, not auto-seeded: figural items need real image assets that have to be cropped and
+      hosted, and several sources need a human license decision. Those are judgment + asset steps, not a scrape —
+      so they live here until a person signs off.
+    </blockquote>
+  </body>
+</html>

@@ -1,0 +1,18 @@
+[
+  {
+    "module": "aptitude",
+    "dimension": "numerical | verbal | logical",
+    "questionText": "The full question stem as the student will read it.",
+    "options": [
+      { "id": "a", "text": "First option" },
+      { "id": "b", "text": "Second option" },
+      { "id": "c", "text": "Third option" },
+      { "id": "d", "text": "Fourth option" }
+    ],
+    "correctOptionId": "b",
+    "source": "ICAR | OPENPSYCH | NTA | AUTHORED",
+    "license": "State the exact license/terms confirmed for THIS source",
+    "version": 1,
+    "poolGroup": "optional - group items drawn from the same pool for randomized draws"
+  }
+]

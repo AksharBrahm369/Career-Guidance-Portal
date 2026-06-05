@@ -1,0 +1,31 @@
+[
+  {
+    "module": "aptitude",
+    "dimension": "spatial | logical",
+    "questionText": "Which option completes the pattern?",
+    "options": [
+      { "id": "a", "text": "Option A" },
+      { "id": "b", "text": "Option B" },
+      { "id": "c", "text": "Option C" },
+      { "id": "d", "text": "Option D" },
+      { "id": "e", "text": "Option E" },
+      { "id": "f", "text": "Option F" }
+    ],
+    "correctOptionId": "c",
+    "media": {
+      "stem": "/aptitude/<source>/<itemId>-stem.png",
+      "options": {
+        "a": "/aptitude/<source>/<itemId>-a.png",
+        "b": "/aptitude/<source>/<itemId>-b.png",
+        "c": "/aptitude/<source>/<itemId>-c.png",
+        "d": "/aptitude/<source>/<itemId>-d.png",
+        "e": "/aptitude/<source>/<itemId>-e.png",
+        "f": "/aptitude/<source>/<itemId>-f.png"
+      }
+    },
+    "source": "SANDIA | ICAR",
+    "license": "State the exact license/terms confirmed for THIS source",
+    "version": 1,
+    "poolGroup": "spatial-matrix"
+  }
+]
