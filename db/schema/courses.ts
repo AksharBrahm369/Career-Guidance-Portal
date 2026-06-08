@@ -9,7 +9,7 @@ import {
   uniqueIndex,
   uuid,
 } from "drizzle-orm/pg-core";
-import { admins } from "./admins";
+import { user } from "./auth";
 import { aiSafetyTag, courseSource, courseStatus, streamEnum } from "./enums";
 import { institutes } from "./institutes";
 
@@ -41,13 +41,13 @@ export const courses = pgTable(
     sourceUrls: text("source_urls").array().notNull().default(sql`ARRAY[]::text[]`),
     status: courseStatus("status").notNull().default("draft"),
     source: courseSource("source").notNull(),
-    createdByAdminId: uuid("created_by_admin_id").references(() => admins.id, {
+    createdByAdminId: uuid("created_by_admin_id").references(() => user.id, {
       onDelete: "set null",
     }),
-    reviewedByAdminId: uuid("reviewed_by_admin_id").references(() => admins.id, {
+    reviewedByAdminId: uuid("reviewed_by_admin_id").references(() => user.id, {
       onDelete: "set null",
     }),
-    lastEditedByAdminId: uuid("last_edited_by_admin_id").references(() => admins.id, {
+    lastEditedByAdminId: uuid("last_edited_by_admin_id").references(() => user.id, {
       onDelete: "set null",
     }),
     rejectionReason: text("rejection_reason"),

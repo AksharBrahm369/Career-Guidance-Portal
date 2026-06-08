@@ -1,13 +1,13 @@
 import { sql } from "drizzle-orm";
 import { index, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
-import { admins } from "./admins";
+import { user } from "./auth";
 import { auditAction } from "./enums";
 
 export const auditLog = pgTable(
   "audit_log",
   {
     id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
-    adminId: uuid("admin_id").references(() => admins.id, { onDelete: "set null" }),
+    adminId: uuid("admin_id").references(() => user.id, { onDelete: "set null" }),
     action: auditAction("action").notNull(),
     entityType: text("entity_type").notNull(),
     entityId: uuid("entity_id"),

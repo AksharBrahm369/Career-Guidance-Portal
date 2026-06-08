@@ -1,1 +1,0 @@
-ALTER TABLE "students" ADD COLUMN "password_hash" text NOT NULL;

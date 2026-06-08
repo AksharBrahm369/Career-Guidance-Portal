@@ -1,8 +1,8 @@
 import { sql } from "drizzle-orm";
 import { index, jsonb, pgTable, text, timestamp, uuid } from "drizzle-orm/pg-core";
 import type { ClusterScore, CourseRecommendation } from "@/lib/recommendation/types";
+import { user } from "./auth";
 import { assessmentStatus } from "./enums";
-import { students } from "./students";
 
 export const assessments = pgTable(
   "assessments",
@@ -10,7 +10,7 @@ export const assessments = pgTable(
     id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
     studentId: uuid("student_id")
       .notNull()
-      .references(() => students.id, { onDelete: "cascade" }),
+      .references(() => user.id, { onDelete: "cascade" }),
     status: assessmentStatus("status").notNull().default("in_progress"),
     aptitudeScores: jsonb("aptitude_scores").$type<
       Record<string, { raw: number; total: number; band: "strong" | "moderate" | "developing" }>
@@ -24,6 +24,7 @@ export const assessments = pgTable(
       .default(sql`ARRAY[]::text[]`),
     responses: jsonb("responses").$type<Record<string, unknown>>().notNull().default(sql`'{}'::jsonb`),
     marks: jsonb("marks").$type<{ board: string; stream: string; subjects: Record<string, number>; strengths: string[] }>(),
+    subjectAffinities: jsonb("subject_affinities").$type<Record<string, number>>(),
     confidence: text("confidence"),
     clusterScores: jsonb("cluster_scores").$type<ClusterScore[]>(),
     recommendedCourses: jsonb("recommended_courses").$type<CourseRecommendation[]>(),

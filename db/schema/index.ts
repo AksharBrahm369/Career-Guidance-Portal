@@ -1,6 +1,4 @@
 export * from "./enums";
-export * from "./admins";
-export * from "./students";
 export * from "./institutes";
 export * from "./courses";
 export * from "./career-clusters";
