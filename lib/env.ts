@@ -17,8 +17,8 @@ const EnvSchema = z
     GOOGLE_GENERATIVE_AI_API_KEY: z.string().optional(),
     OPENAI_API_KEY: z.string().optional(),
 
-    AUTH_SECRET: z.string().min(32, "AUTH_SECRET must be at least 32 chars"),
-    NEXTAUTH_URL: z.string().url().default("http://localhost:3000"),
+    BETTER_AUTH_SECRET: z.string().min(32, "BETTER_AUTH_SECRET must be at least 32 chars"),
+    BETTER_AUTH_URL: z.string().url().default("http://localhost:3000"),
   })
   .refine((env) => Boolean(providerKey(env, env.AI_PROVIDER)), {
     message:
