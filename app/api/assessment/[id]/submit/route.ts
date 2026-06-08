@@ -1,7 +1,7 @@
 import { eq } from "drizzle-orm";
 import { requireStudent, studentErrorResponse } from "@/lib/auth/require-student";
 import { db } from "@/lib/db";
-import { assessments, students } from "@/db/schema";
+import { assessments, user } from "@/db/schema";
 import { getActiveItems } from "@/lib/assessment/items";
 import { scoreAssessment, type AssessmentResponses } from "@/lib/assessment/scoring";
 import { recommend } from "@/lib/recommendation";
@@ -9,7 +9,7 @@ import { getRecommendationInputs } from "@/lib/recommendation/catalogue";
 
 export const runtime = "nodejs";
 
-const REQUIRED_MODULES = ["interests", "work_style", "aptitude", "marks"] as const;
+const REQUIRED_MODULES = ["interests", "work_style", "aptitude", "subjects", "marks"] as const;
 
 /** Finalize an attempt: score the four lenses deterministically and persist the profile. */
 export async function POST(_req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -55,6 +55,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       workStyle: profile.workStyleScores,
       aptitude: profile.aptitudeScores,
       marks: profile.marks,
+      subjectAffinities: profile.subjectAffinities,
       knownStream: profile.marks?.stream ?? null,
       confidence: profile.confidence,
     },
@@ -73,6 +74,7 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
         workStyleScores: profile.workStyleScores,
         aptitudeScores: profile.aptitudeScores,
         marks: profile.marks,
+        subjectAffinities: profile.subjectAffinities,
         knownStream: profile.marks?.stream ?? null,
         confidence: profile.confidence,
         clusterScores: rec.clusterScores,
@@ -81,9 +83,9 @@ export async function POST(_req: Request, { params }: { params: Promise<{ id: st
       })
       .where(eq(assessments.id, id));
     await tx
-      .update(students)
+      .update(user)
       .set({ lastAssessmentAt: completedAt })
-      .where(eq(students.id, student.studentId));
+      .where(eq(user.id, student.studentId));
   });
 
   return Response.json({ id, confidence: profile.confidence, lowSignal: rec.lowSignal });

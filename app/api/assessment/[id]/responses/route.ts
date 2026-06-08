@@ -18,7 +18,11 @@ const MarksPatch = z.object({
     subjects: z.record(z.number()),
   }),
 });
-const ResponsesPatch = z.union([SelfReportPatch, MarksPatch]);
+const SubjectsPatch = z.object({
+  module: z.literal("subjects"),
+  answers: z.record(z.number()), // subject label -> 1..5 liking
+});
+const ResponsesPatch = z.union([SelfReportPatch, SubjectsPatch, MarksPatch]);
 
 /** Save one module's answers into the attempt's `responses` jsonb. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {

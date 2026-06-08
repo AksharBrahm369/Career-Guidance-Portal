@@ -14,6 +14,7 @@ export type StudentProfile = {
     subjects: Record<string, number>;
     strengths: string[];
   } | null;
+  subjectAffinities?: Record<string, number>; // subject label -> 0..1 liking
   knownStream: string | null;
   confidence: "high" | "moderate" | "low" | null;
 };

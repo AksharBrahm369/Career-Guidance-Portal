@@ -15,15 +15,30 @@ const RIASEC_LABEL: Record<string, string> = {
   C: "Conventional",
 };
 
-/** Capability signal for a specific course: mean of relevant subject marks (0..1), else overall mean. */
-function subjectSignal(student: StudentProfile, course: CourseInput): number {
-  const subs = student.marks?.subjects ?? {};
-  const rel = course.requiredSubjects.map((s) => subs[s]).filter((v): v is number => v != null);
-  if (rel.length === 0) {
-    const all = Object.values(subs);
-    return all.length ? all.reduce((a, b) => a + b, 0) / all.length / 100 : 0;
-  }
-  return rel.reduce((a, b) => a + b, 0) / rel.length / 100;
+// How the course-specific subject signal splits between can-do (marks) and
+// likes (subject affinity). Tunable. 0.5 = weight both equally.
+const SUBJECT_MARKS_WEIGHT = 0.5;
+
+/** Mean of a 0..1 map over a course's required subjects, falling back to the overall mean. */
+function meanOverRequired(
+  map: Record<string, number>,
+  requiredSubjects: string[],
+  scale: number,
+): number {
+  const rel = requiredSubjects.map((s) => map[s]).filter((v): v is number => v != null);
+  const pool = rel.length > 0 ? rel : Object.values(map);
+  if (pool.length === 0) return 0;
+  return pool.reduce((a, b) => a + b, 0) / pool.length / scale;
+}
+
+/** Can-do signal: mean of relevant subject marks (0..1). */
+function subjectMarksSignal(student: StudentProfile, course: CourseInput): number {
+  return meanOverRequired(student.marks?.subjects ?? {}, course.requiredSubjects, 100);
+}
+
+/** Likes signal: mean of relevant subject affinities (already 0..1). */
+function subjectAffinitySignal(student: StudentProfile, course: CourseInput): number {
+  return meanOverRequired(student.subjectAffinities ?? {}, course.requiredSubjects, 1);
 }
 
 function buildReasons(
@@ -39,6 +54,8 @@ function buildReasons(
   if (strongApt) reasons.push(`Backed by strong ${strongApt} aptitude`);
   const relSub = course.requiredSubjects.find((s) => (student.marks?.subjects ?? {})[s] != null);
   if (relSub) reasons.push(`Your ${relSub} marks (${student.marks!.subjects[relSub]}%) fit`);
+  const likedSub = course.requiredSubjects.find((s) => ((student.subjectAffinities ?? {})[s] ?? 0) >= 0.8);
+  if (likedSub) reasons.push(`You enjoy ${likedSub}`);
   reasons.push(`Strong fit for the ${cluster.name} cluster`);
   if (crossStream) reasons.push(`Note: cross-stream from ${student.knownStream} — check the entrance route`);
   return reasons;
@@ -68,8 +85,11 @@ export function rankCourses(
     }
     if (!best) continue; // no recommendable cluster context
 
-    const subSig = subjectSignal(student, course);
-    let fit01 = 0.7 * best.score + 0.3 * subSig;
+    // Course-specific signal blends can-do (marks) and likes (subject affinity).
+    const courseSignal =
+      SUBJECT_MARKS_WEIGHT * subjectMarksSignal(student, course) +
+      (1 - SUBJECT_MARKS_WEIGHT) * subjectAffinitySignal(student, course);
+    let fit01 = 0.7 * best.score + 0.3 * courseSignal;
     if (elig.crossStream) fit01 *= 0.85;
     out.push({
       courseId: course.id,
