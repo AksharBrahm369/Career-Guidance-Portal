@@ -1,5 +1,5 @@
 import "server-only";
-import { auth } from "@/lib/auth";
+import { getCachedSession } from "@/lib/auth/session";
 
 export interface AdminSession {
   adminId: string;
@@ -14,11 +14,10 @@ export class UnauthorizedError extends Error {
 }
 
 export async function requireAdmin(): Promise<AdminSession> {
-  const session = await auth();
+  const session = await getCachedSession();
   const role = (session?.user as { role?: string } | undefined)?.role;
-  const adminId = (session?.user as { adminId?: string } | undefined)?.adminId;
-  if (!session || role !== "admin" || !adminId) throw new UnauthorizedError();
-  return { adminId, email: session.user!.email! };
+  if (!session || role !== "admin") throw new UnauthorizedError();
+  return { adminId: session.user.id, email: session.user.email };
 }
 
 export function adminErrorResponse(err: unknown): Response | null {

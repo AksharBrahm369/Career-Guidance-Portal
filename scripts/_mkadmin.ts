@@ -1,0 +1,10 @@
+import "./load-env";
+import { eq } from "drizzle-orm";
+import { auth } from "@/lib/auth";
+import { db } from "@/lib/db";
+import { user } from "@/db/schema";
+import { normalizePhone, synthEmailFromPhone } from "@/lib/phone";
+const raw = "+91 97000 00009"; const phone = normalizePhone(raw); const password = "RealHttpTest#99";
+const su = await auth.api.signUpEmail({ body: { email: synthEmailFromPhone(raw), password, name: "HTTP Admin" } });
+await db.update(user).set({ phoneNumber: phone, phoneNumberVerified: false, role: "admin" }).where(eq(user.id, su.user.id));
+console.log("CREATED phone=" + phone + " password=" + password); process.exit(0);

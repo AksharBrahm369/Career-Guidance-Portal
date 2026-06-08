@@ -1,10 +1,6 @@
-import "dotenv/config";
+import "./load-env";
 import { createInterface } from "node:readline/promises";
 import { stdin as input, stdout as output } from "node:process";
-import { eq } from "drizzle-orm";
-import { db } from "../lib/db";
-import { admins } from "../db/schema";
-import { hashPassword } from "../lib/auth/password";
 
 async function prompt(question: string, { hidden = false } = {}): Promise<string> {
   const rl = createInterface({ input, output, terminal: true });
@@ -27,11 +23,19 @@ async function prompt(question: string, { hidden = false } = {}): Promise<string
 }
 
 async function main() {
-  const email = (await prompt("Admin email: ")).trim().toLowerCase();
+  // Imported dynamically AFTER dotenv has loaded — these modules validate env
+  // at import time, so they must not be statically hoisted above the env load.
+  const { auth } = await import("@/lib/auth");
+  const { db } = await import("@/lib/db");
+  const { user } = await import("@/db/schema");
+  const { eq } = await import("drizzle-orm");
+  const { normalizePhone, synthEmailFromPhone } = await import("@/lib/phone");
+
   const name = (await prompt("Admin name: ")).trim();
+  const phone = (await prompt("Admin phone: ")).trim();
   const password = await prompt("Password (min 12 chars): ", { hidden: true });
 
-  if (!email || !name || !password) {
+  if (!name || !phone || !password) {
     console.error("✗ All fields required.");
     process.exit(1);
   }
@@ -40,19 +44,24 @@ async function main() {
     process.exit(1);
   }
 
-  const existing = await db.query.admins.findFirst({ where: eq(admins.email, email) });
-  if (existing) {
-    console.error(`✗ Admin with email ${email} already exists.`);
+  const normalizedPhone = normalizePhone(phone);
+  if (!normalizedPhone) {
+    console.error("✗ Phone normalizes to empty — enter a valid number.");
     process.exit(1);
   }
 
-  const passwordHash = await hashPassword(password);
-  const [created] = await db
-    .insert(admins)
-    .values({ email, name, passwordHash })
-    .returning({ id: admins.id, email: admins.email });
+  const created = await auth.api.signUpEmail({
+    body: { email: synthEmailFromPhone(phone), password, name },
+  });
 
-  console.log(`✓ Admin created: ${created?.email} (${created?.id})`);
+  await db
+    .update(user)
+    // phoneNumberVerified stays false: v1 has no OTP, so we cannot prove
+    // ownership of this number. See lib/auth.ts — do not trust this field.
+    .set({ phoneNumber: normalizedPhone, phoneNumberVerified: false, role: "admin" })
+    .where(eq(user.id, created.user.id));
+
+  console.log(`✓ Admin created: ${normalizedPhone} (${created.user.id})`);
   process.exit(0);
 }
 

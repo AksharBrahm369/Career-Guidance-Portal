@@ -1,36 +1,47 @@
-import { NextResponse } from "next/server";
-import { auth } from "@/lib/auth/edge";
+import { NextResponse, type NextRequest } from "next/server";
+import { getSessionCookie } from "better-auth/cookies";
 
-export default auth((req) => {
-  const { pathname } = req.nextUrl;
+// Optimistic gate: redirect unauthenticated users to the right login. The
+// authoritative role check runs in the guards (requireAdmin / requireStudent)
+// and the admin layout, which execute per route/page.
+export function middleware(request: NextRequest) {
+  const { pathname } = request.nextUrl;
 
-  // /admin/login is public; every other /admin/* requires an admin session.
-  if (pathname.startsWith("/admin/login")) {
-    return NextResponse.next();
+  // Expose the path to server layouts/pages (so the admin layout can exempt
+  // its own login route from the admin-role gate).
+  const requestHeaders = new Headers(request.headers);
+  requestHeaders.set("x-pathname", pathname);
+  const pass = () => NextResponse.next({ request: { headers: requestHeaders } });
+
+  // Public auth routes render bare (no session-cookie gate). They still flow
+  // through `pass()` so x-pathname is set for layouts to detect them.
+  if (
+    pathname.startsWith("/admin/login") ||
+    pathname.startsWith("/student/login") ||
+    pathname.startsWith("/student/signup")
+  ) {
+    return pass();
   }
 
-  if (pathname === "/admin" || pathname.startsWith("/admin/")) {
-    const role = (req.auth?.user as { role?: string } | undefined)?.role;
-    if (!req.auth || role !== "admin") {
-      const url = req.nextUrl.clone();
-      url.pathname = "/admin/login";
-      url.searchParams.set("error", "unauthorized");
-      return NextResponse.redirect(url);
-    }
+  const sessionCookie = getSessionCookie(request);
+  if (!sessionCookie) {
+    const url = request.nextUrl.clone();
+    url.pathname = pathname.startsWith("/admin") ? "/admin/login" : "/student/login";
+    return NextResponse.redirect(url);
   }
-
-  if (pathname === "/assessment" || pathname.startsWith("/assessment/")) {
-    const role = (req.auth?.user as { role?: string } | undefined)?.role;
-    if (!req.auth || role !== "student") {
-      const url = req.nextUrl.clone();
-      url.pathname = "/student/login";
-      return NextResponse.redirect(url);
-    }
-  }
-
-  return NextResponse.next();
-});
+  return pass();
+}
 
 export const config = {
-  matcher: ["/admin", "/admin/:path*", "/assessment", "/assessment/:path*"],
+  matcher: [
+    "/admin",
+    "/admin/:path*",
+    "/assessment",
+    "/assessment/:path*",
+    // /student/:path* is matched only so x-pathname is set for the (student)
+    // layout to render /student/login + /student/signup bare (both are exempt
+    // from the session gate above). /courses stays PUBLIC — intentionally not
+    // matched — so the catalogue is browsable without login.
+    "/student/:path*",
+  ],
 };

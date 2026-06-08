@@ -40,8 +40,8 @@ Only the selected provider's API key is required at runtime.
 ## Local development
 
 ```bash
-cp .env.example .env.local                                 # fill ANTHROPIC_API_KEY + AUTH_SECRET
-# AUTH_SECRET: openssl rand -base64 32
+cp .env.example .env.local                                 # fill ANTHROPIC_API_KEY + BETTER_AUTH_SECRET
+# BETTER_AUTH_SECRET (>= 32 chars): openssl rand -base64 32
 
 docker compose up -d db                                    # start postgres
 pnpm install
