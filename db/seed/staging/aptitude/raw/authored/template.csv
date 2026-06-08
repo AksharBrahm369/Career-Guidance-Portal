@@ -1,0 +1,4 @@
+dimension,questionText,optA,optB,optC,optD,optE,optF,correctOption,source,license,poolGroup
+numerical,What is 2 + 2?,3,4,5,6,,,b,AUTHORED,,
+verbal,Choose the word closest in meaning to BIG.,Small,Large,Fast,Cold,,,b,AUTHORED,,
+logical,"Find the next number: 2, 4, 6, ?",7,8,9,10,,,b,AUTHORED,,

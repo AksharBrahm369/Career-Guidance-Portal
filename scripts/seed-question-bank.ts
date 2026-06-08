@@ -1,4 +1,4 @@
-import "dotenv/config";
+import "./load-env";
 import { readFile } from "node:fs/promises";
 import { seedItems } from "../lib/admin/question-bank/seed-loader";
 

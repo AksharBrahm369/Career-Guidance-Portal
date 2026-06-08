@@ -1,0 +1,3 @@
+itemId,dimension,correctOptionId,questionText,stem,optA,optB,optC,optD,license,poolGroup
+fig-rot-1,spatial,a,Which arrow continues the rotation?,rot-1-stem.svg,arrow-up.svg,arrow-right.svg,arrow-down.svg,arrow-left.svg,Authored (original),spatial-rotation
+fig-seq-1,spatial,c,How many dots come next?,seq-1-stem.svg,dots-2.svg,dots-3.svg,dots-4.svg,dots-5.svg,Authored (original),spatial-series
