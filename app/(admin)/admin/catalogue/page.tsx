@@ -1,11 +1,24 @@
 import Link from "next/link";
 import { CourseLifecycleActions } from "@/components/admin/course-lifecycle-actions";
 import { Pagination } from "@/components/pagination";
+import { AdminPageHeader } from "@/components/admin/shell/page-header";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import {
   ADMIN_STATUSES,
   listAdminCourses,
   type AdminStatus,
 } from "@/lib/admin/courses-list";
+import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
 
@@ -15,6 +28,18 @@ const TAB_LABELS: Record<AdminStatus, string> = {
   rejected: "Rejected",
   archived: "Archived",
 };
+
+const SAFETY_LABELS: Record<string, string> = {
+  ai_safe: "AI safe",
+  ai_augmented: "AI augmented",
+  ai_risk: "AI risk",
+};
+
+function safetyVariant(tag: string): "secondary" | "outline" | "destructive" {
+  if (tag === "ai_risk") return "destructive";
+  if (tag === "ai_augmented") return "outline";
+  return "secondary";
+}
 
 interface PageProps {
   searchParams: Promise<Record<string, string | string[] | undefined>>;
@@ -41,20 +66,15 @@ export default async function AdminCataloguePage({ searchParams }: PageProps) {
   };
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-semibold">Courses</h1>
-          <p className="text-sm text-muted-foreground">
-            {data.total} {TAB_LABELS[status].toLowerCase()} course{data.total === 1 ? "" : "s"}.
-          </p>
-        </div>
-        <Link href="/admin" className="text-sm underline">
-          ← Dashboard
-        </Link>
-      </div>
+    <div className="flex flex-col gap-6">
+      <AdminPageHeader
+        title="Courses"
+        description={`${data.total} ${TAB_LABELS[status].toLowerCase()} course${
+          data.total === 1 ? "" : "s"
+        }.`}
+      />
 
-      <div role="tablist" className="flex flex-wrap gap-1.5 text-xs">
+      <div role="tablist" className="flex flex-wrap gap-1.5">
         {ADMIN_STATUSES.map((s) => {
           const active = s === status;
           const href = s === "published" ? "/admin/catalogue" : `/admin/catalogue?status=${s}`;
@@ -64,15 +84,16 @@ export default async function AdminCataloguePage({ searchParams }: PageProps) {
               role="tab"
               aria-selected={active}
               href={href}
-              className={`rounded-full border px-3 py-1.5 transition ${
+              className={cn(
+                "inline-flex items-center gap-1.5 rounded-full border px-3 py-1.5 text-xs font-medium transition-colors",
                 active
                   ? "border-primary bg-primary text-primary-foreground"
-                  : "border-input bg-background hover:bg-muted"
-              }`}
+                  : "border-input bg-background hover:bg-muted",
+              )}
             >
-              {TAB_LABELS[s]}{" "}
+              {TAB_LABELS[s]}
               <span className={active ? "opacity-80" : "text-muted-foreground"}>
-                ({data.counts[s]})
+                {data.counts[s]}
               </span>
             </Link>
           );
@@ -80,45 +101,56 @@ export default async function AdminCataloguePage({ searchParams }: PageProps) {
       </div>
 
       {data.rows.length === 0 ? (
-        <div className="rounded-md border bg-card p-8 text-center text-sm text-muted-foreground">
-          No {TAB_LABELS[status].toLowerCase()} courses.
-        </div>
+        <Alert>
+          <AlertTitle>No courses</AlertTitle>
+          <AlertDescription>
+            No {TAB_LABELS[status].toLowerCase()} courses to show.
+          </AlertDescription>
+        </Alert>
       ) : (
-        <div className="overflow-hidden rounded-md border">
-          <table className="w-full text-sm">
-            <thead className="bg-muted/50 text-left text-xs uppercase tracking-wide text-muted-foreground">
-              <tr>
-                <th className="px-3 py-2">Course</th>
-                <th className="px-3 py-2">Stream</th>
-                <th className="px-3 py-2">AI Safety</th>
-                <th className="px-3 py-2">{dateLabel(status)}</th>
-                <th className="px-3 py-2 text-right">Actions</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {data.rows.map((c) => (
-                <tr key={c.id}>
-                  <td className="px-3 py-2 font-medium">
-                    {c.courseName}
-                    {status === "rejected" && c.rejectionReason ? (
-                      <div className="mt-0.5 line-clamp-2 max-w-md text-xs font-normal text-destructive">
-                        {c.rejectionReason}
-                      </div>
-                    ) : null}
-                  </td>
-                  <td className="px-3 py-2">{c.stream}</td>
-                  <td className="px-3 py-2">{c.aiSafetyTag}</td>
-                  <td className="px-3 py-2 text-xs text-muted-foreground">
-                    {formatDate(dateForStatus(status, c))}
-                  </td>
-                  <td className="px-3 py-2 text-right">
-                    <CourseLifecycleActions courseId={c.id} status={status} />
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Card>
+          <CardContent className="p-0">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Course</TableHead>
+                  <TableHead>Stream</TableHead>
+                  <TableHead>AI safety</TableHead>
+                  <TableHead>{dateLabel(status)}</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {data.rows.map((c) => (
+                  <TableRow key={c.id}>
+                    <TableCell className="font-medium">
+                      {c.courseName}
+                      {status === "rejected" && c.rejectionReason ? (
+                        <div className="mt-0.5 line-clamp-2 max-w-md text-xs font-normal text-destructive">
+                          {c.rejectionReason}
+                        </div>
+                      ) : null}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant="outline">{c.stream}</Badge>
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={safetyVariant(c.aiSafetyTag)}>
+                        {SAFETY_LABELS[c.aiSafetyTag] ?? c.aiSafetyTag}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-xs text-muted-foreground">
+                      {formatDate(dateForStatus(status, c))}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <CourseLifecycleActions courseId={c.id} status={status} />
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </CardContent>
+        </Card>
       )}
 
       <Pagination page={data.page} pageCount={data.pageCount} hrefForPage={hrefForPage} />

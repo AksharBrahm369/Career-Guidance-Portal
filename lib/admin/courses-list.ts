@@ -36,27 +36,30 @@ export async function listAdminCourses(
   const page = Math.max(1, filters.page ?? 1);
   const offset = (page - 1) * perPage;
 
-  const rows = await db
-    .select()
-    .from(courses)
-    .where(eq(courses.status, filters.status))
-    .orderBy(desc(orderForStatus(filters.status)))
-    .limit(perPage)
-    .offset(offset);
-
-  const countsRes = await db.execute<{
-    published: number;
-    pending_review: number;
-    rejected: number;
-    archived: number;
-  }>(sql`
-    select
-      count(*) filter (where status = 'published')::int as published,
-      count(*) filter (where status = 'pending_review')::int as pending_review,
-      count(*) filter (where status = 'rejected')::int as rejected,
-      count(*) filter (where status = 'archived')::int as archived
-    from ${courses}
-  `);
+  // The page rows and the status-breakdown counts are independent queries —
+  // run them concurrently to avoid a serial round-trip on every load/page change.
+  const [rows, countsRes] = await Promise.all([
+    db
+      .select()
+      .from(courses)
+      .where(eq(courses.status, filters.status))
+      .orderBy(desc(orderForStatus(filters.status)))
+      .limit(perPage)
+      .offset(offset),
+    db.execute<{
+      published: number;
+      pending_review: number;
+      rejected: number;
+      archived: number;
+    }>(sql`
+      select
+        count(*) filter (where status = 'published')::int as published,
+        count(*) filter (where status = 'pending_review')::int as pending_review,
+        count(*) filter (where status = 'rejected')::int as rejected,
+        count(*) filter (where status = 'archived')::int as archived
+      from ${courses}
+    `),
+  ]);
   const counts: Record<AdminStatus, number> = {
     published: countsRes.rows[0]?.published ?? 0,
     pending_review: countsRes.rows[0]?.pending_review ?? 0,
