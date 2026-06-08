@@ -1,13 +1,19 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
+import { Timer } from "lucide-react";
 import type { ChoiceAnswers, ClientItem } from "./types";
+import { ModuleIntro, QuestionCard, QuestionPrompt, OptionButton, ImageOption } from "./wizard-ui";
+import { StickyActions } from "./sticky-actions";
 
 interface Props {
   items: ClientItem[];
   initial: ChoiceAnswers;
   onComplete: (answers: ChoiceAnswers) => void;
+  onBack?: () => void;
   saving: boolean;
+  step: number;
+  total: number;
 }
 
 function fmt(seconds: number) {
@@ -17,16 +23,20 @@ function fmt(seconds: number) {
 }
 
 /**
- * Aptitude module — a timed single-correct MCQ. One option id per item.
+ * Aptitude module — a timed single-correct MCQ, one question at a time.
  * Correctness is graded server-side on submit (the client never sees the key).
  *
  * The ticking elapsed value lives in a ref (rerender-use-ref-transient-values);
- * a 1s interval drives the whole-second display state so the form below does not
- * re-render on every tick. The timer is an elapsed display only — it does not
- * gate submission in this plan.
+ * a 1s interval drives the whole-second display state so the option grid does
+ * not re-render on every tick. The timer is an elapsed display only — it does
+ * not gate submission. Figural stems/options reserve fixed boxes to avoid CLS.
  */
-export function AptitudeModule({ items, initial, onComplete, saving }: Props) {
+export function AptitudeModule({ items, initial, onComplete, onBack, saving, step, total }: Props) {
   const [answers, setAnswers] = useState<ChoiceAnswers>(initial);
+  const [q, setQ] = useState(() => {
+    const firstUnanswered = items.findIndex((i) => !answers[i.id]);
+    return firstUnanswered === -1 ? 0 : firstUnanswered;
+  });
   const [display, setDisplay] = useState(0);
   const startedAt = useRef(Date.now());
   const elapsed = useRef(0);
@@ -39,81 +49,96 @@ export function AptitudeModule({ items, initial, onComplete, saving }: Props) {
     return () => clearInterval(t);
   }, []);
 
+  const item = items[q]!;
+  const isLast = q === items.length - 1;
   const allAnswered = items.every((i) => answers[i.id]);
+  const selected = answers[item.id];
+  const hasImageOptions = !!item.media?.options;
+
+  function choose(optId: string) {
+    setAnswers((cur) => ({ ...cur, [item.id]: optId }));
+  }
+
+  function handleNext() {
+    if (!selected) return;
+    if (isLast) {
+      if (allAnswered) onComplete(answers);
+      return;
+    }
+    setQ((n) => Math.min(n + 1, items.length - 1));
+  }
+
+  function handleBack() {
+    if (q === 0) {
+      onBack?.();
+      return;
+    }
+    setQ((n) => Math.max(n - 1, 0));
+  }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (allAnswered) onComplete(answers);
-      }}
-      className="flex flex-col gap-4"
-    >
+    <div className="flex flex-col gap-6">
       <div className="flex items-start justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          <h2 className="text-lg font-semibold">Aptitude check</h2>
-          <p className="text-sm text-muted-foreground">
-            Pick the best answer for each. Work steadily — there&apos;s no penalty for guessing.
-          </p>
-        </div>
+        <ModuleIntro
+          step={step}
+          total={total}
+          title="Quick aptitude check"
+          description="Pick the best answer for each. Work steadily — there's no penalty for guessing."
+        />
         <span
-          aria-label="Time elapsed"
-          className="shrink-0 rounded-md bg-muted px-2 py-1 font-mono text-xs tabular-nums text-muted-foreground"
+          aria-label={`Time elapsed ${fmt(display)}`}
+          className="mt-1 inline-flex shrink-0 items-center gap-1.5 rounded-full bg-muted px-3 py-1.5 text-sm font-medium tabular-nums text-muted-foreground"
         >
+          <Timer className="size-4" aria-hidden />
           {fmt(display)}
         </span>
       </div>
 
-      <fieldset className="flex flex-col gap-4">
-        {items.map((item, idx) => (
-          <div key={item.id} className="flex flex-col gap-2 rounded-lg border bg-card p-4">
-            <p className="text-sm font-medium">
-              <span className="text-muted-foreground">{idx + 1}.</span> {item.questionText}
-            </p>
-            {item.media?.stem ? (
-              // eslint-disable-next-line @next/next/no-img-element
-              <img src={item.media.stem} alt="" className="max-h-40 w-auto rounded" />
-            ) : null}
-            <div className={item.media?.options ? "grid grid-cols-2 gap-2 sm:grid-cols-3" : "flex flex-col gap-1.5"}>
-              {item.options.map((opt) => {
-                const selected = answers[item.id] === opt.id;
-                const optImg = item.media?.options?.[opt.id];
-                return (
-                  <button
-                    key={opt.id}
-                    type="button"
-                    aria-pressed={selected}
-                    aria-label={optImg ? opt.text : undefined}
-                    onClick={() => setAnswers((cur) => ({ ...cur, [item.id]: opt.id }))}
-                    className={`rounded-md border text-left text-sm transition ${
-                      optImg ? "flex items-center justify-center p-2" : "px-3 py-2"
-                    } ${
-                      selected
-                        ? "border-primary bg-primary text-primary-foreground"
-                        : "bg-background hover:border-primary"
-                    }`}
-                  >
-                    {optImg ? (
-                      // eslint-disable-next-line @next/next/no-img-element
-                      <img src={optImg} alt={opt.text} className="h-16 w-auto" />
-                    ) : (
-                      opt.text
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </fieldset>
+      <QuestionCard count={items.length} index={q}>
+        <QuestionPrompt>{item.questionText}</QuestionPrompt>
 
-      <button
-        type="submit"
-        disabled={!allAnswered || saving}
-        className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50"
-      >
-        {saving ? "Saving…" : "Continue"}
-      </button>
-    </form>
+        {item.media?.stem ? (
+          <div className="flex min-h-40 items-center justify-center rounded-md bg-muted/40 p-3">
+            {/* eslint-disable-next-line @next/next/no-img-element */}
+            <img src={item.media.stem} alt="" className="max-h-40 w-auto rounded" />
+          </div>
+        ) : null}
+
+        {hasImageOptions ? (
+          <div className="grid grid-cols-2 gap-2.5 sm:grid-cols-3">
+            {item.options.map((opt) => (
+              <ImageOption
+                key={opt.id}
+                selected={selected === opt.id}
+                onSelect={() => choose(opt.id)}
+                src={item.media!.options![opt.id]!}
+                label={opt.text}
+              />
+            ))}
+          </div>
+        ) : (
+          <div className="flex flex-col gap-2.5">
+            {item.options.map((opt) => (
+              <OptionButton
+                key={opt.id}
+                selected={selected === opt.id}
+                onSelect={() => choose(opt.id)}
+              >
+                {opt.text}
+              </OptionButton>
+            ))}
+          </div>
+        )}
+      </QuestionCard>
+
+      <StickyActions
+        onBack={q > 0 || onBack ? handleBack : undefined}
+        onNext={handleNext}
+        nextDisabled={!selected}
+        saving={saving}
+        finish={isLast && step === total}
+        nextLabel={isLast ? (step === total ? "Finish" : "Continue") : "Next"}
+      />
+    </div>
   );
 }

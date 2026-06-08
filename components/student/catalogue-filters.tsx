@@ -2,12 +2,16 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
+import { Search, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { cn } from "@/lib/utils";
 
 const STREAMS = ["science", "commerce", "arts", "vocational"] as const;
 const TAGS = [
   { v: "ai_safe", label: "AI-safe" },
   { v: "ai_augmented", label: "AI-augmented" },
-  { v: "ai_risk", label: "AI-risk" },
+  { v: "ai_risk", label: "AI-exposed" },
 ] as const;
 
 export function CatalogueFilters() {
@@ -42,63 +46,102 @@ export function CatalogueFilters() {
   const active = q || stream || safety;
 
   return (
-    <div className="flex flex-col gap-3 rounded-md border bg-card p-3 sm:p-4">
-      <form onSubmit={onSearch} className="flex gap-2">
-        <input
-          type="search"
-          inputMode="search"
-          placeholder="Search courses…"
-          value={q}
-          onChange={(e) => setQ(e.target.value)}
-          className="min-w-0 flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm"
-        />
-        <button
-          type="submit"
-          disabled={pending}
-          className="rounded-md bg-primary px-3 py-2 text-sm text-primary-foreground disabled:opacity-50"
-        >
+    <div
+      className={cn(
+        "flex flex-col gap-4 rounded-lg border bg-card p-4 shadow-sm transition-opacity sm:p-5",
+        pending && "opacity-70",
+      )}
+    >
+      <form onSubmit={onSearch} className="flex gap-2" role="search">
+        <div className="relative min-w-0 flex-1">
+          <Search
+            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"
+            aria-hidden
+          />
+          <label htmlFor="course-search" className="sr-only">
+            Search courses
+          </label>
+          <Input
+            id="course-search"
+            type="search"
+            inputMode="search"
+            placeholder="Search courses…"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            className="h-11 pl-9"
+          />
+        </div>
+        <Button type="submit" disabled={pending} className="h-11 shrink-0">
           Search
-        </button>
+        </Button>
       </form>
 
-      <div className="flex flex-wrap gap-1.5 text-xs">
-        <Chip label="All streams" active={!stream} onClick={() => update({ stream: null })} />
+      <FilterRow label="Stream">
+        <FilterChip
+          label="All"
+          active={!stream}
+          onClick={() => update({ stream: null })}
+        />
         {STREAMS.map((s) => (
-          <Chip
+          <FilterChip
             key={s}
             label={s[0]!.toUpperCase() + s.slice(1)}
             active={stream === s}
             onClick={() => update({ stream: stream === s ? null : s })}
           />
         ))}
-      </div>
+      </FilterRow>
 
-      <div className="flex flex-wrap gap-1.5 text-xs">
-        <Chip label="Any AI exposure" active={!safety} onClick={() => update({ ai: null })} />
+      <FilterRow label="AI exposure">
+        <FilterChip
+          label="Any"
+          active={!safety}
+          onClick={() => update({ ai: null })}
+        />
         {TAGS.map((t) => (
-          <Chip
+          <FilterChip
             key={t.v}
             label={t.label}
             active={safety === t.v}
             onClick={() => update({ ai: safety === t.v ? null : t.v })}
           />
         ))}
-      </div>
+      </FilterRow>
 
       {active ? (
-        <button
+        <Button
           type="button"
+          variant="ghost"
+          size="sm"
           onClick={clearAll}
-          className="self-start text-xs text-muted-foreground underline"
+          className="h-9 self-start text-muted-foreground"
         >
+          <X data-icon="inline-start" />
           Clear filters
-        </button>
+        </Button>
       ) : null}
     </div>
   );
 }
 
-function Chip({
+function FilterRow({
+  label,
+  children,
+}: {
+  label: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <fieldset className="flex flex-col gap-2">
+      <legend className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {label}
+      </legend>
+      <div className="flex flex-wrap gap-2">{children}</div>
+    </fieldset>
+  );
+}
+
+function FilterChip({
   label,
   active,
   onClick,
@@ -111,11 +154,13 @@ function Chip({
     <button
       type="button"
       onClick={onClick}
-      className={`rounded-full border px-2.5 py-1 transition ${
+      aria-pressed={active}
+      className={cn(
+        "inline-flex min-h-[36px] items-center rounded-full border px-3.5 py-1.5 text-sm font-medium outline-none transition-colors focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none",
         active
-          ? "border-primary bg-primary text-primary-foreground"
-          : "border-input bg-background text-foreground hover:bg-muted"
-      }`}
+          ? "border-primary bg-primary text-primary-foreground shadow-sm"
+          : "border-border bg-background text-foreground hover:bg-muted",
+      )}
     >
       {label}
     </button>

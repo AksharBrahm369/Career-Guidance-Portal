@@ -1,20 +1,33 @@
-import Link from "next/link";
+import { headers } from "next/headers";
+import { StudentHeader } from "@/components/student/student-shell/student-header";
 
-export default function StudentLayout({ children }: { children: React.ReactNode }) {
+// The (student) root applies the warm "student" theme (violet + emerald-teal)
+// scoped via `.theme-student`. Auth routes (login / signup) render bare and
+// centered — no app nav — detected via the x-pathname header set in middleware.
+export default async function StudentLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const pathname = (await headers()).get("x-pathname") ?? "";
+  const isAuthRoute =
+    pathname.startsWith("/student/login") ||
+    pathname.startsWith("/student/signup");
+
+  if (isAuthRoute) {
+    return (
+      <div className="theme-student flex min-h-dvh flex-col items-center justify-center bg-background px-4 py-10 font-sans">
+        <div className="w-full max-w-md">{children}</div>
+      </div>
+    );
+  }
+
   return (
-    <div className="min-h-screen bg-background">
-      <header className="border-b">
-        <div className="mx-auto flex max-w-3xl items-center justify-between px-4 py-3">
-          <Link href="/" className="text-sm font-semibold">
-            Career Box
-          </Link>
-          <nav className="flex gap-4 text-sm">
-            <Link href="/assessment">Assessment</Link>
-            <Link href="/courses">Courses</Link>
-          </nav>
-        </div>
-      </header>
-      <main className="mx-auto max-w-3xl px-4 py-6 sm:py-10">{children}</main>
+    <div className="theme-student min-h-dvh bg-background font-sans">
+      <StudentHeader />
+      <main className="mx-auto max-w-5xl px-4 py-6 sm:px-6 sm:py-10">
+        {children}
+      </main>
     </div>
   );
 }

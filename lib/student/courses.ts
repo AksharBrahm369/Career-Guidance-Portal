@@ -56,21 +56,24 @@ export async function listPublishedCourses(filters: CatalogueFilters) {
     .offset(offset);
 
   const ids = rows.map((r) => r.id);
-  const counts = ids.length
-    ? await db
-        .select({
-          courseId: courseInstitutes.courseId,
-          count: sql<number>`count(*)::int`,
-        })
-        .from(courseInstitutes)
-        .where(inArray(courseInstitutes.courseId, ids))
-        .groupBy(courseInstitutes.courseId)
-    : [];
+  // counts (per-course institute totals) and totalRes (overall page count) are
+  // independent of each other — run them concurrently to save a DB round-trip.
+  const [counts, totalRes] = await Promise.all([
+    ids.length
+      ? db
+          .select({
+            courseId: courseInstitutes.courseId,
+            count: sql<number>`count(*)::int`,
+          })
+          .from(courseInstitutes)
+          .where(inArray(courseInstitutes.courseId, ids))
+          .groupBy(courseInstitutes.courseId)
+      : Promise.resolve([]),
+    db.execute<{ total: number }>(
+      sql`select count(*)::int as total from ${courses} where ${where}`,
+    ),
+  ]);
   const countMap = new Map(counts.map((c) => [c.courseId, c.count]));
-
-  const totalRes = await db.execute<{ total: number }>(
-    sql`select count(*)::int as total from ${courses} where ${where}`,
-  );
   const total = totalRes.rows[0]?.total ?? 0;
 
   return {
@@ -86,26 +89,32 @@ export async function listPublishedCourses(filters: CatalogueFilters) {
   };
 }
 
-export async function getPublishedCourseBySlug(slug: string) {
-  const course = await db.query.courses.findFirst({
+export async function getPublishedCourseRowBySlug(slug: string) {
+  return db.query.courses.findFirst({
     where: and(eq(courses.slug, slug), eq(courses.status, "published")),
   });
-  if (!course) return null;
+}
 
+export async function getInstitutesForCourse(courseId: string) {
   const links = await db
     .select({ instituteId: courseInstitutes.instituteId })
     .from(courseInstitutes)
-    .where(eq(courseInstitutes.courseId, course.id));
+    .where(eq(courseInstitutes.courseId, courseId));
   const instituteIds = links.map((l) => l.instituteId);
 
-  const linkedInstitutes = instituteIds.length
-    ? await db
+  return instituteIds.length
+    ? db
         .select()
         .from(institutes)
         .where(inArray(institutes.id, instituteIds))
         .orderBy(institutes.name)
     : [];
+}
 
+export async function getPublishedCourseBySlug(slug: string) {
+  const course = await getPublishedCourseRowBySlug(slug);
+  if (!course) return null;
+  const linkedInstitutes = await getInstitutesForCourse(course.id);
   return { course, institutes: linkedInstitutes };
 }
 

@@ -1,5 +1,6 @@
+import { redirect } from "next/navigation";
 import { desc, eq } from "drizzle-orm";
-import { requireStudent } from "@/lib/auth/require-student";
+import { requireStudent, StudentUnauthorizedError } from "@/lib/auth/require-student";
 import { db } from "@/lib/db";
 import { assessments } from "@/db/schema";
 import { getActiveItems } from "@/lib/assessment/items";
@@ -15,13 +16,24 @@ export const runtime = "nodejs";
  * - resolves the student session (middleware already gates /assessment),
  * - loads the latest attempt + the three scored item sets in parallel,
  * - renders the captured profile if the latest attempt is completed,
- *   otherwise the resumable 4-module flow.
+ *   otherwise the resumable 5-module flow (interests, work_style, aptitude,
+ *   subjects, marks).
  *
  * SECURITY: question-bank rows carry answer keys (`correctOptionId`,
  * `scoringMap`). Those are stripped here — only `ClientItem` reaches the client.
  */
 export default async function AssessmentEntryPage() {
-  const { studentId } = await requireStudent();
+  // requireStudent() THROWS on a missing/expired session or a wrong-role (e.g.
+  // admin) session. Middleware only checks cookie *presence*, so a stale cookie
+  // reaches here — catch the auth error and redirect to login rather than
+  // rendering the global error boundary (mirrors the admin layout's pattern).
+  let studentId: string;
+  try {
+    ({ studentId } = await requireStudent());
+  } catch (err) {
+    if (err instanceof StudentUnauthorizedError) redirect("/student/login");
+    throw err;
+  }
 
   const [latest, interestItems, workStyleItems, aptitudeItems] = await Promise.all([
     db.query.assessments.findFirst({
@@ -41,6 +53,7 @@ export default async function AssessmentEntryPage() {
         interestData={latest.interestData ?? {}}
         workStyleScores={latest.workStyleScores ?? {}}
         aptitudeScores={latest.aptitudeScores ?? {}}
+        subjectAffinities={latest.subjectAffinities ?? {}}
         marks={latest.marks ?? null}
         confidence={confidence}
         clusterScores={latest.clusterScores ?? []}
@@ -61,15 +74,19 @@ export default async function AssessmentEntryPage() {
 
   const inProgress = latest && latest.status === "in_progress" ? latest : null;
 
+  // The wizard reads best in a comfortable single-column measure, narrower than
+  // the page's max-w-5xl (which the results view uses for its rich course cards).
   return (
-    <AssessmentFlow
-      attemptId={inProgress?.id ?? null}
-      initialResponses={(inProgress?.responses as Record<string, unknown> | undefined) ?? {}}
-      items={{
-        interests: toClient(interestItems),
-        work_style: toClient(workStyleItems),
-        aptitude: toClient(aptitudeItems),
-      }}
-    />
+    <div className="mx-auto w-full max-w-2xl">
+      <AssessmentFlow
+        attemptId={inProgress?.id ?? null}
+        initialResponses={(inProgress?.responses as Record<string, unknown> | undefined) ?? {}}
+        items={{
+          interests: toClient(interestItems),
+          work_style: toClient(workStyleItems),
+          aptitude: toClient(aptitudeItems),
+        }}
+      />
+    </div>
   );
 }

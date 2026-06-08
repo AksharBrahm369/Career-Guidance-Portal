@@ -1,12 +1,35 @@
 import Link from "next/link";
+import {
+  ArrowRightIcon,
+  CompassIcon,
+  GraduationCapIcon,
+  HeartIcon,
+  type LucideIcon,
+  SparklesIcon,
+  SproutIcon,
+  StarIcon,
+  TrendingUpIcon,
+} from "lucide-react";
 import type { ClusterScore, CourseRecommendation } from "@/lib/recommendation/types";
-import { PrintResultButton } from "./result-actions";
-import type { AptitudeScores, Marks, Riasec, WorkStyleScores } from "./types";
+import { cn } from "@/lib/utils";
+import { Badge } from "@/components/ui/badge";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Empty,
+  EmptyContent,
+  EmptyDescription,
+  EmptyHeader,
+  EmptyMedia,
+  EmptyTitle,
+} from "@/components/ui/empty";
+import { ResultActions } from "./result-actions";
+import type { AptitudeScores, Marks, Riasec, SubjectAffinities, WorkStyleScores } from "./types";
 
 interface Props {
   interestData: Riasec;
   workStyleScores: WorkStyleScores;
   aptitudeScores: AptitudeScores;
+  subjectAffinities: SubjectAffinities;
   marks: Marks | null;
   confidence: "high" | "moderate" | "low" | null;
   clusterScores: ClusterScore[];
@@ -23,53 +46,142 @@ const RIASEC_LABELS: Record<string, string> = {
   C: "Conventional",
 };
 
-const BAND_TONE: Record<string, string> = {
-  strong: "bg-emerald-100 text-emerald-900",
-  moderate: "bg-amber-100 text-amber-900",
-  developing: "bg-slate-100 text-slate-700",
+const RIASEC_BLURBS: Record<string, string> = {
+  R: "Hands-on, building, doing",
+  I: "Ideas, research, figuring things out",
+  A: "Creating, designing, expressing",
+  S: "Helping, teaching, connecting",
+  E: "Leading, persuading, starting things",
+  C: "Organising, planning, precision",
+};
+
+type Band = "strong" | "moderate" | "developing";
+
+const BAND_META: Record<Band, { label: string; icon: LucideIcon; chip: string; dot: string }> = {
+  strong: {
+    label: "Strong",
+    icon: StarIcon,
+    // Emerald = "fit/success". Explicit (not --accent) so it reads green in the
+    // admin reuse too, where --accent is indigo, not emerald-teal.
+    chip: "border-emerald-200 bg-emerald-50 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300",
+    dot: "bg-emerald-500",
+  },
+  moderate: {
+    label: "Moderate",
+    icon: TrendingUpIcon,
+    chip: "border-amber-200 bg-amber-50 text-amber-800 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-300",
+    dot: "bg-amber-500",
+  },
+  developing: {
+    label: "Developing",
+    icon: SproutIcon,
+    chip: "border-border bg-muted text-muted-foreground",
+    dot: "bg-muted-foreground/50",
+  },
 };
 
 const CONFIDENCE_NOTE: Record<string, string> = {
-  high: "Your answers look consistent — this profile is a reliable starting point.",
-  moderate: "This profile is a useful starting point.",
+  high: "Your answers look consistent — this is a reliable starting point for what fits you.",
+  moderate: "This is a useful starting point for what fits you.",
   low: "Some answers looked rushed, so treat this as a rough first read — you can retake it later for a sharper picture.",
 };
 
-/** Horizontal bar list scaled relative to the largest value in the set. */
-function BarList({ entries, label }: { entries: [string, number][]; label: string }) {
-  const max = Math.max(1, ...entries.map(([, v]) => v));
+/**
+ * One staggered reveal slot. Pure CSS via tailwindcss-animate, gated behind
+ * `motion-safe:` so `prefers-reduced-motion` users get the final state instantly.
+ */
+function Reveal({
+  children,
+  index = 0,
+  className,
+}: {
+  children: React.ReactNode;
+  index?: number;
+  className?: string;
+}) {
   return (
-    <div className="flex flex-col gap-2">
-      <h3 className="text-sm font-semibold">{label}</h3>
-      <div className="flex flex-col gap-1.5">
-        {entries.map(([key, value]) => (
-          <div key={key} className="flex items-center gap-2">
-            <span className="w-28 shrink-0 text-xs text-muted-foreground">{key}</span>
-            <div className="h-2 flex-1 overflow-hidden rounded-full bg-muted">
-              <div
-                className="h-full rounded-full bg-primary"
-                style={{ width: `${(value / max) * 100}%` }}
-              />
-            </div>
-            <span className="w-8 shrink-0 text-right text-xs tabular-nums text-muted-foreground">
-              {value}
-            </span>
-          </div>
-        ))}
-      </div>
+    <div
+      className={cn(
+        "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:fill-mode-both motion-safe:duration-500",
+        className,
+      )}
+      style={{ animationDelay: `${Math.min(index, 8) * 70}ms` }}
+    >
+      {children}
     </div>
   );
 }
 
+/** Labelled horizontal bars, scaled to the largest value in the set. */
+function BarList({
+  entries,
+  emphasiseTop = false,
+}: {
+  entries: Array<{ key: string; label: string; value: number; blurb?: string }>;
+  emphasiseTop?: boolean;
+}) {
+  const max = Math.max(1, ...entries.map((e) => e.value));
+  return (
+    <div className="flex flex-col gap-3.5">
+      {entries.map((entry, i) => {
+        const pct = Math.round((entry.value / max) * 100);
+        const isTop = emphasiseTop && i === 0;
+        return (
+          <div key={entry.key} className="flex flex-col gap-1.5">
+            <div className="flex items-baseline justify-between gap-2">
+              <span className="flex items-baseline gap-2 text-sm font-medium">
+                {entry.label}
+                {entry.blurb ? (
+                  <span className="text-xs font-normal text-muted-foreground">{entry.blurb}</span>
+                ) : null}
+              </span>
+              <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
+                {entry.value}
+              </span>
+            </div>
+            <div
+              className="h-2.5 overflow-hidden rounded-full bg-muted"
+              role="img"
+              aria-label={`${entry.label}: ${pct} percent of your strongest`}
+            >
+              <div
+                className={cn(
+                  "h-full rounded-full transition-[width] duration-700 ease-out",
+                  isTop ? "bg-primary" : "bg-primary/55",
+                )}
+                style={{ width: `${pct}%` }}
+              />
+            </div>
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
+/** Small section heading with a tinted icon tile — used across profile cards. */
+function SectionTitle({ icon: Icon, children }: { icon: LucideIcon; children: React.ReactNode }) {
+  return (
+    <CardTitle className="flex items-center gap-2.5 text-base">
+      <span className="flex size-8 items-center justify-center rounded-lg bg-primary/10 text-primary">
+        <Icon className="size-4" aria-hidden />
+      </span>
+      {children}
+    </CardTitle>
+  );
+}
+
 /**
- * Read-only "Brain Profile" for a completed attempt: RIASEC interests,
- * work-style traits, aptitude bands, and marks strengths. Recommendations
- * (clusters → courses → institutes) arrive in the next milestone.
+ * Read-only "Brain Profile" for a completed attempt — the reward moment: a hero
+ * with the top career cluster, RIASEC interests, work-style + aptitude bands,
+ * subject strengths, marks, and recommended-course cards. Shared with the admin
+ * student-detail page, so prop shapes are fixed; presentation is owned here.
  */
 export function CapturedProfile({
   interestData,
   workStyleScores,
   aptitudeScores,
+  subjectAffinities,
   marks,
   confidence,
   clusterScores,
@@ -77,116 +189,237 @@ export function CapturedProfile({
   lowSignal,
 }: Props) {
   const interestEntries = Object.entries(interestData)
-    .map(([k, v]) => [RIASEC_LABELS[k] ?? k, v] as [string, number])
-    .sort((a, b) => b[1] - a[1]);
-  const workStyleEntries = Object.entries(workStyleScores).sort((a, b) => b[1] - a[1]);
+    .map(([k, v]) => ({ key: k, label: RIASEC_LABELS[k] ?? k, value: v, blurb: RIASEC_BLURBS[k] }))
+    .sort((a, b) => b.value - a.value);
+  const workStyleEntries = Object.entries(workStyleScores)
+    .map(([k, v]) => ({ key: k, label: k, value: v }))
+    .sort((a, b) => b.value - a.value);
+  const favouriteSubjects = Object.entries(subjectAffinities)
+    .filter(([, v]) => v >= 0.8)
+    .sort((a, b) => b[1] - a[1])
+    .map(([s]) => s);
   const aptitudeEntries = Object.entries(aptitudeScores);
-  const clusterEntries = clusterScores
-    .slice(0, 5)
-    .map((c) => [c.name, Math.round(c.score * 100)] as [string, number]);
+  const topCluster = clusterScores[0] ?? null;
+  const clusterEntries = clusterScores.slice(0, 5).map((c) => ({
+    key: c.clusterKey,
+    label: c.name,
+    value: Math.round(c.score * 100),
+  }));
+
+  // Running index so each card reveals a beat after the previous one.
+  let slot = 0;
 
   return (
-    <section className="flex flex-col gap-6">
-      <div className="flex items-start justify-between gap-3">
-        <div className="flex flex-col gap-1">
-          <h1 className="text-xl font-semibold">Your Brain Profile</h1>
-          {confidence ? (
-            <p className="text-sm text-muted-foreground">{CONFIDENCE_NOTE[confidence]}</p>
-          ) : null}
-        </div>
-        <PrintResultButton />
-      </div>
-
-      {interestEntries.length > 0 ? (
-        <div className="rounded-lg border bg-card p-4">
-          <BarList entries={interestEntries} label="Interests (RIASEC)" />
-        </div>
-      ) : null}
-
-      {workStyleEntries.length > 0 ? (
-        <div className="rounded-lg border bg-card p-4">
-          <BarList entries={workStyleEntries} label="How you like to work" />
-        </div>
-      ) : null}
-
-      {aptitudeEntries.length > 0 ? (
-        <div className="flex flex-col gap-2 rounded-lg border bg-card p-4">
-          <h3 className="text-sm font-semibold">Aptitude</h3>
-          <div className="flex flex-col gap-1.5">
-            {aptitudeEntries.map(([dim, { raw, total, band }]) => (
-              <div key={dim} className="flex items-center justify-between gap-2 text-sm">
-                <span className="capitalize">{dim}</span>
-                <span className="flex items-center gap-2">
-                  <span className="text-xs tabular-nums text-muted-foreground">
-                    {raw}/{total}
-                  </span>
-                  <span
-                    className={`rounded px-1.5 py-0.5 text-[11px] font-medium capitalize ${
-                      BAND_TONE[band] ?? "bg-muted"
-                    }`}
-                  >
-                    {band}
-                  </span>
+    <section className="flex flex-col gap-5">
+      {/* Hero — the celebratory top of the results. */}
+      <Reveal index={slot++}>
+        <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-5 sm:p-7">
+          <div
+            aria-hidden
+            className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-primary/10 blur-3xl"
+          />
+          <div className="relative flex flex-col gap-4">
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="flex flex-col gap-2">
+                <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
+                  <SparklesIcon className="size-3.5" aria-hidden />
+                  Your results are ready
                 </span>
+                <h1 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
+                  Your Brain Profile
+                </h1>
               </div>
-            ))}
+              <ResultActions />
+            </div>
+
+            {topCluster ? (
+              <div className="flex flex-col gap-1.5">
+                <p className="text-sm text-muted-foreground">Your strongest career direction</p>
+                <p className="flex items-center gap-2 font-heading text-xl font-semibold sm:text-2xl">
+                  <CompassIcon className="size-5 shrink-0 text-accent" aria-hidden />
+                  {topCluster.name}
+                </p>
+              </div>
+            ) : null}
+
+            {confidence ? (
+              <p className="max-w-prose text-sm text-muted-foreground">
+                {CONFIDENCE_NOTE[confidence]}
+              </p>
+            ) : null}
           </div>
         </div>
+      </Reveal>
+
+      {/* Interests (RIASEC). */}
+      {interestEntries.length > 0 ? (
+        <Reveal index={slot++}>
+          <Card>
+            <CardHeader>
+              <SectionTitle icon={HeartIcon}>What you&apos;re drawn to</SectionTitle>
+            </CardHeader>
+            <CardContent>
+              <BarList entries={interestEntries} emphasiseTop />
+            </CardContent>
+          </Card>
+        </Reveal>
       ) : null}
 
-      {marks ? (
-        <div className="flex flex-col gap-2 rounded-lg border bg-card p-4">
-          <h3 className="text-sm font-semibold">Academic strengths</h3>
-          <p className="text-xs text-muted-foreground">
-            {marks.board} · <span className="capitalize">{marks.stream}</span>
-          </p>
-          <div className="flex flex-wrap gap-1.5">
-            {marks.strengths.map((subject, i) => (
-              <span
-                key={subject}
-                className={`rounded px-2 py-0.5 text-xs ${
-                  i === 0 ? "bg-secondary font-medium" : "bg-muted text-muted-foreground"
-                }`}
-              >
-                {subject}
-                {marks.subjects[subject] != null ? ` · ${marks.subjects[subject]}%` : ""}
-              </span>
-            ))}
-          </div>
-        </div>
+      {/* Work style. */}
+      {workStyleEntries.length > 0 ? (
+        <Reveal index={slot++}>
+          <Card>
+            <CardHeader>
+              <SectionTitle icon={CompassIcon}>How you like to work</SectionTitle>
+            </CardHeader>
+            <CardContent>
+              <BarList entries={workStyleEntries} />
+            </CardContent>
+          </Card>
+        </Reveal>
       ) : null}
 
+      {/* Aptitude — friendly band chips (color + icon + text). */}
+      {aptitudeEntries.length > 0 ? (
+        <Reveal index={slot++}>
+          <Card>
+            <CardHeader>
+              <SectionTitle icon={SparklesIcon}>Your thinking strengths</SectionTitle>
+            </CardHeader>
+            <CardContent>
+              <ul className="flex flex-col gap-2.5">
+                {aptitudeEntries.map(([dim, { raw, total, band }]) => {
+                  const meta = BAND_META[band] ?? BAND_META.developing;
+                  const BandIcon = meta.icon;
+                  return (
+                    <li
+                      key={dim}
+                      className="flex items-center justify-between gap-3 rounded-xl border bg-card p-3"
+                    >
+                      <span className="flex items-center gap-2.5 text-sm font-medium capitalize">
+                        <span className={cn("size-2 shrink-0 rounded-full", meta.dot)} aria-hidden />
+                        {dim}
+                      </span>
+                      <span className="flex items-center gap-2.5">
+                        <span className="text-xs tabular-nums text-muted-foreground">
+                          {raw}/{total}
+                        </span>
+                        <span
+                          className={cn(
+                            "inline-flex items-center gap-1 rounded-full border px-2.5 py-1 text-xs font-semibold",
+                            meta.chip,
+                          )}
+                        >
+                          <BandIcon className="size-3.5" aria-hidden />
+                          {meta.label}
+                        </span>
+                      </span>
+                    </li>
+                  );
+                })}
+              </ul>
+            </CardContent>
+          </Card>
+        </Reveal>
+      ) : null}
+
+      {/* Subjects you enjoy + academic strengths. */}
+      {favouriteSubjects.length > 0 || marks ? (
+        <Reveal index={slot++}>
+          <Card>
+            <CardHeader>
+              <SectionTitle icon={GraduationCapIcon}>Your academic side</SectionTitle>
+            </CardHeader>
+            <CardContent className="flex flex-col gap-5">
+              {favouriteSubjects.length > 0 ? (
+                <div className="flex flex-col gap-2.5">
+                  <p className="text-sm font-medium text-muted-foreground">Subjects you enjoy</p>
+                  <div className="flex flex-wrap gap-2">
+                    {favouriteSubjects.map((subject) => (
+                      <Badge key={subject} variant="secondary" className="px-3 py-1 text-xs">
+                        {subject}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+
+              {marks ? (
+                <div className="flex flex-col gap-2.5">
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-sm font-medium text-muted-foreground">
+                      Where you&apos;re strong
+                    </p>
+                    <span className="text-xs text-muted-foreground">
+                      {marks.board} · <span className="capitalize">{marks.stream}</span>
+                    </span>
+                  </div>
+                  <div className="flex flex-wrap gap-2">
+                    {marks.strengths.map((subject, i) => (
+                      <Badge
+                        key={subject}
+                        variant={i === 0 ? "default" : "secondary"}
+                        className="px-3 py-1 text-xs tabular-nums"
+                      >
+                        {subject}
+                        {marks.subjects[subject] != null ? ` · ${marks.subjects[subject]}%` : ""}
+                      </Badge>
+                    ))}
+                  </div>
+                </div>
+              ) : null}
+            </CardContent>
+          </Card>
+        </Reveal>
+      ) : null}
+
+      {/* Recommendations — or warm low-signal / empty guidance. */}
       {recommendedCourses.length === 0 ? (
-        <div className="flex flex-col gap-3 rounded-lg border border-dashed bg-muted/40 p-4">
-          <p className="text-sm">
-            <span className="font-medium">We couldn&apos;t find a confident match yet.</span> That
-            often just means the catalogue is still filling in for your stream. It&apos;s worth
-            talking to a counselor and exploring the full catalogue while we add more courses.
-          </p>
-          <Link
-            href="/courses"
-            className="self-start rounded-md border px-3 py-1.5 text-sm hover:border-primary"
-          >
-            Browse all courses
-          </Link>
-        </div>
+        <Reveal index={slot++}>
+          <Empty className="border">
+            <EmptyHeader>
+              <EmptyMedia variant="icon">
+                <CompassIcon />
+              </EmptyMedia>
+              <EmptyTitle>No confident match just yet</EmptyTitle>
+              <EmptyDescription>
+                That usually just means the catalogue is still filling in for your stream. Explore
+                everything we have so far — and a counselor can help you read these results.
+              </EmptyDescription>
+            </EmptyHeader>
+            <EmptyContent>
+              <Link
+                href="/courses"
+                className="inline-flex h-10 items-center justify-center gap-1.5 rounded-md bg-primary px-4 text-sm font-medium text-primary-foreground ring-offset-background transition-colors hover:bg-primary/90 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2"
+              >
+                Browse all courses
+                <ArrowRightIcon className="size-4" aria-hidden />
+              </Link>
+            </EmptyContent>
+          </Empty>
+        </Reveal>
       ) : (
-        <div className="flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <h2 className="text-lg font-semibold">
-              {lowSignal ? "Directions worth exploring" : "Your recommended courses"}
+        <Reveal index={slot++} className="flex flex-col gap-5">
+          <div className="flex flex-col gap-1.5">
+            <h2 className="font-heading text-2xl font-bold tracking-tight">
+              {lowSignal ? "Directions worth exploring" : "Courses that fit you"}
             </h2>
-            <p className="text-sm text-muted-foreground">
+            <p className="max-w-prose text-sm text-muted-foreground">
               {lowSignal
-                ? "Your answers didn't point to one clear path, so treat these as a broad starting set — you can retake the assessment later for a sharper read."
+                ? "Your answers didn't point to one clear path, so treat these as a broad starting set — retake the assessment later for a sharper read."
                 : "Ranked by how well each fits your profile. Tap any course for institutes, fees and sources."}
             </p>
           </div>
 
           {clusterEntries.length > 0 ? (
-            <div className="rounded-lg border bg-card p-4">
-              <BarList entries={clusterEntries} label="Career clusters that fit you" />
-            </div>
+            <Card>
+              <CardHeader>
+                <SectionTitle icon={CompassIcon}>Career clusters that fit you</SectionTitle>
+              </CardHeader>
+              <CardContent>
+                <BarList entries={clusterEntries} emphasiseTop={!lowSignal} />
+              </CardContent>
+            </Card>
           ) : null}
 
           <ol className="flex flex-col gap-3">
@@ -196,44 +429,76 @@ export function CapturedProfile({
                 <li key={course.courseId}>
                   <Link
                     href={`/courses/${course.slug}`}
-                    className={`flex flex-col gap-2 rounded-lg border bg-card p-4 transition hover:border-primary ${
-                      isTop ? "border-primary ring-1 ring-primary" : ""
-                    }`}
+                    className={cn(
+                      "group block rounded-2xl border bg-card p-4 transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:p-5",
+                      isTop && "border-primary/60 ring-1 ring-primary/30",
+                    )}
                   >
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="flex flex-col gap-0.5">
-                        {isTop ? (
-                          <span className="text-[11px] font-medium uppercase tracking-wide text-primary">
-                            Top match
+                    <div className="flex flex-col gap-3">
+                      <div className="flex items-start justify-between gap-3">
+                        <div className="flex flex-col gap-1.5">
+                          {isTop ? (
+                            <span className="inline-flex w-fit items-center gap-1 rounded-full bg-primary/10 px-2.5 py-0.5 text-[11px] font-semibold uppercase tracking-wide text-primary">
+                              <StarIcon className="size-3" aria-hidden />
+                              Top match
+                            </span>
+                          ) : null}
+                          <h3 className="font-heading text-lg font-semibold leading-tight">
+                            {course.courseName}
+                          </h3>
+                        </div>
+                        <span className="flex shrink-0 flex-col items-center rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300">
+                          <span className="text-base font-bold leading-none tabular-nums">
+                            {course.fitScore}%
                           </span>
-                        ) : null}
-                        <h3 className="text-base font-semibold leading-tight">{course.courseName}</h3>
+                          <span className="text-[10px] font-medium uppercase tracking-wide">
+                            fit
+                          </span>
+                        </span>
                       </div>
-                      <span className="shrink-0 rounded bg-secondary px-2 py-0.5 text-xs font-medium tabular-nums">
-                        {course.fitScore}% fit
-                      </span>
-                    </div>
-                    <ul className="flex flex-col gap-1 text-sm text-muted-foreground">
-                      {course.reasons.map((reason) => (
-                        <li key={reason} className="flex gap-1.5">
-                          <span aria-hidden className="text-primary">
-                            ·
+
+                      {course.reasons.length > 0 ? (
+                        <ul className="flex flex-col gap-1.5 text-sm text-muted-foreground">
+                          {course.reasons.map((reason) => (
+                            <li key={reason} className="flex gap-2">
+                              <ArrowRightIcon
+                                className="mt-0.5 size-3.5 shrink-0 text-accent"
+                                aria-hidden
+                              />
+                              <span>{reason}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      ) : null}
+
+                      <div className="flex items-center justify-between gap-2">
+                        {course.crossStream ? (
+                          <span className="inline-flex items-center gap-1 rounded-full border border-amber-200 bg-amber-50 px-2.5 py-0.5 text-[11px] font-semibold text-amber-800 dark:border-amber-900 dark:bg-amber-950/50 dark:text-amber-300">
+                            Cross-stream
                           </span>
-                          {reason}
-                        </li>
-                      ))}
-                    </ul>
-                    {course.crossStream ? (
-                      <span className="self-start rounded bg-amber-100 px-1.5 py-0.5 text-[11px] font-medium text-amber-900">
-                        Cross-stream
-                      </span>
-                    ) : null}
+                        ) : (
+                          <span />
+                        )}
+                        <span className="inline-flex items-center gap-1 text-sm font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                          View course
+                          <ArrowRightIcon className="size-4" aria-hidden />
+                        </span>
+                      </div>
+                    </div>
                   </Link>
                 </li>
               );
             })}
           </ol>
-        </div>
+
+          <Link
+            href="/courses"
+            className="inline-flex items-center justify-center gap-1.5 self-center text-sm font-medium text-muted-foreground underline-offset-4 hover:text-primary hover:underline"
+          >
+            Browse all courses instead
+            <ArrowRightIcon className="size-4" aria-hidden />
+          </Link>
+        </Reveal>
       )}
     </section>
   );

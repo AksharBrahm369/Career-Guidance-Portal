@@ -1,22 +1,43 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { QAChat } from "@/components/student/qa-chat";
 import {
-  getPublishedCourseBySlug,
+  ArrowLeft,
+  Banknote,
+  Building2,
+  Clock,
+  ExternalLink,
+  GraduationCap,
+  Info,
+  Link2,
+  MapPin,
+  MessagesSquare,
+  ScrollText,
+} from "lucide-react";
+import { QAChat } from "@/components/student/qa-chat";
+import { AiSafetyBadge } from "@/components/student/ai-safety-badge";
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import {
+  getInstitutesForCourse,
+  getPublishedCourseRowBySlug,
   getRelatedPublishedCourses,
 } from "@/lib/student/courses";
 
 export const dynamic = "force-dynamic";
 
-const TAG_LABEL: Record<string, string> = {
-  ai_safe: "AI-safe",
-  ai_augmented: "AI-augmented",
-  ai_risk: "AI-risk",
-};
-const TAG_TONE: Record<string, string> = {
-  ai_safe: "bg-emerald-100 text-emerald-900",
-  ai_augmented: "bg-amber-100 text-amber-900",
-  ai_risk: "bg-rose-100 text-rose-900",
+const STREAM_LABEL: Record<string, string> = {
+  science: "Science",
+  commerce: "Commerce",
+  arts: "Arts",
+  vocational: "Vocational",
 };
 
 export default async function CourseDetailPage({
@@ -25,138 +46,277 @@ export default async function CourseDetailPage({
   params: Promise<{ slug: string }>;
 }) {
   const { slug } = await params;
-  const data = await getPublishedCourseBySlug(slug);
-  if (!data) notFound();
-  const { course, institutes: linkedInstitutes } = data;
+  const course = await getPublishedCourseRowBySlug(slug);
+  if (!course) notFound();
 
-  const related = await getRelatedPublishedCourses(course.id, course.careerClusters);
+  // institutes and related courses both depend only on the resolved course
+  // (its id + clusters) and are independent of each other — fetch in parallel
+  // instead of serializing related behind the institutes round-trip.
+  const [linkedInstitutes, related] = await Promise.all([
+    getInstitutesForCourse(course.id),
+    getRelatedPublishedCourses(course.id, course.careerClusters),
+  ]);
 
   return (
     <article className="flex flex-col gap-6">
-      <Link href="/courses" className="text-xs text-muted-foreground underline">
-        ← Back to catalogue
-      </Link>
+      <Button
+        asChild
+        variant="ghost"
+        size="sm"
+        className="-ml-2 self-start text-muted-foreground"
+      >
+        <Link href="/courses">
+          <ArrowLeft data-icon="inline-start" />
+          Back to catalogue
+        </Link>
+      </Button>
 
-      <header className="flex flex-col gap-3">
-        <div className="flex flex-wrap items-start justify-between gap-2">
-          <h1 className="text-2xl font-semibold sm:text-3xl">{course.courseName}</h1>
-          <span
-            className={`shrink-0 rounded px-2 py-1 text-xs font-medium ${TAG_TONE[course.aiSafetyTag] ?? "bg-muted"
-              }`}
-          >
-            {TAG_LABEL[course.aiSafetyTag] ?? course.aiSafetyTag}
-          </span>
+      {/* Header */}
+      <header className="flex flex-col gap-4">
+        <div className="flex flex-wrap items-center gap-2">
+          <Badge variant="secondary" className="font-normal">
+            {STREAM_LABEL[course.stream] ?? course.stream}
+          </Badge>
+          <AiSafetyBadge tag={course.aiSafetyTag} size="md" />
         </div>
-        <div className="flex flex-wrap gap-1.5 text-xs">
-          <Tag>{course.stream}</Tag>
-          <Tag>{course.tenureYears} yrs</Tag>
-          {course.careerClusters.map((c) => (
-            <Tag key={c} tone="secondary">
-              {c}
-            </Tag>
-          ))}
+
+        <h1 className="font-heading text-3xl font-bold tracking-tight sm:text-4xl">
+          {course.courseName}
+        </h1>
+
+        <div className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-muted-foreground">
+          <span className="inline-flex items-center gap-1.5">
+            <Clock className="size-4" aria-hidden />
+            <span className="tabular-nums">{course.tenureYears}</span> year
+            {course.tenureYears === "1" ? "" : "s"}
+          </span>
+          <span className="inline-flex items-center gap-1.5">
+            <Building2 className="size-4" aria-hidden />
+            <span className="tabular-nums">{linkedInstitutes.length}</span>{" "}
+            {linkedInstitutes.length === 1 ? "institute" : "institutes"}
+          </span>
+          {course.careerClusters.length > 0 ? (
+            <span className="inline-flex flex-wrap items-center gap-1.5">
+              {course.careerClusters.map((c) => (
+                <Badge key={c} variant="outline" className="font-normal">
+                  {c}
+                </Badge>
+              ))}
+            </span>
+          ) : null}
         </div>
       </header>
 
-      <section>
-        <h2 className="mb-1 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          About
-        </h2>
-        <p className="whitespace-pre-line text-sm leading-relaxed sm:text-base">
-          {course.description}
-        </p>
-      </section>
+      {/* Overview */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Info className="size-5 text-primary" aria-hidden />
+            Overview
+          </CardTitle>
+        </CardHeader>
+        <CardContent className="flex flex-col gap-4">
+          <p className="whitespace-pre-line text-sm leading-relaxed text-foreground/90 sm:text-base">
+            {course.description}
+          </p>
+          {course.aiSafetyReasoning ? (
+            <>
+              <Separator />
+              <div className="flex flex-col gap-1.5">
+                <div className="flex items-center gap-2 text-sm font-medium">
+                  <AiSafetyBadge tag={course.aiSafetyTag} />
+                  <span className="text-muted-foreground">
+                    What this means for your future
+                  </span>
+                </div>
+                <p className="text-sm leading-relaxed text-muted-foreground">
+                  {course.aiSafetyReasoning}
+                </p>
+              </div>
+            </>
+          ) : null}
+        </CardContent>
+      </Card>
 
-      {course.aiSafetyReasoning ? (
-        <section className="rounded-md border bg-muted/30 p-3">
-          <h2 className="mb-1 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
-            AI exposure: why &ldquo;{TAG_LABEL[course.aiSafetyTag] ?? course.aiSafetyTag}&rdquo;
-          </h2>
-          <p className="text-sm">{course.aiSafetyReasoning}</p>
-        </section>
-      ) : null}
+      {/* Eligibility & exams + Fees */}
+      <div className="grid grid-cols-1 gap-4 lg:grid-cols-2">
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <GraduationCap className="size-5 text-primary" aria-hidden />
+              Eligibility &amp; exams
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <DetailRow label="Who can apply">
+              {course.eligibilityCriteria}
+            </DetailRow>
+            <Separator />
+            <DetailRow label="Entrance exams">
+              {course.entranceExams.length ? (
+                <div className="flex flex-wrap gap-1.5">
+                  {course.entranceExams.map((e) => (
+                    <Badge key={e} variant="outline" className="font-normal">
+                      {e}
+                    </Badge>
+                  ))}
+                </div>
+              ) : (
+                "No entrance exam required"
+              )}
+            </DetailRow>
+          </CardContent>
+        </Card>
 
-      <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
-        <Field label="Eligibility">{course.eligibilityCriteria}</Field>
-        <Field label="Entrance exams">
-          {course.entranceExams.length ? course.entranceExams.join(", ") : "None"}
-        </Field>
-        <Field label="Tenure">{course.tenureYears} years</Field>
-        <Field label="Fees (annual, INR)">{formatFees(course.feesMinInr, course.feesMaxInr)}</Field>
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-lg">
+              <Banknote className="size-5 text-primary" aria-hidden />
+              Fees
+            </CardTitle>
+            <CardDescription>Approximate annual tuition (INR)</CardDescription>
+          </CardHeader>
+          <CardContent className="flex flex-col gap-4">
+            <p className="font-heading text-2xl font-semibold tabular-nums">
+              {formatFees(course.feesMinInr, course.feesMaxInr)}
+            </p>
+            <DetailRow label="Duration">
+              <span className="tabular-nums">{course.tenureYears}</span> year
+              {course.tenureYears === "1" ? "" : "s"}
+            </DetailRow>
+          </CardContent>
+        </Card>
       </div>
 
-      <section>
-        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          Where it&apos;s offered ({linkedInstitutes.length})
-        </h2>
-        {linkedInstitutes.length === 0 ? (
-          <p className="text-sm text-muted-foreground">No institutes linked yet.</p>
-        ) : (
-          <ul className="divide-y rounded-md border bg-card">
-            {linkedInstitutes.map((i) => (
-              <li key={i.id} className="flex items-center justify-between gap-2 p-3 text-sm">
-                <div className="min-w-0">
-                  <div className="truncate font-medium">{i.name}</div>
-                  <div className="text-xs text-muted-foreground">
-                    {i.city}, {i.state} · {i.instituteType}
+      {/* Institutes */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <Building2 className="size-5 text-primary" aria-hidden />
+            Where it&apos;s offered
+            <span className="text-sm font-normal text-muted-foreground tabular-nums">
+              ({linkedInstitutes.length})
+            </span>
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          {linkedInstitutes.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              We&apos;re still adding institutes for this course. Check back soon.
+            </p>
+          ) : (
+            <ul className="flex flex-col divide-y rounded-lg border">
+              {linkedInstitutes.map((i) => (
+                <li
+                  key={i.id}
+                  className="flex items-center justify-between gap-3 p-3"
+                >
+                  <div className="flex min-w-0 flex-col gap-0.5">
+                    <span className="truncate text-sm font-medium">
+                      {i.name}
+                    </span>
+                    <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                      <MapPin className="size-3" aria-hidden />
+                      {i.city}, {i.state} · {i.instituteType}
+                    </span>
                   </div>
-                </div>
-                {i.websiteUrl ? (
+                  {i.websiteUrl ? (
+                    <Button
+                      asChild
+                      variant="ghost"
+                      size="sm"
+                      className="shrink-0"
+                    >
+                      <a href={i.websiteUrl} target="_blank" rel="noreferrer">
+                        Visit
+                        <ExternalLink data-icon="inline-end" />
+                      </a>
+                    </Button>
+                  ) : null}
+                </li>
+              ))}
+            </ul>
+          )}
+        </CardContent>
+      </Card>
+
+      {/* Q&A — prominent */}
+      <Card className="border-primary/30 bg-primary/[0.03]">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <MessagesSquare className="size-5 text-primary" aria-hidden />
+            Ask about this course
+          </CardTitle>
+          <CardDescription>
+            Curious about jobs, daily life, or what comes after? Ask anything —
+            answers are about this course only.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          <QAChat courseId={course.id} courseName={course.courseName} />
+        </CardContent>
+      </Card>
+
+      {/* Sources */}
+      {course.sourceUrls.length > 0 ? (
+        <Card>
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2 text-base">
+              <ScrollText className="size-4 text-muted-foreground" aria-hidden />
+              Sources
+            </CardTitle>
+            <CardDescription>
+              Where this information comes from.
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <ul className="flex flex-col gap-2">
+              {course.sourceUrls.map((u) => (
+                <li key={u}>
                   <a
-                    href={i.websiteUrl}
+                    href={u}
                     target="_blank"
                     rel="noreferrer"
-                    className="shrink-0 text-xs underline"
+                    className="inline-flex items-start gap-1.5 text-xs text-muted-foreground underline-offset-4 hover:text-primary hover:underline"
                   >
-                    Visit ↗
+                    <Link2 className="mt-0.5 size-3 shrink-0" aria-hidden />
+                    <span className="break-all">{u}</span>
                   </a>
-                ) : null}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {course.sourceUrls.length > 0 ? (
-        <section>
-          <h2 className="mb-1 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-            Sources
-          </h2>
-          <ul className="space-y-1 text-xs">
-            {course.sourceUrls.map((u) => (
-              <li key={u}>
-                <a href={u} target="_blank" rel="noreferrer" className="underline break-all">
-                  {u}
-                </a>
-              </li>
-            ))}
-          </ul>
-        </section>
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
       ) : null}
 
-      <section aria-label="Ask about this course">
-        <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
-          Ask about this course
-        </h2>
-        <QAChat courseId={course.id} courseName={course.courseName} />
-      </section>
-
+      {/* Related */}
       {related.length > 0 ? (
-        <section>
-          <h2 className="mb-2 text-sm font-semibold uppercase tracking-wide text-muted-foreground">
+        <section className="flex flex-col gap-3">
+          <h2 className="font-heading text-lg font-semibold tracking-tight">
             Related courses
           </h2>
-          <div className="grid grid-cols-1 gap-2 sm:grid-cols-2">
+          <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {related.map((r) => (
               <Link
                 key={r.id}
                 href={`/courses/${r.slug}`}
-                className="rounded-md border bg-card p-3 text-sm hover:border-primary"
+                className="group flex items-center justify-between gap-2 rounded-lg border bg-card p-3.5 shadow-sm transition-[transform,box-shadow,border-color] duration-200 ease-out hover:-translate-y-0.5 hover:border-primary/50 hover:shadow-md focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 motion-reduce:transition-none motion-reduce:hover:translate-y-0"
               >
-                <div className="font-medium">{r.courseName}</div>
-                <div className="text-xs text-muted-foreground">
-                  {r.stream} · {TAG_LABEL[r.aiSafetyTag] ?? r.aiSafetyTag}
+                <div className="flex min-w-0 flex-col gap-1.5">
+                  <span className="truncate font-heading text-sm font-semibold">
+                    {r.courseName}
+                  </span>
+                  <div className="flex flex-wrap items-center gap-1.5">
+                    <Badge variant="secondary" className="font-normal">
+                      {STREAM_LABEL[r.stream] ?? r.stream}
+                    </Badge>
+                    <AiSafetyBadge tag={r.aiSafetyTag} />
+                  </div>
                 </div>
+                <ExternalLink
+                  className="size-4 shrink-0 text-muted-foreground transition-colors group-hover:text-primary"
+                  aria-hidden
+                />
               </Link>
             ))}
           </div>
@@ -166,23 +326,19 @@ export default async function CourseDetailPage({
   );
 }
 
-function Tag({
+function DetailRow({
+  label,
   children,
-  tone = "muted",
 }: {
+  label: string;
   children: React.ReactNode;
-  tone?: "muted" | "secondary";
 }) {
-  const cls =
-    tone === "secondary" ? "bg-secondary text-secondary-foreground" : "bg-muted text-foreground";
-  return <span className={`rounded px-2 py-0.5 ${cls}`}>{children}</span>;
-}
-
-function Field({ label, children }: { label: string; children: React.ReactNode }) {
   return (
-    <div className="rounded-md border bg-card p-3">
-      <div className="text-[11px] uppercase tracking-wide text-muted-foreground">{label}</div>
-      <div className="mt-1 text-sm">{children}</div>
+    <div className="flex flex-col gap-1">
+      <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+        {label}
+      </span>
+      <div className="text-sm text-foreground/90">{children}</div>
     </div>
   );
 }

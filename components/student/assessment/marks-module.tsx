@@ -1,12 +1,29 @@
 "use client";
 
 import { useState } from "react";
+import { Plus, X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Field, FieldDescription, FieldGroup, FieldLabel } from "@/components/ui/field";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
 import type { MarksAnswers, Stream } from "./types";
+import { ModuleIntro, QuestionCard } from "./wizard-ui";
+import { StickyActions } from "./sticky-actions";
 
 interface Props {
   initial: Partial<MarksAnswers> | undefined;
   onComplete: (answers: MarksAnswers) => void;
+  onBack?: () => void;
   saving: boolean;
+  step: number;
+  total: number;
 }
 
 const STREAMS: { value: Stream; label: string }[] = [
@@ -41,8 +58,11 @@ function seedRows(initial: Partial<MarksAnswers> | undefined): Row[] {
  * Marks module — board (free text), stream (select), and per-subject percentage
  * inputs. Saved as `{ board, stream, subjects }`; strength ranking is derived
  * server-side. Distinct shape from the choice modules, so it owns its inputs.
+ *
+ * Presentation: a calm two-card section (basics + subjects) with shadcn Field
+ * inputs, a friendly subject/marks table, and the closing "see my profile" CTA.
  */
-export function MarksModule({ initial, onComplete, saving }: Props) {
+export function MarksModule({ initial, onComplete, onBack, saving, step, total }: Props) {
   const [board, setBoard] = useState(initial?.board ?? "");
   const [stream, setStream] = useState<Stream>((initial?.stream as Stream) ?? "science");
   const [rows, setRows] = useState<Row[]>(() => seedRows(initial));
@@ -64,108 +84,130 @@ export function MarksModule({ initial, onComplete, saving }: Props) {
   });
   const canSubmit = board.trim().length > 0 && validRows.length > 0 && numbersOk;
 
-  const inputCls = "w-full rounded-md border border-input bg-background px-3 py-2 text-sm";
+  function submit() {
+    if (!canSubmit) return;
+    const subjects: Record<string, number> = {};
+    for (const r of validRows) subjects[r.name.trim()] = Number(r.value);
+    onComplete({ board: board.trim(), stream, subjects });
+  }
 
   return (
-    <form
-      onSubmit={(e) => {
-        e.preventDefault();
-        if (!canSubmit) return;
-        const subjects: Record<string, number> = {};
-        for (const r of validRows) subjects[r.name.trim()] = Number(r.value);
-        onComplete({ board: board.trim(), stream, subjects });
-      }}
-      className="flex flex-col gap-4"
-    >
-      <div className="flex flex-col gap-1">
-        <h2 className="text-lg font-semibold">Your recent marks</h2>
-        <p className="text-sm text-muted-foreground">
-          Enter your latest percentage (0–100) per subject. These stay on your board&apos;s scale.
-        </p>
-      </div>
+    <div className="flex flex-col gap-6">
+      <ModuleIntro
+        step={step}
+        total={total}
+        title="Your recent marks"
+        description="Last bit! Add your latest percentage per subject. These stay on your board's own scale."
+      />
 
-      <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Board</span>
-          <input
-            className={inputCls}
-            placeholder="e.g. CBSE, ICSE, State Board"
-            value={board}
-            onChange={(e) => setBoard(e.target.value)}
-            required
-          />
-        </label>
-
-        <label className="flex flex-col gap-1 text-sm">
-          <span className="font-medium">Stream</span>
-          <select
-            className={inputCls}
-            value={stream}
-            onChange={(e) => onStreamChange(e.target.value as Stream)}
-          >
-            {STREAMS.map((s) => (
-              <option key={s.value} value={s.value}>
-                {s.label}
-              </option>
-            ))}
-          </select>
-        </label>
-      </div>
-
-      <div className="flex flex-col gap-2 rounded-lg border bg-card p-4">
-        <span className="text-sm font-medium">Subjects &amp; marks</span>
-        {rows.map((row, i) => (
-          <div key={i} className="flex items-center gap-2">
-            <input
-              className={`${inputCls} flex-1`}
-              placeholder="Subject"
-              value={row.name}
-              onChange={(e) =>
-                setRows((cur) => cur.map((r, j) => (j === i ? { ...r, name: e.target.value } : r)))
-              }
+      <QuestionCard>
+        <FieldGroup>
+          <Field>
+            <FieldLabel htmlFor="board">Board</FieldLabel>
+            <Input
+              id="board"
+              placeholder="e.g. CBSE, ICSE, State Board"
+              value={board}
+              onChange={(e) => setBoard(e.target.value)}
+              required
             />
-            <input
-              className={`${inputCls} w-20`}
-              type="number"
-              inputMode="numeric"
-              min={0}
-              max={100}
-              placeholder="%"
-              value={row.value}
-              onChange={(e) =>
-                setRows((cur) => cur.map((r, j) => (j === i ? { ...r, value: e.target.value } : r)))
-              }
-            />
-            <button
-              type="button"
-              aria-label="Remove subject"
-              onClick={() => setRows((cur) => cur.filter((_, j) => j !== i))}
-              className="shrink-0 rounded-md border px-2 py-2 text-xs text-muted-foreground hover:border-destructive hover:text-destructive"
-            >
-              Remove
-            </button>
-          </div>
-        ))}
-        <button
+          </Field>
+          <Field>
+            <FieldLabel htmlFor="stream">Stream</FieldLabel>
+            <Select value={stream} onValueChange={(v) => onStreamChange(v as Stream)}>
+              <SelectTrigger id="stream">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectGroup>
+                  {STREAMS.map((s) => (
+                    <SelectItem key={s.value} value={s.value}>
+                      {s.label}
+                    </SelectItem>
+                  ))}
+                </SelectGroup>
+              </SelectContent>
+            </Select>
+            <FieldDescription>We use this to suggest the usual subjects.</FieldDescription>
+          </Field>
+        </FieldGroup>
+      </QuestionCard>
+
+      <QuestionCard>
+        <div className="flex flex-col gap-1">
+          <h3 className="font-heading text-base font-semibold">Subjects &amp; marks</h3>
+          <p className="text-sm text-muted-foreground">Enter a percentage from 0 to 100.</p>
+        </div>
+
+        <div className="flex flex-col gap-2.5">
+          {rows.map((row, i) => (
+            <div key={i} className="flex items-center gap-2">
+              <Input
+                aria-label={`Subject ${i + 1}`}
+                className="flex-1"
+                placeholder="Subject"
+                value={row.name}
+                onChange={(e) =>
+                  setRows((cur) =>
+                    cur.map((r, j) => (j === i ? { ...r, name: e.target.value } : r)),
+                  )
+                }
+              />
+              <Input
+                aria-label={`${row.name || `Subject ${i + 1}`} marks (%)`}
+                className="w-20 text-center tabular-nums"
+                type="number"
+                inputMode="numeric"
+                min={0}
+                max={100}
+                placeholder="%"
+                value={row.value}
+                onChange={(e) =>
+                  setRows((cur) =>
+                    cur.map((r, j) => (j === i ? { ...r, value: e.target.value } : r)),
+                  )
+                }
+              />
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                aria-label={`Remove ${row.name || `subject ${i + 1}`}`}
+                onClick={() => setRows((cur) => cur.filter((_, j) => j !== i))}
+                className="shrink-0 text-muted-foreground hover:text-destructive"
+              >
+                <X aria-hidden />
+              </Button>
+            </div>
+          ))}
+        </div>
+
+        <Button
           type="button"
+          variant="outline"
+          size="sm"
           onClick={() => setRows((cur) => [...cur, { name: "", value: "" }])}
-          className="self-start rounded-md border px-3 py-1.5 text-xs hover:border-primary"
+          className="self-start"
         >
-          + Add subject
-        </button>
-      </div>
+          <Plus aria-hidden />
+          Add subject
+        </Button>
 
-      {!numbersOk ? (
-        <p className="text-xs text-destructive">Marks must be numbers between 0 and 100.</p>
-      ) : null}
+        {!numbersOk ? (
+          <p className="text-sm font-medium text-destructive">
+            Marks must be numbers between 0 and 100.
+          </p>
+        ) : null}
+      </QuestionCard>
 
-      <button
-        type="submit"
-        disabled={!canSubmit || saving}
-        className="rounded-md bg-primary px-4 py-2 text-sm text-primary-foreground disabled:opacity-50"
-      >
-        {saving ? "Saving…" : "Finish & see my profile"}
-      </button>
-    </form>
+      <StickyActions
+        onBack={onBack}
+        onNext={submit}
+        nextDisabled={!canSubmit}
+        saving={saving}
+        finish
+        nextLabel="See my profile"
+      />
+    </div>
   );
 }

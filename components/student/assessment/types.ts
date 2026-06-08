@@ -16,6 +16,12 @@ export interface ClientItems {
 /** Self-report / aptitude answers: questionId -> optionId. */
 export type ChoiceAnswers = Record<string, string>;
 
+/** Subject-preference answers: subject label -> 1..5 liking. */
+export type SubjectAnswers = Record<string, number>;
+
+/** Captured subject affinities: subject label -> 0..1. */
+export type SubjectAffinities = Record<string, number>;
+
 export type Stream = "science" | "commerce" | "arts" | "vocational";
 
 export interface MarksAnswers {
