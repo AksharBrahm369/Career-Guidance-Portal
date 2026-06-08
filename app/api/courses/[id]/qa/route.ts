@@ -39,6 +39,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     return Response.json({ error: "course_not_found" }, { status: 404 });
   }
 
+  // The institute lookup is independent of body validation, session, and
+  // rate-limiting — start it now so it overlaps that work and is ready by the
+  // time we build the prompt (start promises early, await late).
+  const institutesPromise = loadInstitutes(course.id);
+
   let body;
   try {
     body = Body.parse(await req.json());
@@ -58,14 +63,7 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     );
   }
 
-  const links = await db
-    .select({ instituteId: courseInstitutes.instituteId })
-    .from(courseInstitutes)
-    .where(eq(courseInstitutes.courseId, course.id));
-  const instituteIds = links.map((l) => l.instituteId);
-  const linkedInstitutes = instituteIds.length
-    ? await db.select().from(institutes).where(inArray(institutes.id, instituteIds))
-    : [];
+  const linkedInstitutes = await institutesPromise;
 
   let model, supportsCacheControl, providerLabel;
   try {
@@ -107,4 +105,15 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
       { status: 502 },
     );
   }
+}
+
+async function loadInstitutes(courseId: string) {
+  const links = await db
+    .select({ instituteId: courseInstitutes.instituteId })
+    .from(courseInstitutes)
+    .where(eq(courseInstitutes.courseId, courseId));
+  const instituteIds = links.map((l) => l.instituteId);
+  return instituteIds.length
+    ? db.select().from(institutes).where(inArray(institutes.id, instituteIds))
+    : [];
 }
