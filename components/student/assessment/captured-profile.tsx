@@ -35,6 +35,8 @@ interface Props {
   clusterScores: ClusterScore[];
   recommendedCourses: CourseRecommendation[];
   lowSignal: boolean;
+  interestMaxScores: Record<string, number>;
+  workStyleMaxScores: Record<string, number>;
 }
 
 const RIASEC_LABELS: Record<string, string> = {
@@ -102,7 +104,7 @@ function Reveal({
   return (
     <div
       className={cn(
-        "motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:fill-mode-both motion-safe:duration-500",
+        "motion-safe:duration-500 motion-safe:animate-in motion-safe:fade-in motion-safe:slide-in-from-bottom-2 motion-safe:fill-mode-both",
         className,
       )}
       style={{ animationDelay: `${Math.min(index, 8) * 70}ms` }}
@@ -117,14 +119,21 @@ function BarList({
   entries,
   emphasiseTop = false,
 }: {
-  entries: Array<{ key: string; label: string; value: number; blurb?: string }>;
+  entries: Array<{
+    key: string;
+    label: string;
+    value: number;
+    maxValue?: number;
+    valueLabel?: string;
+    blurb?: string;
+  }>;
   emphasiseTop?: boolean;
 }) {
-  const max = Math.max(1, ...entries.map((e) => e.value));
   return (
     <div className="flex flex-col gap-3.5">
       {entries.map((entry, i) => {
-        const pct = Math.round((entry.value / max) * 100);
+        const scaleMax = Math.max(1, entry.maxValue ?? entry.value);
+        const pct = Math.round((entry.value / scaleMax) * 100);
         const isTop = emphasiseTop && i === 0;
         return (
           <div key={entry.key} className="flex flex-col gap-1.5">
@@ -136,13 +145,13 @@ function BarList({
                 ) : null}
               </span>
               <span className="shrink-0 text-xs tabular-nums text-muted-foreground">
-                {entry.value}
+                {entry.valueLabel ?? entry.value}
               </span>
             </div>
             <div
               className="h-2.5 overflow-hidden rounded-full bg-muted"
               role="img"
-              aria-label={`${entry.label}: ${pct} percent of your strongest`}
+              aria-label={`${entry.label}: ${entry.value} out of ${scaleMax} (${pct} percent)`}
             >
               <div
                 className={cn(
@@ -187,12 +196,27 @@ export function CapturedProfile({
   clusterScores,
   recommendedCourses,
   lowSignal,
+  interestMaxScores,
+  workStyleMaxScores,
 }: Props) {
   const interestEntries = Object.entries(interestData)
-    .map(([k, v]) => ({ key: k, label: RIASEC_LABELS[k] ?? k, value: v, blurb: RIASEC_BLURBS[k] }))
+    .map(([k, v]) => ({
+      key: k,
+      label: RIASEC_LABELS[k] ?? k,
+      value: v,
+      maxValue: interestMaxScores[k] ?? 0,
+      valueLabel: interestMaxScores[k] ? `${v} / ${interestMaxScores[k]}` : String(v),
+      blurb: RIASEC_BLURBS[k],
+    }))
     .sort((a, b) => b.value - a.value);
   const workStyleEntries = Object.entries(workStyleScores)
-    .map(([k, v]) => ({ key: k, label: k, value: v }))
+    .map(([k, v]) => ({
+      key: k,
+      label: k,
+      value: v,
+      maxValue: workStyleMaxScores[k] ?? 0,
+      valueLabel: workStyleMaxScores[k] ? `${v} / ${workStyleMaxScores[k]}` : String(v),
+    }))
     .sort((a, b) => b.value - a.value);
   const favouriteSubjects = Object.entries(subjectAffinities)
     .filter(([, v]) => v >= 0.8)
@@ -204,6 +228,8 @@ export function CapturedProfile({
     key: c.clusterKey,
     label: c.name,
     value: Math.round(c.score * 100),
+    maxValue: 100,
+    valueLabel: `${Math.round(c.score * 100)}%`,
   }));
 
   // Running index so each card reveals a beat after the previous one.
@@ -297,7 +323,10 @@ export function CapturedProfile({
                       className="flex items-center justify-between gap-3 rounded-xl border bg-card p-3"
                     >
                       <span className="flex items-center gap-2.5 text-sm font-medium capitalize">
-                        <span className={cn("size-2 shrink-0 rounded-full", meta.dot)} aria-hidden />
+                        <span
+                          className={cn("size-2 shrink-0 rounded-full", meta.dot)}
+                          aria-hidden
+                        />
                         {dim}
                       </span>
                       <span className="flex items-center gap-2.5">
@@ -448,7 +477,7 @@ export function CapturedProfile({
                           </h3>
                         </div>
                         <span className="flex shrink-0 flex-col items-center rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-1.5 text-emerald-800 dark:border-emerald-900 dark:bg-emerald-950/50 dark:text-emerald-300">
-                          <span className="text-base font-bold leading-none tabular-nums">
+                          <span className="text-base font-bold tabular-nums leading-none">
                             {course.fitScore}%
                           </span>
                           <span className="text-[10px] font-medium uppercase tracking-wide">

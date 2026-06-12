@@ -4,7 +4,7 @@ import { eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { user } from "@/db/schema";
-import { normalizePhone } from "@/lib/phone";
+import { adminUsernameToAuthEmail } from "@/lib/admin/admin-username";
 
 export default async function AdminLoginPage({
   searchParams,
@@ -18,7 +18,8 @@ export default async function AdminLoginPage({
 
   async function login(formData: FormData) {
     "use server";
-    const phone = normalizePhone(String(formData.get("phone") ?? ""));
+    const username = String(formData.get("username") ?? "");
+    const email = adminUsernameToAuthEmail(username);
     const password = String(formData.get("password") ?? "");
 
     // Outcome is decided inside try/catch; the redirect() (which throws by
@@ -27,17 +28,17 @@ export default async function AdminLoginPage({
     // same generic message to avoid account enumeration.
     let outcome: "ok" | "denied" = "denied";
     try {
-      await auth.api.signInPhoneNumber({
-        body: { phoneNumber: phone, password },
+      await auth.api.signInEmail({
+        body: { email, password },
         headers: await headers(),
       });
       // Sign-in succeeded (password verified) — but a successful sign-in alone is
-      // NOT authorization. Read the role authoritatively from the DB by phone.
+      // NOT authorization. Read the role authoritatively from the DB by username email.
       // (getSession() here would read the CURRENT request's cookies, which don't
       // yet carry the session just issued in this action's response — it would
       // always come back null and deny every admin.)
       const row = await db.query.user.findFirst({
-        where: eq(user.phoneNumber, phone),
+        where: eq(user.email, email),
         columns: { role: true },
       });
       outcome = row?.role === "admin" ? "ok" : "denied";
@@ -60,12 +61,12 @@ export default async function AdminLoginPage({
       </p>
       <form action={login} className="flex flex-col gap-3">
         <label className="flex flex-col gap-1 text-sm">
-          Phone
+          Username
           <input
-            name="phone"
-            type="tel"
+            name="username"
+            type="text"
             required
-            autoComplete="tel"
+            autoComplete="username"
             className="rounded-md border border-input bg-background px-3 py-2 text-sm"
           />
         </label>

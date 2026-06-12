@@ -159,3 +159,6 @@ scripts/               # migrate.ts, create-admin.ts
 admin email : sevak@hp.com
 Admin name: HP Sevak
 Password (min 12 chars): HPSevakDas@369
+
+username : sevak@hp
+pass : HPSevakDas@369

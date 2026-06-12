@@ -1,7 +1,12 @@
 import type { NextConfig } from "next";
+import { dirname } from "node:path";
+import { fileURLToPath } from "node:url";
+
+const appDir = dirname(fileURLToPath(import.meta.url));
 
 const nextConfig: NextConfig = {
   output: "standalone",
+  outputFileTracingRoot: appDir,
   reactStrictMode: true,
   typedRoutes: true,
   // Better Auth (and its nested kysely) must be resolved by Node at runtime, not

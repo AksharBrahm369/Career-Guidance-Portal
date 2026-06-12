@@ -8,6 +8,8 @@
     --foreground: 222.2 47.4% 11.2%;
     --card: 0 0% 100%;
     --card-foreground: 222.2 47.4% 11.2%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222.2 47.4% 11.2%;
     /* ui-ux-pro-max: indigo primary (trust + clarity) on slate neutrals */
     --primary: 243 75% 58%;
     --primary-foreground: 0 0% 100%;
@@ -38,6 +40,8 @@
     --foreground: 210 40% 96%;
     --card: 222.2 47% 8%;
     --card-foreground: 210 40% 96%;
+    --popover: 222.2 47% 8%;
+    --popover-foreground: 210 40% 96%;
     --primary: 243 75% 66%;
     --primary-foreground: 0 0% 100%;
     --secondary: 217.2 32.6% 17.5%;
@@ -72,6 +76,8 @@
     --foreground: 222 47% 11%;
     --card: 0 0% 100%;
     --card-foreground: 222 47% 11%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 222 47% 11%;
     --primary: 252 72% 60%;
     --primary-foreground: 0 0% 100%;
     --accent: 162 72% 41%;
@@ -91,6 +97,8 @@
     --foreground: 220 30% 96%;
     --card: 250 30% 9%;
     --card-foreground: 220 30% 96%;
+    --popover: 250 30% 9%;
+    --popover-foreground: 220 30% 96%;
     --primary: 252 78% 70%;
     --primary-foreground: 0 0% 100%;
     --accent: 162 64% 46%;

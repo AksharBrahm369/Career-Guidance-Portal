@@ -15,7 +15,9 @@ import { SaveIndicator } from "./wizard-ui";
 import type { ChoiceAnswers, ClientItems, MarksAnswers, SubjectAnswers } from "./types";
 
 const MODULES = ["interests", "work_style", "aptitude", "subjects", "marks"] as const;
+const QUESTION_MODULES = ["interests", "work_style", "aptitude"] as const;
 type ModuleKey = (typeof MODULES)[number];
+type QuestionModuleKey = (typeof QUESTION_MODULES)[number];
 const STEP_LABELS: Record<ModuleKey, string> = {
   interests: "Interests",
   work_style: "Work style",
@@ -54,6 +56,8 @@ export function AssessmentFlow({ attemptId: initialAttemptId, initialResponses, 
   const [saveState, setSaveState] = useState<SaveState>("idle");
   const [error, setError] = useState<string | null>(null);
   const [, startRefresh] = useTransition();
+  const missingQuestionModules = QUESTION_MODULES.filter((m) => items[m].length === 0);
+  const missingQuestionModuleLabels = missingQuestionModules.map((m) => STEP_LABELS[m]).join(", ");
 
   // Children only read these to seed their initial useState, so a stable
   // identity buys nothing — derive during render instead of memoizing.
@@ -166,11 +170,19 @@ export function AssessmentFlow({ attemptId: initialAttemptId, initialResponses, 
               <AlertDescription>{error}</AlertDescription>
             </Alert>
           ) : null}
+          {missingQuestionModules.length > 0 ? (
+            <Alert className="text-left">
+              <AlertDescription>
+                Assessment questions are not available yet. Missing active question-bank rows for:{" "}
+                {missingQuestionModuleLabels}.
+              </AlertDescription>
+            </Alert>
+          ) : null}
           <Button
             type="button"
             size="lg"
             onClick={start}
-            disabled={saving}
+            disabled={saving || missingQuestionModules.length > 0}
             className="w-full sm:w-auto"
           >
             {saving ? (
@@ -198,6 +210,14 @@ export function AssessmentFlow({ attemptId: initialAttemptId, initialResponses, 
   const moduleStep = step + 1;
   const moduleTotal = MODULES.length;
   const pct = (moduleStep / moduleTotal) * 100;
+  const currentQuestionModule = QUESTION_MODULES.includes(current as QuestionModuleKey)
+    ? (current as QuestionModuleKey)
+    : null;
+  const currentQuestionItemsMissing =
+    currentQuestionModule != null && items[currentQuestionModule].length === 0;
+  const currentQuestionModuleLabel = currentQuestionModule
+    ? STEP_LABELS[currentQuestionModule]
+    : "";
 
   return (
     <section className="flex flex-col gap-6">
@@ -224,7 +244,16 @@ export function AssessmentFlow({ attemptId: initialAttemptId, initialResponses, 
         </Alert>
       ) : null}
 
-      {current === "interests" ? (
+      {currentQuestionItemsMissing ? (
+        <Alert>
+          <AlertDescription>
+            Assessment questions are not available for {currentQuestionModuleLabel}. Please add or
+            activate question-bank rows before continuing.
+          </AlertDescription>
+        </Alert>
+      ) : null}
+
+      {currentQuestionItemsMissing ? null : current === "interests" ? (
         <InterestsModule
           items={items.interests}
           initial={initial.interests}

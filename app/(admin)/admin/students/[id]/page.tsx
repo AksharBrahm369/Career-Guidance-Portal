@@ -10,6 +10,8 @@ import {
 } from "lucide-react";
 import { and, desc, eq } from "drizzle-orm";
 import { requireAdmin } from "@/lib/auth/require-admin";
+import { dimensionMaxScores } from "@/lib/assessment/display";
+import { getActiveItems } from "@/lib/assessment/items";
 import { db } from "@/lib/db";
 import { assessments, user } from "@/db/schema";
 import { isLowSignal } from "@/lib/recommendation";
@@ -17,13 +19,7 @@ import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { CapturedProfile } from "@/components/student/assessment/captured-profile";
@@ -76,11 +72,7 @@ function Field({
   );
 }
 
-export default async function StudentDetailPage({
-  params,
-}: {
-  params: Promise<{ id: string }>;
-}) {
+export default async function StudentDetailPage({ params }: { params: Promise<{ id: string }> }) {
   // Auth doesn't gate which row we read (that's keyed on the route id), so run
   // the getSession round-trip alongside the data queries, then await auth first.
   const authPromise = requireAdmin();
@@ -94,10 +86,12 @@ export default async function StudentDetailPage({
       where: and(eq(assessments.studentId, id), eq(assessments.status, "completed")),
       orderBy: desc(assessments.completedAt),
     }),
+    getActiveItems("interests"),
+    getActiveItems("work_style"),
   ]);
 
   await authPromise;
-  const [student, latestAssessment] = await dataPromise;
+  const [student, latestAssessment, interestItems, workStyleItems] = await dataPromise;
 
   if (!student) notFound();
 
@@ -183,6 +177,8 @@ export default async function StudentDetailPage({
                       clusterScores={latestAssessment.clusterScores ?? []}
                       recommendedCourses={recommendedCourses}
                       lowSignal={isLowSignal(recommendedCourses, confidence)}
+                      interestMaxScores={dimensionMaxScores(interestItems)}
+                      workStyleMaxScores={dimensionMaxScores(workStyleItems)}
                     />
                   );
                 })()}

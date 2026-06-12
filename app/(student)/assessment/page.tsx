@@ -3,6 +3,7 @@ import { desc, eq } from "drizzle-orm";
 import { requireStudent, StudentUnauthorizedError } from "@/lib/auth/require-student";
 import { db } from "@/lib/db";
 import { assessments } from "@/db/schema";
+import { dimensionMaxScores } from "@/lib/assessment/display";
 import { getActiveItems } from "@/lib/assessment/items";
 import { isLowSignal } from "@/lib/recommendation";
 import { AssessmentFlow } from "@/components/student/assessment/assessment-flow";
@@ -59,6 +60,8 @@ export default async function AssessmentEntryPage() {
         clusterScores={latest.clusterScores ?? []}
         recommendedCourses={recommendedCourses}
         lowSignal={isLowSignal(recommendedCourses, confidence)}
+        interestMaxScores={dimensionMaxScores(interestItems)}
+        workStyleMaxScores={dimensionMaxScores(workStyleItems)}
       />
     );
   }

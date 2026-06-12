@@ -1,5 +1,4 @@
 import { NextResponse, type NextRequest } from "next/server";
-import { getSessionCookie } from "better-auth/cookies";
 
 // Optimistic gate: redirect unauthenticated users to the right login. The
 // authoritative role check runs in the guards (requireAdmin / requireStudent)
@@ -23,7 +22,11 @@ export function middleware(request: NextRequest) {
     return pass();
   }
 
-  const sessionCookie = getSessionCookie(request);
+  const sessionCookie =
+    request.cookies.get("better-auth.session_token") ??
+    request.cookies.get("__Secure-better-auth.session_token") ??
+    request.cookies.get("better-auth-session_token") ??
+    request.cookies.get("__Secure-better-auth-session_token");
   if (!sessionCookie) {
     const url = request.nextUrl.clone();
     url.pathname = pathname.startsWith("/admin") ? "/admin/login" : "/student/login";
