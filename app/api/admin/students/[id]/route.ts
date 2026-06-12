@@ -4,6 +4,7 @@ import { adminErrorResponse, requireAdmin } from "@/lib/auth/require-admin";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { user } from "@/db/schema";
+import { logAudit } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
@@ -25,9 +26,10 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   return Response.json({ student });
 }
 
-export async function DELETE(_req: Request, { params }: { params: Promise<{ id: string }> }) {
+export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  let admin;
   try {
-    await requireAdmin();
+    admin = await requireAdmin();
   } catch (err) {
     return adminErrorResponse(err) ?? Response.json({ error: "internal" }, { status: 500 });
   }
@@ -37,5 +39,16 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
 
   // admin-plugin endpoint — REQUIRES the admin session, so forward the request headers.
   await auth.api.removeUser({ body: { userId: id }, headers: await headers() });
+
+  await logAudit({
+    adminId: admin.adminId,
+    action: "delete",
+    entityType: "student",
+    entityId: id,
+    oldValues: { name: student.name, phoneNumber: student.phoneNumber },
+    ip: req.headers.get("x-forwarded-for"),
+    userAgent: req.headers.get("user-agent"),
+  });
+
   return Response.json({ ok: true });
 }

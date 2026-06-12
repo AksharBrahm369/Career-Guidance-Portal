@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { formatInvalidTransition } from "@/lib/admin/course-transitions";
 
 type Status = "published" | "pending_review" | "rejected" | "archived";
 
@@ -24,7 +25,11 @@ export function CourseLifecycleActions({ courseId, status, size = "sm" }: Props)
     const res = await fetch(`/api/admin/courses/${courseId}/${path}`, { method: "POST" });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      window.alert(data.error ?? `HTTP ${res.status}`);
+      window.alert(
+        data.error === "invalid_transition"
+          ? formatInvalidTransition(data)
+          : (data.error ?? `HTTP ${res.status}`),
+      );
       return;
     }
     startTransition(() => router.refresh());

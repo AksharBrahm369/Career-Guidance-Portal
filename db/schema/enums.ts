@@ -56,4 +56,11 @@ export const auditAction = pgEnum("audit_action", [
   "reject",
   "login",
   "ai_fetch",
+  "delete",
+  "ban",
+  "unban",
+  "reset_password",
+  "reset_cooldown",
+  "reopen",
+  "restore",
 ]);

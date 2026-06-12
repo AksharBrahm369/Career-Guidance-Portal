@@ -67,10 +67,9 @@ export async function DELETE(_req: Request, { params }: { params: Promise<{ id: 
   await db.delete(questionBank).where(eq(questionBank.id, id));
   await logAudit({
     adminId: admin.adminId,
-    action: "update",
+    action: "delete",
     entityType: "question_bank_item",
     entityId: id,
-    newValues: { deleted: true },
   });
   return Response.json({ ok: true });
 }

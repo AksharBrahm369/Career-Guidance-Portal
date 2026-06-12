@@ -9,7 +9,14 @@ type AuditAction =
   | "archive"
   | "reject"
   | "login"
-  | "ai_fetch";
+  | "ai_fetch"
+  | "delete"
+  | "ban"
+  | "unban"
+  | "reset_password"
+  | "reset_cooldown"
+  | "reopen"
+  | "restore";
 
 interface AuditEntry {
   adminId: string | null;

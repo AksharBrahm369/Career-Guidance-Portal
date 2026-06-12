@@ -3,6 +3,7 @@ import { z } from "zod";
 import { adminErrorResponse, requireAdmin } from "@/lib/auth/require-admin";
 import { db } from "@/lib/db";
 import { courses } from "@/db/schema";
+import { checkTransition } from "@/lib/admin/course-transitions";
 import { logAudit } from "@/lib/audit";
 
 export const runtime = "nodejs";
@@ -27,6 +28,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const existing = await db.query.courses.findFirst({ where: eq(courses.id, id) });
   if (!existing) return Response.json({ error: "not_found" }, { status: 404 });
+  const transition = checkTransition("reject", existing.status);
+  if (!transition.ok) {
+    return Response.json(transition.body, { status: 409 });
+  }
 
   const [updated] = await db
     .update(courses)

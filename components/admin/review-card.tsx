@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { SourceUrlsEditor } from "@/components/admin/source-urls-editor";
+import { formatInvalidTransition } from "@/lib/admin/course-transitions";
 
 interface CourseRow {
   id: string;
@@ -85,7 +86,11 @@ export function ReviewCard({ course }: { course: CourseRow }) {
     const res = await fetch(`/api/admin/courses/${course.id}/publish`, { method: "POST" });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      const detail = data.missing ? `missing: ${data.missing.join(", ")}` : data.error;
+      const detail = data.missing
+        ? `missing: ${data.missing.join(", ")}`
+        : data.error === "invalid_transition"
+          ? formatInvalidTransition(data)
+          : data.error;
       setError(detail ?? `HTTP ${res.status}`);
       return;
     }
@@ -103,7 +108,11 @@ export function ReviewCard({ course }: { course: CourseRow }) {
     });
     if (!res.ok) {
       const data = await res.json().catch(() => ({}));
-      setError(data.error ?? `HTTP ${res.status}`);
+      setError(
+        data.error === "invalid_transition"
+          ? formatInvalidTransition(data)
+          : (data.error ?? `HTTP ${res.status}`),
+      );
       return;
     }
     startTransition(refresh);

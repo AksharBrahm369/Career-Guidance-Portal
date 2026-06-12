@@ -15,6 +15,13 @@
       "when": 1780729194342,
       "tag": "0001_hot_stephen_strange",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1781279637725,
+      "tag": "0002_stormy_jimmy_woo",
+      "breakpoints": true
     }
   ]
 }

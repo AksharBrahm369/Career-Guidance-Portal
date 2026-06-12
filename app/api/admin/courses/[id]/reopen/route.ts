@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { adminErrorResponse, requireAdmin } from "@/lib/auth/require-admin";
 import { db } from "@/lib/db";
 import { courses } from "@/db/schema";
+import { checkTransition } from "@/lib/admin/course-transitions";
 import { logAudit } from "@/lib/audit";
 
 export const runtime = "nodejs";
@@ -17,11 +18,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   const existing = await db.query.courses.findFirst({ where: eq(courses.id, id) });
   if (!existing) return Response.json({ error: "not_found" }, { status: 404 });
-  if (existing.status !== "rejected") {
-    return Response.json(
-      { error: "invalid_transition", from: existing.status, to: "pending_review" },
-      { status: 409 },
-    );
+  const transition = checkTransition("reopen", existing.status);
+  if (!transition.ok) {
+    return Response.json(transition.body, { status: 409 });
   }
 
   const [updated] = await db
@@ -37,11 +36,11 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
   await logAudit({
     adminId: admin.adminId,
-    action: "update",
+    action: "reopen",
     entityType: "course",
     entityId: id,
     oldValues: { status: existing.status, rejectionReason: existing.rejectionReason },
-    newValues: { status: "pending_review", reopened: true },
+    newValues: { status: "pending_review" },
     ip: req.headers.get("x-forwarded-for"),
     userAgent: req.headers.get("user-agent"),
   });

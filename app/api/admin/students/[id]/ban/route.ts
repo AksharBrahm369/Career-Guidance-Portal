@@ -5,14 +5,16 @@ import { adminErrorResponse, requireAdmin } from "@/lib/auth/require-admin";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { user } from "@/db/schema";
+import { logAudit } from "@/lib/audit";
 
 export const runtime = "nodejs";
 
 const Body = z.object({ ban: z.boolean(), reason: z.string().optional() });
 
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  let admin;
   try {
-    await requireAdmin();
+    admin = await requireAdmin();
   } catch (err) {
     return adminErrorResponse(err) ?? Response.json({ error: "internal" }, { status: 500 });
   }
@@ -36,5 +38,18 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   } else {
     await auth.api.unbanUser({ body: { userId: id }, headers: hdrs });
   }
+
+  await logAudit({
+    adminId: admin.adminId,
+    action: body.ban ? "ban" : "unban",
+    entityType: "student",
+    entityId: id,
+    newValues: body.ban
+      ? { banned: true, banReason: body.reason ?? null }
+      : { banned: false },
+    ip: req.headers.get("x-forwarded-for"),
+    userAgent: req.headers.get("user-agent"),
+  });
+
   return Response.json({ ok: true });
 }
