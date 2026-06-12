@@ -12,7 +12,7 @@ Order is roughly bottom-up: **Foundation → AI → Admin → Student**.
 
 - Single Zod schema parses `process.env` at module load. Failure throws synchronously — server won't start with bad config.
 - Refine() check: the API key for whichever provider `AI_PROVIDER` selects **must** be present.
-- Importers: `lib/db`, `lib/auth/*`, `lib/ai/*`, `drizzle.config.ts`.
+- Importers: `lib/db`, `lib/auth.ts`, `lib/ai/*`, `drizzle.config.ts`.
 - Type re-exports: `Env`, `ProviderId`.
 
 > **Rule:** never reach into `process.env` from anywhere else. If you need a new var, add it to `EnvSchema` and re-export through `env`.
@@ -25,11 +25,11 @@ Order is roughly bottom-up: **Foundation → AI → Admin → Student**.
 
 - `lib/db/index.ts` builds a singleton `Pool` (node-postgres) keyed by `DATABASE_URL` and wraps it in `drizzle()` with `schema` for query DSL + typed select.
 - Schema is split per table under `db/schema/`:
-  - `enums.ts` — every Postgres enum (status, source, stream, AI safety, audit action, etc.)
-  - `admins.ts`, `students.ts` (M4), `institutes.ts`, `courses.ts` (+ `course_institutes`), `assessments.ts`, `question-bank.ts`, `audit-log.ts`
-  - `auth.ts` — NextAuth standard tables
+  - `enums.ts` — every Postgres enum (status, source, stream, AI safety, assessment module/status, audit action, etc.)
+  - `institutes.ts`, `courses.ts` (+ `course_institutes`), `career-clusters.ts`, `assessments.ts`, `question-bank.ts`, `audit-log.ts`
+  - `auth.ts` — Better Auth tables (`user / session / account / verification / rate_limit`); the single `user` table holds admins **and** students (`role` column + student fields `grade`, `cooldownOverride`, `lastAssessmentAt`)
   - `relations.ts` — Drizzle `relations()` for join queries
-  - `index.ts` re-exports everything so `import { courses, institutes, courseInstitutes, audit_log } from "@/db/schema"` is the one-import surface.
+  - `index.ts` re-exports everything so `import { courses, institutes, courseInstitutes, auditLog } from "@/db/schema"` is the one-import surface.
 
 **Important columns to remember:**
 
@@ -44,7 +44,7 @@ aiSafetyTagAi: same enum (the model's original pick, kept for audit)
 aiSafetyReasoning: text                       // displayed to students on detail page
 publishedAt / fetchedAt / createdAt / updatedAt: timestamptz
 rejectionReason: text                         // cleared on reopen
-reviewedByAdminId / createdByAdminId / lastEditedByAdminId: uuid -> admins.id
+reviewedByAdminId / createdByAdminId / lastEditedByAdminId: uuid -> user.id
 ```
 
 ```ts
@@ -65,26 +65,31 @@ UNIQUE (course_id, institute_id)              // course_institutes_pair_uq
 
 **Never** rewrite a shipped migration. To undo, ship a new migration that reverses it.
 
-Current migrations on the branch: `0000_green_lady_bullseye.sql` (initial schema), `0001_tearful_sentry.sql` (M2 hotfix — `ai_safety_reasoning`, `course_institutes` FKs + composite unique).
+Current migrations on the branch: `0000_late_albert_cleary.sql` (full initial schema — courses/institutes, career clusters, assessments, question bank, audit log, Better Auth tables), `0001_hot_stephen_strange.sql` (`rate_limit` table for DB-backed auth rate limiting), `0002_stormy_jimmy_woo.sql` (extends the `audit_action` enum with `delete / ban / unban / reset_password / reset_cooldown / reopen / restore`).
 
 ---
 
-## 4. Auth & RBAC (`lib/auth/*`, `middleware.ts`, `scripts/create-admin.ts`)
+## 4. Auth & RBAC (`lib/auth.ts`, `lib/auth-client.ts`, `lib/auth/*`, `middleware.ts`, `scripts/create-admin.ts`)
+
+**Better Auth**, phone+password for both roles (no email login, no OTP in v1 — `sendOTP` is a no-op and a synthetic `<phone>@phone.local` email satisfies core).
 
 | File | Role |
 |---|---|
-| `lib/auth/config.base.ts` | Shared NextAuth config (callbacks, JWT shape) — used by both edge and node runtimes |
-| `lib/auth/config.ts` | Node runtime config — adds Drizzle adapter + credentials provider (scrypt verify) |
-| `lib/auth/edge.ts` | Edge runtime config — no DB, no scrypt; for middleware only |
-| `lib/auth/index.ts` | Exports `{ auth, handlers, signIn, signOut }` (node) |
-| `lib/auth/password.ts` | `hashPassword(plain)` + `verifyPassword(stored, plain)` using `node:crypto` scrypt |
-| `lib/auth/require-admin.ts` | Server-side guard: throws `UnauthorizedError` if no admin session |
-| `middleware.ts` | Calls edge `auth()`; redirects unauth'd `/admin/*` → `/admin/login` |
-| `scripts/create-admin.ts` | CLI to seed an admin row (prompt → hash → insert) |
+| `lib/auth.ts` | The Better Auth instance: `drizzleAdapter(db, { provider: "pg" })`, `phoneNumber` + `admin` plugins (`defaultRole: "student"`, `adminRoles: ["admin"]`), `nextCookies()` **last**; DB-backed rate limiting (`storage: "database"`, 5/min sign-in, 3/min sign-up); sessions 24h with 1h `updateAge`/`freshAge` + 5-min `cookieCache`; UUID ids; student `additionalFields` (`grade`, `cooldownOverride`, `lastAssessmentAt`). Deliberately **no** `import "server-only"` — the Better Auth CLI loads it in plain Node. |
+| `lib/auth-client.ts` | `createAuthClient` (better-auth/react) + `phoneNumberClient` + `adminClient`; exports `signIn / signUp / signOut / useSession` for client components |
+| `lib/auth/session.ts` | `getCachedSession()` — `React.cache`-memoized `auth.api.getSession({ headers })`, so the layout + guards share one session lookup per request |
+| `lib/auth/require-admin.ts` | Server guard: `requireAdmin()` → `{ adminId, email }` (`adminId` = `user.id`); throws `UnauthorizedError` → `adminErrorResponse(err)` returns 401 |
+| `lib/auth/require-student.ts` | Mirror guard: `requireStudent()` → `{ studentId, name }`; `studentErrorResponse` returns 401 |
+| `lib/phone.ts` | `normalizePhone()` + `synthEmailFromPhone()` — the **single source of truth** for the phone identifier; no `server-only` (client forms import it) |
+| `middleware.ts` | Optimistic **cookie-existence** gate (no DB call): sets `x-pathname`, exempts `/admin/login` + `/student/login` + `/student/signup`, redirects cookie-less `/admin/*` → `/admin/login` and `/assessment` + `/student/*` → `/student/login`. `/courses` stays public (not matched). |
+| `app/(admin)/layout.tsx` | The authoritative admin **role** gate — `redirect("/admin/login")` for non-admins, exempting its own login route via `x-pathname` |
+| `app/api/auth/[...all]` | Better Auth route handler |
+| `scripts/create-admin.ts` | `pnpm create-admin` — prompts name/phone/password, signs up via `auth.api`, then sets `phoneNumber` (normalized) + `role: "admin"`, keeping `phoneNumberVerified: false` |
 
-**Session shape (JWT):**
+**Session shape:**
 ```ts
-session.user = { name, email, role: "admin", adminId: <uuid> }
+session.user = { id: <uuid>, name, email, role: "admin" | "student", phoneNumber, ... }
+// guards return { adminId } / { studentId } — both are user.id
 ```
 
 **Pattern for an admin-only API route:**
@@ -97,7 +102,9 @@ try {
 }
 ```
 
-`requireAdmin()` is the only thing API routes should trust for "is this an admin." Don't read `session?.user?.role` directly anywhere else.
+`requireAdmin()` / `requireStudent()` are the only things API routes should trust for role checks. Don't read `session?.user?.role` directly anywhere else (the `(admin)` layout and assessment page go through `getCachedSession` / the guards).
+
+> ⚠️ Any change here must pass the **verification gate** in `CLAUDE.md`: a real browser login or HTTP `sign-in → get-session` round-trip against `pnpm dev` — cookie/redirect bugs compile clean and pass server-side smokes.
 
 ---
 
@@ -124,30 +131,31 @@ PROVIDERS: Record<ProviderId, ProviderSpec> = {
 **Flow:**
 
 ```
-POST /api/admin/fetch
+POST /api/admin/fetch   body: { query, override? }
   → requireAdmin()
-  → consume(adminId)  // 10 fetches / 60 s, in-memory bucket
-  → safeFetchCourse({ query, excludeNames })
-        → generateText() with experimental_output (Zod schema)
-        → soft duplicate warning if name > 85% similar to existing
+  → consume(`fetch:${adminId}`)  // capacity 20, refills 20/min, in-memory bucket
+  → safeFetchCourseBatch({ query, excludeNames })   // excludeNames skipped when override=true
+        → generateText() with experimental_output (Zod CoursesBatchOutput — an ARRAY of courses)
+        → per-course validation; soft duplicate warning if name > 85% similar to existing
         → verifyUrls(sourceUrls)  // dead dropped, unknown kept
-  → persistFetchedCourse(parsed, ctx)  // inside a TX:
+  → for each returned course: persistFetchedCourse(course, ctx)  // inside a TX:
         upsert institutes (onConflictDoNothing on slug)
         insert course (status='pending_review', source='ai_fetch')
         link course_institutes (composite unique avoids dup)
         logAudit("ai_fetch")
-  → return { courseId, slug, warnings, durationMs }
+     (a persist failure is collected into `failures`, not fatal to the batch)
+  → return { mode: "batch", total, failures, courses: [{ courseId, slug, provider, warnings, course }] }
 ```
 
 **Files:**
 
 - `lib/ai/safe-fetch.ts`
-  - `CourseFetchResult` — Zod schema for the structured AI output (name, stream, clusters, AI safety, eligibility, exams, fees, sources, description, institutes).
+  - `CourseFetchResult` — Zod schema for one structured course (name, stream, clusters, AI safety, eligibility, exams, fees, sources, description, institutes); `CoursesBatchOutput` wraps it in `{ courses: [...] }` so one query can return several.
   - `SYSTEM_PROMPT` — pinned in this file; deliberately includes the "no duplicates" + "evidence-first" rules.
-  - `safeFetchCourse({ query, excludeNames })` returns `{ course, warnings, durationMs }`.
+  - `safeFetchCourseBatch({ query, excludeNames })` returns `{ results: [{ course, provider, warnings }], failures }`; throws `FetchFailedError` when the provider returns nothing usable.
 - `lib/admin/persist-fetched-course.ts` — transaction-safe persistence. Uses `onConflictDoNothing({ target: institutes.slug })` + a fallback select to handle two parallel fetches sharing the same institute.
 - `lib/slug.ts` — `slugify()` returns 6-char random suffix when input has no ASCII (Devanagari, etc.) so we never emit empty slugs and never collide on `""`.
-- `lib/rate-limit.ts` — `consume(key, cfg)` token bucket; admin fetch passes `capacity: 10, refillPerSecond: 10/60`. Returns `{ ok: false, retryAfter }` on miss → HTTP 429.
+- `lib/rate-limit.ts` — `consume(key, cfg)` token bucket; admin fetch passes `capacity: 20, refillPerSecond: 20/60`. Returns `{ ok: false, retryAfterSeconds }` on miss → HTTP 429.
 
 **UI:** `app/(admin)/admin/fetch/page.tsx` + `components/admin/fetch-manager.tsx` — query input, streaming status, warnings panel, "Add manually instead" link.
 
@@ -178,9 +186,9 @@ The POST handler also runs `verifyUrls()` on the pasted source URLs (dropping de
 | `PATCH /api/admin/courses/[id]` | Zod `PatchBody` (optional fields incl. `sourceUrls: z.array(z.string().url()).max(8)`) | partial update | `update` |
 | `POST .../publish` | `status === "pending_review"`; required fields (description ≥ 150 chars, eligibility, tenure, clusters) | `pending_review → published`, sets `publishedAt`, `reviewedByAdminId` | `publish` |
 | `POST .../reject` | `status === "pending_review"`, body `{ reason: string ≥ 3 chars }` | `pending_review → rejected`, sets `rejectionReason`, `reviewedByAdminId` | `reject` |
-| `POST .../reopen` | `status === "rejected"` | `rejected → pending_review`, clears `rejectionReason` + `reviewedByAdminId` | `update` (with `reopened: true`) |
+| `POST .../reopen` | `status === "rejected"` | `rejected → pending_review`, clears `rejectionReason` + `reviewedByAdminId` | `reopen` |
 
-All return HTTP 409 with `{ error: "invalid_transition", from, to }` if the source state doesn't match.
+All return HTTP 409 with `{ error: "invalid_transition", action, expected, actual }` if the source state doesn't match. The transition matrix is centralised in `lib/admin/course-transitions.ts` (`TRANSITIONS` + `checkTransition()`, tested in `lib/__tests__/course-transitions.test.ts`); all five lifecycle routes (publish/reject/reopen/archive/restore) use it.
 
 ---
 
@@ -220,11 +228,11 @@ All return HTTP 409 with `{ error: "invalid_transition", from, to }` if the sour
 
 **Endpoints (the new ones):**
 
-- `POST /api/admin/courses/[id]/archive` — `published → archived` (already shipped in M2)
-- `POST /api/admin/courses/[id]/restore` — `archived → published`. Mirrors the publish/archive pattern; if `publishedAt` is null, sets it to `now()`. Audit `publish` + `restored: true`.
-- `POST /api/admin/courses/[id]/reopen` — `rejected → pending_review`. Clears `rejectionReason` + `reviewedByAdminId`. Audit `update` + `reopened: true`.
+- `POST /api/admin/courses/[id]/archive` — `published → archived` (already shipped in M2). Audit `archive`.
+- `POST /api/admin/courses/[id]/restore` — `archived → published`. Mirrors the publish/archive pattern; preserves the original `publishedAt` (sets it to `now()` only if null). Audit `restore`.
+- `POST /api/admin/courses/[id]/reopen` — `rejected → pending_review`. Clears `rejectionReason` + `reviewedByAdminId`. Audit `reopen`.
 
-Both 409 on invalid transitions.
+Both guard via `checkTransition()` and 409 on invalid transitions.
 
 ---
 
@@ -309,10 +317,11 @@ body: { message: string, history: { role, content }[] }
   → getOrCreateQASessionId() reads/sets qa_sid cookie (HttpOnly, SameSite=lax, 8h)
   → consume(qaSessionKey(courseId, sid), { capacity: 20, refillPerSecond: 0 })
         429 + { error: "session_limit_reached", limit: 20 } if exhausted
-  → spec = providerForFeature("qa") (Anthropic by default)
-  → messages = buildQAMessages({ course, message }, history, spec.supportsExplicitCacheControl)
-  → streamText({ model: spec.build(), messages })
-  → return res.toTextStreamResponse() with:
+  → linked institutes loaded (promise started early, awaited late)
+  → { model, supportsCacheControl, providerLabel } = getModel("qa")  (Anthropic by default)
+  → { system, messages } = buildQAMessages({ course, institutes }, history, supportsCacheControl)
+  → streamText({ model, system, messages, temperature: 0.4 })
+  → return result.toTextStreamResponse() with:
         X-Provider: <id>
         X-Session-Id: <sid>
         X-Remaining: <int>
@@ -345,8 +354,8 @@ body: { message: string, history: { role, content }[] }
 ```ts
 await logAudit({
   adminId,
-  action: "publish" | "archive" | "reject" | "update" | "create" | "ai_fetch" | "login",
-  entityType: "course" | "institute" | "admin",
+  action, // see the full enum below
+  entityType, // e.g. "course" | "student" | "question_bank_item" | "career_cluster"
   entityId,
   oldValues,
   newValues,
@@ -355,21 +364,53 @@ await logAudit({
 });
 ```
 
+**`AuditAction` enum** (mirrors the `audit_action` Postgres enum, extended by migration `0002`):
+
+| Action | Logged by |
+|---|---|
+| `create` / `update` | manual course create, course PATCH, question-bank + cluster create/update |
+| `publish` / `reject` / `archive` / `reopen` / `restore` | the five course lifecycle routes — each transition logs under **its own** action |
+| `ai_fetch` | `persistFetchedCourse` (one row per persisted course) |
+| `delete` | student delete, question-bank delete |
+| `ban` / `unban` | `POST /api/admin/students/[id]/ban` (one route, body picks the direction) |
+| `reset_password` / `reset_cooldown` | the matching `/api/admin/students/[id]/*` routes |
+| `login` | in the enum for auth events; not currently emitted by any route |
+
 - Always called **after** the DB write succeeds (so we never log a failed action).
 - `oldValues` / `newValues` are JSONB; pass only the columns you actually changed to keep the diff readable.
 - `/admin` dashboard reads from this table for the "last AI fetch" widget; M5 will read it for richer activity feeds.
 
 ---
 
-## 16. Assessment shells (`app/(student)/assessment/*`, `app/api/assessment/submit/route.ts`)
+## 16. Assessment & recommendation (`app/(student)/assessment/page.tsx`, `app/api/assessment/*`, `lib/assessment/*`, `lib/recommendation/*`)
 
-Currently placeholder pages (M1 scaffolding) + a 501 submit endpoint. The DB tables (`question_bank`, `assessments`) exist with the right shape; M4 fills them in:
+**Live and fully deterministic** — no LLM anywhere in this path (platform invariant; the spec explicitly forbids it).
 
-- Curated question rows (no LLM authoring).
-- Deterministic scoring (`scoring_meta` JSONB on each question maps responses to module-specific weights).
-- Result page reads the most recent `assessments` row per student.
+**Flow:**
 
-Do **not** wire anything to AI in this surface — the spec explicitly forbids it.
+```
+POST /api/assessment/start                  → resume the student's in_progress attempt or insert a fresh one
+PATCH /api/assessment/[id]/responses        → save one module's answers into the attempt's `responses` jsonb
+   modules: interests | work_style | aptitude (question-bank driven)
+            subjects (subject → 1..5 liking)  |  marks (board, stream, subject marks)
+POST /api/assessment/[id]/submit            → finalize:
+   404 unknown attempt · 403 not the owner · 409 already_completed · 400 incomplete (missing modules listed)
+   → scoreAssessment(responses, items)      // lib/assessment/scoring — pure
+   → recommend(profile, clusters, courses)  // lib/recommendation — pure
+   → one TX: assessments row gets status='completed' + scored profile + cluster/course output;
+             user.lastAssessmentAt = now()
+```
+
+All three routes guard with `requireStudent()`.
+
+**Pieces:**
+
+- `app/(student)/assessment/page.tsx` — server component: renders the captured profile if the latest attempt is completed, else the resumable 5-module wizard (`components/student/assessment/*`). **Answer keys (`correctOptionId`, `scoringMap`) are stripped server-side** — only `ClientItem` reaches the client.
+- `lib/assessment/items.ts` — `getActiveItems(module)` loads active `question_bank` rows; `lib/assessment/scoring/*` scores each lens (RIASEC interests, work-style traits, banded aptitude, subject affinities, marks profile) plus an overall `confidence` (`high | moderate | low`).
+- `lib/recommendation/*` — gate → cluster match (against `career_clusters.targetProfile` with per-cluster `lensWeights`) → eligibility-filtered course ranking over the published catalogue (`getRecommendationInputs()`); caps at 10 courses and flags `lowSignal` shortlists so the UI avoids a falsely-confident #1.
+- Content is seeded, never LLM-authored: `scripts/seed-question-bank.ts` + `scripts/seed-clusters.ts`.
+
+Retake cooldown: the *fields* exist (`user.lastAssessmentAt`, `user.cooldownOverride`, admin reset endpoint) but `start` does not enforce a cooldown gate yet.
 
 ---
 
@@ -390,7 +431,7 @@ Do **not** wire anything to AI in this surface — the spec explicitly forbids i
 2. New API route? Put `requireAdmin()` (or its student equivalent) at the top, validate body with Zod, do the DB work, call `logAudit()` if admin-mutating, return JSON.
 3. New AI feature? Add a `FeatureId` to `lib/ai/providers.ts` if it's a separate cost-center, otherwise reuse `"fetch"` or `"qa"`. **Never** import a provider SDK directly outside `lib/ai/`.
 4. New UI list? Reuse `listAdminCourses` / `listPublishedCourses` patterns: service returns `{ rows, page, pageCount, hrefForPage-compatible state, … }`; page calls `<Pagination />`.
-5. New status transition? Mirror `publish/route.ts`: load row, guard `status === expectedFrom` (409 otherwise), `update().set({ status: to, updatedAt: now })`, `logAudit()`.
+5. New status transition? Add it to `TRANSITIONS` in `lib/admin/course-transitions.ts` (+ a case in `lib/__tests__/course-transitions.test.ts`), then mirror `publish/route.ts`: load row, `checkTransition()` (return its body with 409 on mismatch), `update().set({ status: to, updatedAt: now })`, `logAudit()` after the write.
 6. New source URL? You don't need a new module — just push the URL into the form; verification + persistence is already wired through `PATCH .../[id]` + `verifyUrls`.
 
 If you find yourself copying logic from two places into a third, you're probably missing a shared util. Add it under `lib/` rather than forking.

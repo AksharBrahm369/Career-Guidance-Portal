@@ -3,22 +3,20 @@
 A pan-India career guidance platform for students in grades 9–12. Two independent parts:
 
 1. **Admin panel** — AI-assisted course/institute fetch, review queue, and published catalogue.
-2. **Student profiling** — three algorithmic modules (aptitude, innate strengths, academic interests) producing a career cluster recommendation.
+2. **Student experience** — catalogue browse, per-course AI Q&A, and a five-module assessment (interests, work style, aptitude, subject liking, marks) producing a deterministic career-cluster + course recommendation.
 
-AI is used in exactly two places: admin fetch and per-course student Q&A.
+AI is used in exactly two places: admin fetch and per-course student Q&A. The assessment/recommendation engine is deterministic — it never calls a model.
 
 ## Status
 
-**Milestone 3 (Student catalogue + course detail + AI Q&A streaming).** Live on top of M2: a mobile-first browse experience at `/courses` with search + stream/AI-safety filters + pagination; a full course detail page at `/courses/[slug]` with institutes, AI-exposure reasoning, sources, and related courses; a streaming AI Q&A widget per course (provider-pluggable, system prompt cached on Anthropic, deflection rules for off-topic questions, 20-message session cap via cookie).
-
-See `/root/.claude/plans/career-guidance-platform-twinkling-nygaard.md` for the full plan.
+**Milestone 4 (profiling engine) feature-complete**, on top of M2 (admin core) and M3 (student catalogue + course detail + AI Q&A streaming). Auth has been migrated to **Better Auth** — phone+password for admins *and* students. The admin panel has grown an app shell redesign, student CRUD (ban/unban, delete, password + cooldown reset), question-bank management, and career-cluster management; course lifecycle transitions are enforced by a central matrix (`lib/admin/course-transitions.ts`, HTTP 409 on invalid moves).
 
 ## Stack
 
 - Next.js 15 (App Router) + React 19 + TypeScript strict
 - Tailwind CSS (mobile-first) + shadcn baseline
 - Postgres via Drizzle ORM (works on local / Neon / Supabase)
-- Auth.js (NextAuth v5) with Drizzle adapter — admin credentials only; student flow TBD (M4)
+- Better Auth with Drizzle adapter — phone+password for everyone (`phoneNumber` + `admin` plugins, DB sessions, DB-backed rate limiting); students self-sign-up, admins are seeded
 - Vercel AI SDK 6 — pluggable across Anthropic Claude, Google Gemini, OpenAI GPT
 - Docker with `output: "standalone"` — portable to any cloud
 
@@ -30,11 +28,11 @@ Default is Anthropic Sonnet 4.6; switch via env without code changes.
 | ID | Default model | Env key |
 |---|---|---|
 | `anthropic` | `claude-sonnet-4-6` | `ANTHROPIC_API_KEY` |
-| `google` | `gemini-3.1-pro` | `GOOGLE_GENERATIVE_AI_API_KEY` |
-| `openai` | `gpt-5.5` | `OPENAI_API_KEY` |
+| `google` | `gemini-2.5-flash` | `GOOGLE_GENERATIVE_AI_API_KEY` |
+| `openai` | `gpt-4o` | `OPENAI_API_KEY` |
 
 Set `AI_PROVIDER` to choose the global default. Optional per-feature
-overrides: `AI_FETCH_PROVIDER` (admin fetch) and `AI_QA_PROVIDER` (course Q&A, M3).
+overrides: `AI_FETCH_PROVIDER` (admin fetch) and `AI_QA_PROVIDER` (course Q&A).
 Only the selected provider's API key is required at runtime.
 
 ## Local development
@@ -51,10 +49,10 @@ pnpm create-admin                                          # seed first admin
 pnpm dev                                                   # http://localhost:3000
 ```
 
-> Password hashing uses Node's built-in `crypto.scrypt` — no native binding,
-> works on Windows / macOS / Linux / WSL with paths containing spaces. If you
-> previously hit `Failed to load native binding` on `@node-rs/argon2`, just
-> `pnpm install` after pulling and the issue is gone.
+> Password hashing is Better Auth's built-in scrypt — no native binding,
+> works on Windows / macOS / Linux / WSL with paths containing spaces.
+> `pnpm create-admin` prompts for name / phone / password (login is
+> phone+password; there is no public admin signup).
 
 ### Pulling latest
 
@@ -94,7 +92,7 @@ docker compose up --build                                  # db + app, migration
 ## What works in M2
 
 - `/admin` dashboard shows live counts (published, pending, rejected, archived), career-cluster coverage, and last AI fetch timestamp.
-- AI fetch is rate-limited at 10 requests / minute per admin (in-memory token bucket; Redis swap-in deferred to multi-replica deploys).
+- AI fetch is rate-limited per admin (token bucket: capacity 20, refilling 20/minute, in-memory; Redis swap-in deferred to multi-replica deploys). One query can return a *batch* of courses; each is persisted and audited individually.
 - The AI's `aiSafetyReasoning` for each course is captured at fetch time, displayed in the review card, and editable before publish — admins always see the model's justification, not just its label.
 - `/admin/fetch` runs an AI fetch against the configured provider, validates the JSON against a Zod schema, and saves to `pending_review`. Existing course names are passed to the prompt as an exclusion list; `>85%` near-duplicates raise a warning rather than an auto-reject.
 - `/admin/review` lists pending courses with inline edit, Save & Publish, and Reject (with reason). Publish enforces required fields (`description ≥ 150 chars`, eligibility, tenure, clusters).
@@ -105,8 +103,6 @@ docker compose up --build                                  # db + app, migration
 - All admin actions write to `audit_log` (admin id, action, old/new values, IP, user-agent).
 - All endpoints check session + admin role; non-admins get 401.
 
-Student routes (`/assessment/*`) still show "Coming soon" — those land in M4.
-
 ## What works in M3
 
 - `/courses` lists published courses with text search, stream filter, AI-safety filter, and pagination (12/page). Cards show stream, tenure, AI-safety chip, lead cluster, and institute count.
@@ -115,6 +111,14 @@ Student routes (`/assessment/*`) still show "Coming soon" — those land in M4.
 - Anonymous Q&A sessions: an `HttpOnly` `qa_sid` cookie scopes a 20-message budget per (course × session). Calls past the cap return 429 with `limit` in the body. Students reload to start a fresh session.
 - Per-message length cap (600 chars) and history cap (10 turns) keep prompt size predictable.
 - Off-topic deflection is enforced by the system instructions: the assistant refuses + offers two example on-topic questions instead.
+
+## What works in M4
+
+- Student auth: phone+password signup at `/student/signup`, login at `/student/login` (Better Auth; brute-force protected via DB-backed rate limiting).
+- `/assessment` is a resumable five-module wizard (interests, work style, aptitude, subject liking, marks). Answer keys never reach the client.
+- Scoring is deterministic (`lib/assessment/scoring`): RIASEC interests, work-style traits, banded aptitude, subject affinities, marks profile, plus an overall confidence band.
+- Recommendation is deterministic too (`lib/recommendation`): cluster match against admin-managed `career_clusters` target profiles, eligibility-gated course ranking over the published catalogue (top 10), and a low-signal flag so the result screen avoids a falsely-confident #1.
+- Admins manage the inputs at `/admin/question-bank` and `/admin/clusters`, and students at `/admin/students` (ban/unban, delete, reset password, reset retake cooldown) — all audited.
 
 ## For Claude Code on the web
 
@@ -126,34 +130,35 @@ deps installed and schema applied.
 
 ```
 app/                   # Next.js App Router
-  (admin)/             # admin route group (chrome only; middleware guards)
-  (student)/           # mobile-first student pages
-  api/                 # API routes (most return 501 in M1)
+  (admin)/             # admin route group (role gate in layout; cookie gate in middleware)
+  (student)/           # mobile-first student pages (catalogue, assessment, auth)
+  api/                 # API routes (admin, assessment, courses Q&A, Better Auth handler)
 components/            # UI
 db/schema/             # Drizzle schema (one file per entity)
 drizzle/               # generated migrations (committed)
 lib/
   env.ts               # zod-validated env
-  auth/                # NextAuth v5 config (split edge/node)
+  auth.ts              # Better Auth instance (phoneNumber + admin plugins)
+  auth/                # getCachedSession + requireAdmin / requireStudent guards
   db/                  # drizzle client
-  ai/                  # Anthropic client + safe-fetch stub (M2)
+  ai/                  # provider registry + safe-fetch + qa-prompt
+  assessment/          # deterministic scoring (items, lenses, confidence)
+  recommendation/      # deterministic cluster match + course ranking
 docker/                # Dockerfile + entrypoint
-scripts/               # migrate.ts, create-admin.ts
+scripts/               # migrate.ts, create-admin.ts, seeders
 ```
 
-## Open decisions (to confirm before M2)
+## Open decisions
 
-- **Claude model ID** — spec references `claude-sonnet-4-20250514`. Current family is Claude 4.X (latest Sonnet: `claude-sonnet-4-6`, latest Opus: `claude-opus-4-7`). `lib/ai/client.ts` currently defaults to `claude-sonnet-4-6` as a placeholder.
-- Retake cooldown period (profiling).
+- Retake cooldown enforcement (fields + admin reset exist; the automatic gate does not yet).
 - Fees display — annual vs total course fees.
 - Max institutes per course page.
-- Algorithm weightings across 3 modules.
 
 ## Roadmap
 
-- **M2** — Admin: AI fetch, review queue, publish, audit log, manual course creation.
-- **M3** — Student catalogue, course detail, AI Q&A streaming (with prompt caching, rate limit, deflection rules).
-- **M4** — Student auth, three profiling modules, algorithm, result screen.
+- **M2** — Admin: AI fetch, review queue, publish, audit log, manual course creation. ✅
+- **M3** — Student catalogue, course detail, AI Q&A streaming (with prompt caching, rate limit, deflection rules). ✅
+- **M4** — Student auth, profiling modules, deterministic scoring + recommendation, result screen. ✅ (cooldown enforcement pending)
 - **M5** — Smart institute tagging, filtering, dashboard stats, polish.
 
 admin email : sevak@hp.com
