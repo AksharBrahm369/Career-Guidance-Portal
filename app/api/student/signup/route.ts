@@ -1,5 +1,6 @@
 import { z } from "zod";
 import { eq } from "drizzle-orm";
+import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { user } from "@/db/schema";
@@ -55,7 +56,29 @@ export async function POST(req: Request) {
       .set({ phoneNumber: phone, phoneNumberVerified: false, role: "student" })
       .where(eq(user.id, createdUserId));
 
-    return Response.json({ ok: true }, { status: 201 });
+    const authHeaders = new Headers(req.headers);
+    if (!authHeaders.has("origin")) authHeaders.set("origin", new URL(req.url).origin);
+
+    const signInResponse = await auth.api.signInPhoneNumber({
+      body: { phoneNumber: phone, password: input.password },
+      headers: authHeaders,
+      asResponse: true,
+    } as Parameters<typeof auth.api.signInPhoneNumber>[0] & { asResponse: true });
+
+    const response = NextResponse.json({ ok: true }, { status: 201 });
+    const setCookies =
+      (signInResponse.headers as Headers & { getSetCookie?: () => string[] }).getSetCookie?.() ??
+      [];
+
+    if (setCookies.length > 0) {
+      for (const cookie of setCookies) response.headers.append("set-cookie", cookie);
+    } else {
+      signInResponse.headers.forEach((value, key) => {
+        if (key.toLowerCase() === "set-cookie") response.headers.append("set-cookie", value);
+      });
+    }
+
+    return response;
   } catch (err) {
     // Duplicate phone OR synth email → structural unique-violation (pg 23505),
     // not brittle message matching. The synth-email collision surfaces from
@@ -65,7 +88,10 @@ export async function POST(req: Request) {
       // the just-created user has no phone and can never log in — delete it so
       // no orphan row is left behind.
       if (createdUserId) {
-        await db.delete(user).where(eq(user.id, createdUserId)).catch(() => {});
+        await db
+          .delete(user)
+          .where(eq(user.id, createdUserId))
+          .catch(() => {});
       }
       return Response.json({ error: "already_registered" }, { status: 409 });
     }
@@ -75,7 +101,10 @@ export async function POST(req: Request) {
     const message = err instanceof Error ? err.message : "";
     if (/exist|already registered|already in use/i.test(message)) {
       if (createdUserId) {
-        await db.delete(user).where(eq(user.id, createdUserId)).catch(() => {});
+        await db
+          .delete(user)
+          .where(eq(user.id, createdUserId))
+          .catch(() => {});
       }
       return Response.json({ error: "already_registered" }, { status: 409 });
     }
@@ -85,7 +114,10 @@ export async function POST(req: Request) {
     console.error("[student/signup] unexpected failure:", err);
     if (createdUserId) {
       // Compensating delete so a half-built (no-phone) account isn't orphaned.
-      await db.delete(user).where(eq(user.id, createdUserId)).catch(() => {});
+      await db
+        .delete(user)
+        .where(eq(user.id, createdUserId))
+        .catch(() => {});
     }
     return Response.json({ error: "signup_failed" }, { status: 500 });
   }

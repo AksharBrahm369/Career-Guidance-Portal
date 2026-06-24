@@ -1,6 +1,6 @@
 "use client";
 
-import { CircleDot, GripVertical, Plus, Trash2 } from "lucide-react";
+import { CircleDot, GripVertical, Loader2, Plus, Trash2 } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { toast } from "sonner";
@@ -168,9 +168,7 @@ export function QuestionBankForm({
       ? { ...base, correctOptionId: correctOptionId.trim() }
       : { ...base, scoringMap: buildScoringMap(trimmedOptions, dimension.trim()) };
 
-    const url = editing
-      ? `/api/admin/question-bank/${item!.id}`
-      : "/api/admin/question-bank";
+    const url = editing ? `/api/admin/question-bank/${item!.id}` : "/api/admin/question-bank";
     const res = await fetch(url, {
       method: editing ? "PATCH" : "POST",
       headers: { "Content-Type": "application/json" },
@@ -274,7 +272,8 @@ export function QuestionBankForm({
             </FieldDescription>
             <div className="flex flex-col gap-2">
               {options.map((o, i) => {
-                const isCorrect = isAptitude && o.id.trim() !== "" && o.id.trim() === correctOptionId.trim();
+                const isCorrect =
+                  isAptitude && o.id.trim() !== "" && o.id.trim() === correctOptionId.trim();
                 return (
                   <div
                     key={i}
@@ -340,11 +339,7 @@ export function QuestionBankForm({
           <Field orientation="responsive">
             <FieldContent>
               <FieldLabel htmlFor="qbf-source">Source</FieldLabel>
-              <Input
-                id="qbf-source"
-                value={source}
-                onChange={(e) => setSource(e.target.value)}
-              />
+              <Input id="qbf-source" value={source} onChange={(e) => setSource(e.target.value)} />
             </FieldContent>
             <FieldContent>
               <FieldLabel htmlFor="qbf-version">Version</FieldLabel>
@@ -422,6 +417,7 @@ export function QuestionBankForm({
             Cancel
           </Button>
           <Button onClick={submit} disabled={pending}>
+            {pending ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}
             {editing ? "Save changes" : "Create item"}
           </Button>
         </DialogFooter>

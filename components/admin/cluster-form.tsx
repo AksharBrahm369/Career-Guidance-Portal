@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { Loader2 } from "lucide-react";
 
 const TEMPLATE =
   '{\n  "key": "engineering-technology",\n  "name": "Engineering & Technology",\n  "targetProfile": {"interests":{"I":0.9},"aptitude":{"numerical":0.8},"workStyle":{"Analytical":0.8}},\n  "lensWeights": {"interests":0.3,"aptitude":0.3,"marks":0.3,"workStyle":0.1}\n}';
@@ -38,21 +39,31 @@ export function ClusterForm() {
 
   return (
     <div className="flex flex-col gap-2 rounded-md border bg-card p-3">
-      <label htmlFor="cluster-json" className="text-sm font-medium">New cluster (JSON)</label>
+      <label htmlFor="cluster-json" className="text-sm font-medium">
+        New cluster (JSON)
+      </label>
       <textarea
         id="cluster-json"
         value={json}
         onChange={(e) => setJson(e.target.value)}
         rows={8}
         className="rounded-md border bg-background p-2 font-mono text-xs"
+        disabled={pending}
       />
       {error ? <p className="text-xs text-destructive">{error}</p> : null}
       <button
         onClick={submit}
         disabled={pending}
-        className="self-start rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground disabled:opacity-50"
+        className="inline-flex items-center gap-2 self-start rounded-md bg-primary px-3 py-1.5 text-sm text-primary-foreground disabled:opacity-50"
       >
-        {pending ? "Saving…" : "Create cluster"}
+        {pending ? (
+          <>
+            <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+            Saving...
+          </>
+        ) : (
+          "Create cluster"
+        )}
       </button>
     </div>
   );

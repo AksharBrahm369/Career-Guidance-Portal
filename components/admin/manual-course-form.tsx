@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 interface InstituteDraft {
   name: string;
@@ -278,10 +279,7 @@ export function ManualCourseForm() {
         </div>
         <div className="flex flex-col gap-2">
           {institutes.map((inst, idx) => (
-            <div
-              key={idx}
-              className="grid grid-cols-2 gap-2 rounded-md border p-2 sm:grid-cols-4"
-            >
+            <div key={idx} className="grid grid-cols-2 gap-2 rounded-md border p-2 sm:grid-cols-4">
               <input
                 className={inputCls}
                 placeholder="Name"
@@ -336,17 +334,18 @@ export function ManualCourseForm() {
       </div>
 
       {error ? (
-        <div className="sm:col-span-2 rounded-md border border-destructive/40 bg-destructive/5 p-2 text-sm text-destructive">
+        <div className="rounded-md border border-destructive/40 bg-destructive/5 p-2 text-sm text-destructive sm:col-span-2">
           {error}
         </div>
       ) : null}
 
-      <div className="sm:col-span-2 flex gap-2">
+      <div className="flex gap-2 sm:col-span-2">
         <button
           type="submit"
           disabled={submitting}
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
         >
+          {submitting ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
           {submitting ? "Saving…" : "Save to Review Queue"}
         </button>
       </div>
@@ -354,8 +353,7 @@ export function ManualCourseForm() {
   );
 }
 
-const inputCls =
-  "w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm";
+const inputCls = "w-full rounded-md border border-input bg-background px-2 py-1.5 text-sm";
 
 function Field({
   label,

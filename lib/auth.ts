@@ -8,14 +8,26 @@ import { env } from "@/lib/env";
 import * as authSchema from "@/db/schema/auth";
 
 const isProd = env.NODE_ENV === "production";
+const devTrustedOrigins = isProd
+  ? []
+  : [
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://127.0.0.1:3000",
+      "http://127.0.0.1:3001",
+    ];
 
 // All real front-end origins. baseURL is auto-trusted; this also allow-lists
 // Vercel preview URLs via BETTER_AUTH_TRUSTED_ORIGINS (comma-separated env).
-const trustedOrigins = [
-  env.BETTER_AUTH_URL,
-  ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",").map((s) => s.trim()).filter(Boolean) ??
-    []),
-];
+const trustedOrigins = Array.from(
+  new Set([
+    env.BETTER_AUTH_URL,
+    ...devTrustedOrigins,
+    ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",")
+      .map((s) => s.trim())
+      .filter(Boolean) ?? []),
+  ]),
+);
 
 // Note: no `import "server-only"` here — the Better Auth CLI loads this file in
 // plain Node to generate the schema. It is still effectively server-only (only

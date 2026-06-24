@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { toast } from "sonner";
 import {
   KeyRoundIcon,
+  Loader2,
   ShieldBanIcon,
   ShieldCheckIcon,
   TimerResetIcon,
@@ -157,6 +158,7 @@ export function StudentActions({ studentId, banned }: Props) {
               Cancel
             </Button>
             <Button onClick={submitPassword} disabled={pending}>
+              {pending ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}
               Set password
             </Button>
           </DialogFooter>
@@ -190,6 +192,7 @@ export function StudentActions({ studentId, banned }: Props) {
               disabled={pending}
               className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
+              {pending ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}
               Delete
             </AlertDialogAction>
           </AlertDialogFooter>

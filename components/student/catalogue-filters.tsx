@@ -2,7 +2,7 @@
 
 import { useRouter, useSearchParams } from "next/navigation";
 import { useState, useTransition } from "react";
-import { Search, X } from "lucide-react";
+import { Loader2, Search, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { cn } from "@/lib/utils";
@@ -72,16 +72,13 @@ export function CatalogueFilters() {
           />
         </div>
         <Button type="submit" disabled={pending} className="h-11 shrink-0">
+          {pending ? <Loader2 className="animate-spin" aria-hidden="true" /> : null}
           Search
         </Button>
       </form>
 
       <FilterRow label="Stream">
-        <FilterChip
-          label="All"
-          active={!stream}
-          onClick={() => update({ stream: null })}
-        />
+        <FilterChip label="All" active={!stream} onClick={() => update({ stream: null })} />
         {STREAMS.map((s) => (
           <FilterChip
             key={s}
@@ -93,11 +90,7 @@ export function CatalogueFilters() {
       </FilterRow>
 
       <FilterRow label="AI exposure">
-        <FilterChip
-          label="Any"
-          active={!safety}
-          onClick={() => update({ ai: null })}
-        />
+        <FilterChip label="Any" active={!safety} onClick={() => update({ ai: null })} />
         {TAGS.map((t) => (
           <FilterChip
             key={t.v}
@@ -124,13 +117,7 @@ export function CatalogueFilters() {
   );
 }
 
-function FilterRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function FilterRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <fieldset className="flex flex-col gap-2">
       <legend className="text-xs font-medium uppercase tracking-wide text-muted-foreground">

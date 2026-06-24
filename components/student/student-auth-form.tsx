@@ -7,12 +7,7 @@ import { authClient } from "@/lib/auth-client";
 import { normalizePhone } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
-import {
-  Field,
-  FieldError,
-  FieldGroup,
-  FieldLabel,
-} from "@/components/ui/field";
+import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import {
   InputGroup,
   InputGroupAddon,
@@ -48,8 +43,7 @@ function validateField(
     }
     case "password":
       if (!value) return "Enter a password.";
-      if (mode === "signup" && value.length < 8)
-        return "Use at least 8 characters.";
+      if (mode === "signup" && value.length < 8) return "Use at least 8 characters.";
       return undefined;
     default:
       return undefined;
@@ -96,7 +90,8 @@ export function StudentAuthForm({ mode }: { mode: "signup" | "login" }) {
     setFormError(null);
 
     // Validate everything on submit; surface all errors at once.
-    const fields: FieldName[] = mode === "signup" ? ["name", "phone", "password"] : ["phone", "password"];
+    const fields: FieldName[] =
+      mode === "signup" ? ["name", "phone", "password"] : ["phone", "password"];
     const nextErrors: FieldErrors = {};
     let hasError = false;
     for (const f of fields) {
@@ -128,11 +123,6 @@ export function StudentAuthForm({ mode }: { mode: "signup" | "login" }) {
           );
           return;
         }
-        const r = await authClient.signIn.phoneNumber({ phoneNumber: canonicalPhone, password });
-        if (r.error) {
-          setFormError("Account created, but auto-login failed — try logging in.");
-          return;
-        }
       } else {
         const r = await authClient.signIn.phoneNumber({ phoneNumber: canonicalPhone, password });
         if (r.error) {
@@ -142,7 +132,7 @@ export function StudentAuthForm({ mode }: { mode: "signup" | "login" }) {
       }
       // Hard navigation (not router.push) so the just-set session cookie is
       // guaranteed to ride along on the next request and the RSC tree re-renders
-      // with the authenticated session — avoids a race where requireStudent()
+      // with the authenticated session - avoids a race where requireStudent()
       // 401s on a stale cached payload.
       window.location.assign("/assessment");
     } finally {
@@ -223,9 +213,7 @@ export function StudentAuthForm({ mode }: { mode: "signup" | "login" }) {
               onChange={(e) => handleChange("password", e.target.value)}
               onBlur={() => handleBlur("password")}
               aria-invalid={touched.password && !!fieldErrors.password}
-              aria-describedby={
-                fieldErrors.password ? "auth-password-error" : undefined
-              }
+              aria-describedby={fieldErrors.password ? "auth-password-error" : undefined}
               className="text-base md:text-base"
             />
             <InputGroupAddon align="inline-end">
@@ -236,11 +224,7 @@ export function StudentAuthForm({ mode }: { mode: "signup" | "login" }) {
                 aria-pressed={showPassword}
                 onClick={() => setShowPassword((s) => !s)}
               >
-                {showPassword ? (
-                  <EyeOff aria-hidden="true" />
-                ) : (
-                  <Eye aria-hidden="true" />
-                )}
+                {showPassword ? <EyeOff aria-hidden="true" /> : <Eye aria-hidden="true" />}
               </InputGroupButton>
             </InputGroupAddon>
           </InputGroup>
@@ -270,7 +254,7 @@ export function StudentAuthForm({ mode }: { mode: "signup" | "login" }) {
         {busy ? (
           <>
             <Loader2 className="animate-spin" aria-hidden="true" />
-            {isSignup ? "Creating your account…" : "Logging you in…"}
+            {isSignup ? "Creating your account..." : "Logging you in..."}
           </>
         ) : isSignup ? (
           "Create my account"

@@ -2,6 +2,7 @@
 
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
+import { Loader2 } from "lucide-react";
 import { SourceUrlsEditor } from "@/components/admin/source-urls-editor";
 import { formatInvalidTransition } from "@/lib/admin/course-transitions";
 
@@ -157,9 +158,10 @@ export function ReviewCard({ course }: { course: CourseRow }) {
           </button>
           <button
             onClick={publish}
-            className="rounded-md bg-primary px-3 py-1 text-primary-foreground"
+            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1 text-primary-foreground"
             disabled={pending}
           >
+            {pending ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : null}
             {pending ? "…" : editing ? "Save & Publish" : "Publish"}
           </button>
         </div>
@@ -241,9 +243,12 @@ export function ReviewCard({ course }: { course: CourseRow }) {
               <div className="sm:col-span-2">
                 <button
                   onClick={save}
-                  className="rounded-md bg-secondary px-3 py-1 text-xs"
+                  className="inline-flex items-center gap-1.5 rounded-md bg-secondary px-3 py-1 text-xs"
                   disabled={pending}
                 >
+                  {pending ? (
+                    <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+                  ) : null}
                   Save edits (without publishing)
                 </button>
               </div>

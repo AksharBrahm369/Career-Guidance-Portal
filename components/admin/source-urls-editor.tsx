@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
 
 type Status = "ok" | "dead" | "unknown";
 
@@ -102,8 +103,9 @@ export function SourceUrlsEditor({ courseId, initialUrls, onChange, editing }: P
           type="button"
           onClick={verifyAll}
           disabled={verifying || urls.length === 0}
-          className="rounded-md border px-2 py-1 text-xs disabled:opacity-50"
+          className="inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs disabled:opacity-50"
         >
+          {verifying ? <Loader2 className="size-3 animate-spin" aria-hidden="true" /> : null}
           {verifying ? "Verifying…" : "Verify all"}
         </button>
       </div>
@@ -119,12 +121,7 @@ export function SourceUrlsEditor({ courseId, initialUrls, onChange, editing }: P
                 key={u}
                 className="flex items-center justify-between gap-2 rounded border bg-background/50 px-2 py-1 text-xs"
               >
-                <a
-                  href={u}
-                  target="_blank"
-                  rel="noreferrer"
-                  className="min-w-0 truncate underline"
-                >
+                <a href={u} target="_blank" rel="noreferrer" className="min-w-0 truncate underline">
                   {u}
                 </a>
                 <div className="flex shrink-0 items-center gap-1.5">

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useTransition } from "react";
+import { Loader2 } from "lucide-react";
 import { formatInvalidTransition } from "@/lib/admin/course-transitions";
 
 type Status = "published" | "pending_review" | "rejected" | "archived";
@@ -18,7 +19,9 @@ export function CourseLifecycleActions({ courseId, status, size = "sm" }: Props)
   const [pending, startTransition] = useTransition();
 
   const cls =
-    size === "sm" ? "rounded-md border px-2 py-1 text-xs" : "rounded-md border px-3 py-1.5 text-sm";
+    size === "sm"
+      ? "inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs"
+      : "inline-flex items-center gap-2 rounded-md border px-3 py-1.5 text-sm";
 
   async function call(path: string, confirmText?: string) {
     if (confirmText && !window.confirm(confirmText)) return;
@@ -43,7 +46,7 @@ export function CourseLifecycleActions({ courseId, status, size = "sm" }: Props)
         disabled={pending}
         className={`${cls} disabled:opacity-50`}
       >
-        {pending ? "…" : "Archive"}
+        {pending ? <LoadingLabel label="Archiving..." /> : "Archive"}
       </button>
     );
   }
@@ -60,16 +63,17 @@ export function CourseLifecycleActions({ courseId, status, size = "sm" }: Props)
     return (
       <button
         type="button"
-        onClick={() => call("reopen", "Reopen this course for review? Rejection reason will be cleared.")}
+        onClick={() =>
+          call("reopen", "Reopen this course for review? Rejection reason will be cleared.")
+        }
         disabled={pending}
         className={`${cls} disabled:opacity-50`}
       >
-        {pending ? "…" : "Reopen for review"}
+        {pending ? <LoadingLabel label="Reopening..." /> : "Reopen for review"}
       </button>
     );
   }
 
-  // archived
   return (
     <button
       type="button"
@@ -77,7 +81,16 @@ export function CourseLifecycleActions({ courseId, status, size = "sm" }: Props)
       disabled={pending}
       className={`${cls} disabled:opacity-50`}
     >
-      {pending ? "…" : "Restore to published"}
+      {pending ? <LoadingLabel label="Restoring..." /> : "Restore to published"}
     </button>
+  );
+}
+
+function LoadingLabel({ label }: { label: string }) {
+  return (
+    <>
+      <Loader2 className="size-3.5 animate-spin" aria-hidden="true" />
+      {label}
+    </>
   );
 }

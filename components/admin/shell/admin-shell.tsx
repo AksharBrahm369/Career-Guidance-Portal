@@ -1,6 +1,7 @@
 "use client";
 
 import type { ReactNode } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import {
@@ -12,9 +13,9 @@ import {
   BookOpen,
   DownloadCloud,
   ClipboardCheck,
+  Loader2,
   LogOut,
 } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
 import {
   Sidebar,
   SidebarContent,
@@ -52,6 +53,21 @@ function isActive(pathname: string, href: string) {
 
 export function AdminShell({ email, children }: { email: string; children: ReactNode }) {
   const pathname = usePathname();
+  const [signingOut, setSigningOut] = useState(false);
+
+  async function handleSignOut() {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await fetch("/api/session/sign-out", {
+        method: "POST",
+        credentials: "include",
+        cache: "no-store",
+      });
+    } finally {
+      window.location.replace("/admin/login");
+    }
+  }
 
   return (
     <SidebarProvider>
@@ -99,10 +115,7 @@ export function AdminShell({ email, children }: { email: string; children: React
         <SidebarFooter>
           <SidebarMenu>
             <SidebarMenuItem>
-              <SidebarMenuButton
-                size="lg"
-                className="group-data-[collapsible=icon]:!p-2"
-              >
+              <SidebarMenuButton size="lg" className="group-data-[collapsible=icon]:!p-2">
                 <Avatar className="size-8 rounded-lg">
                   <AvatarFallback className="rounded-lg">
                     {email.slice(0, 2).toUpperCase()}
@@ -128,13 +141,16 @@ export function AdminShell({ email, children }: { email: string; children: React
             <Button
               variant="outline"
               size="sm"
-              onClick={async () => {
-                await authClient.signOut();
-                window.location.assign("/admin/login");
-              }}
+              onClick={handleSignOut}
+              disabled={signingOut}
+              aria-busy={signingOut}
             >
-              <LogOut data-icon="inline-start" />
-              Sign out
+              {signingOut ? (
+                <Loader2 data-icon="inline-start" className="animate-spin" />
+              ) : (
+                <LogOut data-icon="inline-start" />
+              )}
+              {signingOut ? "Signing out..." : "Sign out"}
             </Button>
           </div>
         </header>

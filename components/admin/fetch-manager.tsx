@@ -2,6 +2,9 @@
 
 import Link from "next/link";
 import { useState } from "react";
+import { Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Skeleton } from "@/components/ui/skeleton";
 
 interface FetchedCourse {
   courseId: string;
@@ -38,9 +41,7 @@ function CourseCard({ item, index }: { item: FetchedCourse; index?: number }) {
       <div className="flex items-start justify-between gap-2">
         <div>
           {index !== undefined && (
-            <div className="mb-0.5 text-xs font-semibold text-muted-foreground">
-              #{index + 1}
-            </div>
+            <div className="mb-0.5 text-xs font-semibold text-muted-foreground">#{index + 1}</div>
           )}
           <div className="text-xs text-muted-foreground">via {item.provider}</div>
           <h2 className="text-xl font-semibold">{item.course.courseName}</h2>
@@ -60,8 +61,8 @@ function CourseCard({ item, index }: { item: FetchedCourse; index?: number }) {
 
       {item.warnings.length > 0 ? (
         <div className="rounded border border-orange-400/40 bg-orange-400/5 p-2 text-xs text-orange-700">
-          {item.warnings.map((w, i) => (
-            <div key={i}>⚠ {w}</div>
+          {item.warnings.map((warning, i) => (
+            <div key={i}>Warning: {warning}</div>
           ))}
         </div>
       ) : null}
@@ -70,18 +71,20 @@ function CourseCard({ item, index }: { item: FetchedCourse; index?: number }) {
 
       <div className="text-xs text-muted-foreground">Career clusters</div>
       <div className="flex flex-wrap gap-1.5">
-        {item.course.careerClusters.map((c) => (
-          <span key={c} className="rounded bg-secondary px-2 py-0.5 text-xs">
-            {c}
+        {item.course.careerClusters.map((cluster) => (
+          <span key={cluster} className="rounded bg-secondary px-2 py-0.5 text-xs">
+            {cluster}
           </span>
         ))}
       </div>
 
-      <div className="text-xs text-muted-foreground">{item.course.institutes.length} institutes</div>
+      <div className="text-xs text-muted-foreground">
+        {item.course.institutes.length} institutes
+      </div>
       <ul className="space-y-1 text-sm">
         {item.course.institutes.slice(0, 5).map((inst) => (
           <li key={`${inst.name}-${inst.city}`}>
-            {inst.name} — {inst.city}, {inst.state}
+            {inst.name} - {inst.city}, {inst.state}
           </li>
         ))}
         {item.course.institutes.length > 5 ? (
@@ -153,6 +156,7 @@ export function FetchManager() {
             required
             minLength={2}
             maxLength={200}
+            disabled={loading}
           />
         </label>
 
@@ -162,19 +166,30 @@ export function FetchManager() {
               type="checkbox"
               checked={override}
               onChange={(e) => setOverride(e.target.checked)}
+              disabled={loading}
             />
             Override exclusion list (allow duplicates)
           </label>
         </div>
 
-        <button
+        <Button
           type="submit"
           disabled={loading || query.trim().length < 2}
-          className="self-start rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
+          className="self-start"
+          aria-busy={loading}
         >
-          {loading ? "Fetching all matches with AI…" : "Fetch all matches with AI"}
-        </button>
+          {loading ? (
+            <>
+              <Loader2 className="animate-spin" aria-hidden="true" />
+              Fetching all matches with AI...
+            </>
+          ) : (
+            "Fetch all matches with AI"
+          )}
+        </Button>
       </form>
+
+      {loading ? <FetchLoadingSkeleton /> : null}
 
       {error ? (
         <div className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive">
@@ -182,7 +197,6 @@ export function FetchManager() {
         </div>
       ) : null}
 
-      {/* Batch summary banner */}
       {isBatch && response ? (
         <div className="flex items-center gap-3 rounded-md border bg-muted/40 px-4 py-2 text-sm">
           <span className="font-semibold">
@@ -191,34 +205,69 @@ export function FetchManager() {
           </span>
           {(response as BatchResponse).failures.length > 0 && (
             <span className="text-orange-700">
-              · {(response as BatchResponse).failures.length} iteration
+              - {(response as BatchResponse).failures.length} iteration
               {(response as BatchResponse).failures.length !== 1 ? "s" : ""} failed
             </span>
           )}
           <Link href="/admin/review" className="ml-auto text-xs underline">
-            Open Review Queue →
+            Open Review Queue
           </Link>
         </div>
       ) : null}
 
-      {/* Failure details for batch */}
       {isBatch && (response as BatchResponse).failures.length > 0 ? (
         <div className="rounded-md border border-orange-400/40 bg-orange-400/5 p-3 text-xs text-orange-700">
           <div className="mb-1 font-semibold">Failed iterations:</div>
-          {(response as BatchResponse).failures.map((f, i) => (
-            <div key={i}>⚠ {f}</div>
+          {(response as BatchResponse).failures.map((failure, i) => (
+            <div key={i}>Warning: {failure}</div>
           ))}
         </div>
       ) : null}
 
-      {/* Course cards */}
       {courses.map((item, idx) => (
-        <CourseCard
-          key={item.courseId}
-          item={item}
-          index={courses.length > 1 ? idx : undefined}
-        />
+        <CourseCard key={item.courseId} item={item} index={courses.length > 1 ? idx : undefined} />
       ))}
+    </div>
+  );
+}
+
+function FetchLoadingSkeleton() {
+  return (
+    <div
+      className="flex flex-col gap-4 rounded-lg border bg-muted/20 p-4"
+      role="status"
+      aria-live="polite"
+      aria-label="Fetching courses with AI"
+    >
+      <div className="flex items-center gap-3 text-sm text-muted-foreground">
+        <Loader2 className="size-4 animate-spin text-primary" aria-hidden="true" />
+        Finding relevant courses, checking duplicates, and saving review drafts...
+      </div>
+      <div className="grid gap-4 lg:grid-cols-3">
+        {Array.from({ length: 3 }).map((_, index) => (
+          <div key={index} className="flex min-h-48 flex-col gap-3 rounded-lg border bg-card p-4">
+            <div className="flex items-start justify-between gap-3">
+              <div className="flex flex-1 flex-col gap-2">
+                <Skeleton className="h-3 w-16" />
+                <Skeleton className="h-6 w-4/5" />
+              </div>
+              <Skeleton className="h-8 w-24" />
+            </div>
+            <div className="flex gap-2">
+              <Skeleton className="h-5 w-16 rounded-full" />
+              <Skeleton className="h-5 w-20 rounded-full" />
+              <Skeleton className="h-5 w-14 rounded-full" />
+            </div>
+            <Skeleton className="h-4 w-full" />
+            <Skeleton className="h-4 w-11/12" />
+            <Skeleton className="h-4 w-2/3" />
+            <div className="mt-auto flex flex-col gap-2">
+              <Skeleton className="h-3 w-24" />
+              <Skeleton className="h-4 w-40" />
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
   );
 }

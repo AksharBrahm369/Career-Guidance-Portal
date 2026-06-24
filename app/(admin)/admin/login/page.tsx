@@ -5,6 +5,7 @@ import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { user } from "@/db/schema";
 import { adminUsernameToAuthEmail } from "@/lib/admin/admin-username";
+import { PendingSubmitButton } from "@/components/ui/pending-submit-button";
 
 export default async function AdminLoginPage({
   searchParams,
@@ -83,12 +84,9 @@ export default async function AdminLoginPage({
         {error ? (
           <p className="text-sm text-destructive">Invalid credentials. Please try again.</p>
         ) : null}
-        <button
-          type="submit"
-          className="rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:opacity-90"
-        >
+        <PendingSubmitButton pendingLabel="Signing in..." className="w-full">
           Sign in
-        </button>
+        </PendingSubmitButton>
       </form>
     </div>
   );

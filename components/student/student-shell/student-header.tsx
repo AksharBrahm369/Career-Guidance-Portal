@@ -3,8 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Compass, LogOut, Menu } from "lucide-react";
-import { authClient } from "@/lib/auth-client";
+import { Compass, Loader2, LogOut, Menu } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import {
@@ -36,17 +35,26 @@ function Wordmark({ onClick }: { onClick?: () => void }) {
   );
 }
 
-async function signOut() {
-  await authClient.signOut();
-  window.location.assign("/student/login");
-}
-
 export function StudentHeader() {
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
+  const [signingOut, setSigningOut] = useState(false);
 
-  const isActive = (href: string) =>
-    pathname === href || pathname.startsWith(`${href}/`);
+  const isActive = (href: string) => pathname === href || pathname.startsWith(`${href}/`);
+
+  async function signOut() {
+    if (signingOut) return;
+    setSigningOut(true);
+    try {
+      await fetch("/api/session/sign-out", {
+        method: "POST",
+        credentials: "include",
+        cache: "no-store",
+      });
+    } finally {
+      window.location.replace("/student/login");
+    }
+  }
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
@@ -77,10 +85,16 @@ export function StudentHeader() {
             variant="ghost"
             size="sm"
             onClick={signOut}
+            disabled={signingOut}
+            aria-busy={signingOut}
             className="ml-1 gap-2 text-muted-foreground hover:text-foreground"
           >
-            <LogOut className="size-4" aria-hidden="true" />
-            Sign out
+            {signingOut ? (
+              <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+            ) : (
+              <LogOut className="size-4" aria-hidden="true" />
+            )}
+            {signingOut ? "Signing out..." : "Sign out"}
           </Button>
         </div>
 
@@ -125,10 +139,16 @@ export function StudentHeader() {
                 type="button"
                 variant="outline"
                 onClick={signOut}
+                disabled={signingOut}
+                aria-busy={signingOut}
                 className="mt-6 h-12 w-full justify-start gap-2"
               >
-                <LogOut className="size-4" aria-hidden="true" />
-                Sign out
+                {signingOut ? (
+                  <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+                ) : (
+                  <LogOut className="size-4" aria-hidden="true" />
+                )}
+                {signingOut ? "Signing out..." : "Sign out"}
               </Button>
             </SheetContent>
           </Sheet>
