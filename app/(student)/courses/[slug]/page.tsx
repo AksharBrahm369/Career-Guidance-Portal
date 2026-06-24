@@ -97,7 +97,7 @@ export default async function CourseDetailPage({
           </span>
           {course.careerClusters.length > 0 ? (
             <span className="inline-flex flex-wrap items-center gap-1.5">
-              {course.careerClusters.map((c) => (
+              {course.careerClusters.map((c: string) => (
                 <Badge key={c} variant="outline" className="font-normal">
                   {c}
                 </Badge>
@@ -155,7 +155,7 @@ export default async function CourseDetailPage({
             <DetailRow label="Entrance exams">
               {course.entranceExams.length ? (
                 <div className="flex flex-wrap gap-1.5">
-                  {course.entranceExams.map((e) => (
+                  {course.entranceExams.map((e: string) => (
                     <Badge key={e} variant="outline" className="font-normal">
                       {e}
                     </Badge>
@@ -271,7 +271,7 @@ export default async function CourseDetailPage({
           </CardHeader>
           <CardContent>
             <ul className="flex flex-col gap-2">
-              {course.sourceUrls.map((u) => (
+              {course.sourceUrls.map((u: string) => (
                 <li key={u}>
                   <a
                     href={u}

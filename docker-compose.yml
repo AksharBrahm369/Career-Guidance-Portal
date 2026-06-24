@@ -26,7 +26,7 @@ services:
         condition: service_healthy
     environment:
       NODE_ENV: production
-      DATABASE_URL: postgresql://postgres:postgres@db:5432/hp_career
+      DATABASE_URL: ${DATABASE_URL:-postgresql://postgres:postgres@db:5432/hp_career}
       AI_PROVIDER: ${AI_PROVIDER:-anthropic}
       AI_FETCH_PROVIDER: ${AI_FETCH_PROVIDER:-}
       AI_QA_PROVIDER: ${AI_QA_PROVIDER:-}

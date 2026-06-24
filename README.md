@@ -43,10 +43,36 @@ cp .env.example .env.local                                 # fill ANTHROPIC_API_
 
 docker compose up -d db                                    # start postgres
 pnpm install
-pnpm db:generate                                           # (only if schema changed)
 pnpm db:migrate                                            # apply migrations
 pnpm create-admin                                          # seed first admin
 pnpm dev                                                   # http://localhost:3000
+```
+
+### Supabase database
+
+This app uses normal Postgres through `DATABASE_URL`, so Supabase works without
+a separate SDK. In Supabase, open **Project Settings -> Database -> Connection
+string**, copy the pooler connection string, and put it in `.env.local`:
+
+```bash
+cp .env.supabase.example .env.local
+```
+
+Use the Session Pooler or Transaction Pooler URL if your network has trouble
+with direct IPv6 database access. Keep `?sslmode=require` on the URL. If your
+password contains special characters such as `@`, `#`, `/`, or `:`, URL-encode
+the password before pasting it.
+
+After updating `.env.local`, initialize Supabase:
+
+```bash
+pnpm install
+pnpm db:migrate
+pnpm seed:clusters
+pnpm seed:demo-catalogue
+pnpm seed:question-bank
+pnpm create-admin
+pnpm dev
 ```
 
 > Password hashing is Better Auth's built-in scrypt — no native binding,
@@ -59,7 +85,7 @@ pnpm dev                                                   # http://localhost:30
 ```bash
 git pull
 pnpm install      # picks up the new lockfile
-pnpm db:migrate   # applies any new migrations
+pnpm db:migrate   # applies any new migrations to the configured DATABASE_URL
 pnpm dev
 ```
 
@@ -167,3 +193,9 @@ Password (min 12 chars): HPSevakDas@369
 
 username : sevak@hp
 pass : HPSevakDas@369
+
+
+supabse details
+
+username : Career Guidance Portal
+pass : Career-guidance-portal

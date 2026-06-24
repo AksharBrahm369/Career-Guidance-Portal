@@ -1,5 +1,10 @@
 # Knowledge Base — Career Guidance Platform
 
+> Current persistence note: runtime data now lives in `data/local-store.json`
+> through the local adapter in `lib/db/index.ts`. Older Postgres/Drizzle
+> migration references below are historical context and no longer required for
+> local setup.
+
 A single reference for **what this app is, why it's built this way, and the rules everything inside it has to follow.** Pair this with [`MODULES.md`](./MODULES.md) for per-module deep-dives.
 
 > Last refreshed against branch `claude/career-guidance-platform-DVGCu` after the M4 profiling engine, the Better Auth migration (phone+password for admins *and* students), the admin ops surface (student CRUD, question-bank + cluster management), and the centralised course-transition guard (`lib/admin/course-transitions.ts`). 2026-06.

@@ -23,49 +23,104 @@ async function prompt(question: string, { hidden = false } = {}): Promise<string
 }
 
 async function main() {
-  // Imported dynamically AFTER dotenv has loaded — these modules validate env
-  // at import time, so they must not be statically hoisted above the env load.
+  // Imported dynamically after dotenv has loaded. These modules validate env at
+  // import time, so they must not be statically hoisted above the env load.
   const { auth } = await import("@/lib/auth");
   const { db } = await import("@/lib/db");
   const { user } = await import("@/db/schema");
-  const { eq } = await import("drizzle-orm");
-  const { normalizePhone, synthEmailFromPhone } = await import("@/lib/phone");
+  const { account } = await import("@/db/schema/auth");
+  const { and, eq } = await import("drizzle-orm");
+  const { adminUsernameToAuthEmail } = await import("@/lib/admin/admin-username");
+  const { normalizePhone } = await import("@/lib/phone");
+  const { hashPassword } = await import("better-auth/crypto");
 
-  const name = (await prompt("Admin name: ")).trim();
-  const phone = (await prompt("Admin phone: ")).trim();
-  const password = await prompt("Password (min 12 chars): ", { hidden: true });
+  const envMode = Boolean(
+    process.env.ADMIN_NAME ||
+    process.env.ADMIN_USERNAME ||
+    process.env.ADMIN_PASSWORD ||
+    process.env.ADMIN_PHONE,
+  );
+  const name = (process.env.ADMIN_NAME ?? (await prompt("Admin name: "))).trim();
+  const username = (
+    process.env.ADMIN_USERNAME ?? (await prompt("Admin username (e.g. sevak@hp): "))
+  ).trim();
+  const phone = (
+    process.env.ADMIN_PHONE ?? (envMode ? "" : await prompt("Admin phone (optional): "))
+  ).trim();
+  const password =
+    process.env.ADMIN_PASSWORD ?? (await prompt("Password (min 12 chars): ", { hidden: true }));
 
-  if (!name || !phone || !password) {
-    console.error("✗ All fields required.");
+  if (!name || !username || !password) {
+    console.error("x Admin name, username, and password are required.");
     process.exit(1);
   }
   if (password.length < 12) {
-    console.error("✗ Password must be at least 12 characters.");
+    console.error("x Password must be at least 12 characters.");
     process.exit(1);
   }
 
-  const normalizedPhone = normalizePhone(phone);
-  if (!normalizedPhone) {
-    console.error("✗ Phone normalizes to empty — enter a valid number.");
+  const normalizedPhone = phone ? normalizePhone(phone) : null;
+  if (phone && !normalizedPhone) {
+    console.error("x Phone normalizes to empty - enter a valid number.");
     process.exit(1);
   }
 
-  const created = await auth.api.signUpEmail({
-    body: { email: synthEmailFromPhone(phone), password, name },
+  const email = adminUsernameToAuthEmail(username);
+  const existing = await db.query.user.findFirst({
+    where: eq(user.email, email),
+    columns: { id: true },
   });
+
+  const userId =
+    existing?.id ??
+    (
+      await auth.api.signUpEmail({
+        body: { email, password, name },
+      })
+    ).user.id;
+
+  if (existing) {
+    const passwordHash = await hashPassword(password);
+    const credentialAccount = await db.query.account.findFirst({
+      where: and(eq(account.userId, userId), eq(account.providerId, "credential")),
+      columns: { id: true },
+    });
+
+    if (credentialAccount) {
+      await db
+        .update(account)
+        .set({ password: passwordHash, updatedAt: new Date() })
+        .where(eq(account.id, credentialAccount.id));
+    } else {
+      await db.insert(account).values({
+        accountId: userId,
+        providerId: "credential",
+        userId,
+        password: passwordHash,
+      });
+    }
+  }
+
+  const userUpdate: Partial<typeof user.$inferInsert> = {
+    name,
+    phoneNumberVerified: false,
+    role: "admin",
+    banned: false,
+  };
+  if (normalizedPhone) userUpdate.phoneNumber = normalizedPhone;
 
   await db
     .update(user)
     // phoneNumberVerified stays false: v1 has no OTP, so we cannot prove
-    // ownership of this number. See lib/auth.ts — do not trust this field.
-    .set({ phoneNumber: normalizedPhone, phoneNumberVerified: false, role: "admin" })
-    .where(eq(user.id, created.user.id));
+    // ownership of this number. See lib/auth.ts; do not trust this field.
+    .set(userUpdate)
+    .where(eq(user.id, userId));
 
-  console.log(`✓ Admin created: ${normalizedPhone} (${created.user.id})`);
+  console.log(`Admin ready: ${username} (${userId})`);
   process.exit(0);
 }
 
 main().catch((err) => {
-  console.error("✗ Failed:", err);
+  console.error("x Failed:", err);
   process.exit(1);
 });

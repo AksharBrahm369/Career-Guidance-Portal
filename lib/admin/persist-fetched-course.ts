@@ -2,13 +2,13 @@ import "server-only";
 import { eq, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
+  auditLog,
   courseInstitutes,
   courses,
   institutes,
   type NewCourse,
   type NewInstitute,
 } from "@/db/schema";
-import { logAudit } from "@/lib/audit";
 import { uniqueSlug } from "@/lib/slug";
 import type { CourseFetchResult } from "@/lib/ai/safe-fetch";
 
@@ -125,7 +125,7 @@ export async function persistFetchedCourse(
         .onConflictDoNothing();
     }
 
-    await logAudit({
+    await tx.insert(auditLog).values({
       adminId: ctx.adminId,
       action: ctx.source === "ai_fetch" ? "ai_fetch" : "create",
       entityType: "course",

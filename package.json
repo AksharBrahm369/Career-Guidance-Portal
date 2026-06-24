@@ -13,6 +13,7 @@
     "format:check": "prettier --check .",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "tsx -r tsconfig-paths/register scripts/migrate.ts",
+    "db:rls": "tsx -r tsconfig-paths/register scripts/apply-supabase-rls.ts",
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:check": "drizzle-kit check",

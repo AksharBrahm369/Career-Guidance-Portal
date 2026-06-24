@@ -27,7 +27,6 @@ These skills live in `.claude/skills/` (tracked in `skills-lock.json`). Treat th
 | **React / Next.js work** — anything in `app/**` or `components/**`, data fetching, RSC vs client boundaries, caching, bundle/perf, refactors | **`vercel-react-best-practices`** | React 19 + Next 15 App Router. Applies 70 prioritized perf rules and overrides Pages-Router-era defaults (waterfalls, needless client components, re-renders). |
 | **Any auth code** — `lib/auth.ts`, `lib/auth-client.ts`, the guards (`lib/auth/require-{admin,student}.ts`), `middleware.ts`, login/signup pages, `app/api/auth/*`, `scripts/create-admin.ts`; anything using **Better Auth** (`auth.api.*`, `authClient.signIn.phoneNumber`, plugins, sessions/cookies) | **`better-auth-best-practices` + `better-auth-security-best-practices`** | The app runs **Better Auth** (phone+password for all, `admin` + `phoneNumber` plugins) — newer than the cutoff. Recalled APIs **and especially cookie/session/redirect timing** are wrong from memory. Auth bugs here (a `getSession()` that can't see the cookie set in the *same* server action; an `(admin)` layout that redirects its own login page) **compile clean and pass server-side smokes** — see the verification gate below. |
 | **UI components** — adding/editing anything under `components/**`, `components.json`, the shadcn registry, Tailwind theming/variants | **`shadcn`** | Project is on the shadcn baseline. The skill themes/extends/composes components correctly and auto-injects project config — don't hand-write or copy components verbatim. ⚠️ It executes shell commands when invoked (probes `npx shadcn@latest info`). |
-| **Neon-specific DB work** — branching, the serverless driver, connection pooling for deploys | **`neon-postgres`** | Neon's branch-per-PR + serverless-driver model has no equivalent in plain `pg`. (Routine Drizzle schema work follows the DB conventions in `docs/MODULES.md` §2–3.) |
 
 Process skills still apply on top of these: **`superpowers:brainstorming`** before any new feature/behavior, **`superpowers:test-driven-development`** when writing tested logic, **`superpowers:systematic-debugging`** on any bug or test failure, and **`superpowers:requesting-code-review`** before merging. When a process skill and a stack skill both apply, run the process skill first (it decides *how* to approach), then the stack skill (it decides *what* to write).
 
@@ -40,10 +39,8 @@ Any change to **auth, sessions, cookies, redirects, middleware, or route-group l
 ```bash
 pnpm dev            # dev server on :3000
 pnpm build          # production build (output: "standalone")
-pnpm check          # FULL GATE: typecheck + lint + db:check + test — run before calling work done
+pnpm check          # FULL GATE: typecheck + lint + test - run before calling work done
 pnpm test <pat>     # single file (pnpm test slug → lib/__tests__/slug.test.ts); pnpm test -t "<name>" for one test
-pnpm db:generate    # after editing db/schema/* → emits drizzle/00NN_*.sql (COMMIT it)
-pnpm db:migrate     # apply migrations; pnpm db:check verifies no drift (part of the gate)
 pnpm create-admin   # seed an admin row (required to log into /admin)
 ```
 

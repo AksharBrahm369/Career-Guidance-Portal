@@ -1,5 +1,9 @@
 # Modules — Career Guidance Platform
 
+> Current persistence note: the app now stores runtime data locally in
+> `data/local-store.json` through `lib/db/index.ts`. Older Drizzle/Postgres
+> migration details below are historical context and no longer part of setup.
+
 Per-module reference: what lives where, the contracts at the seams, and the gotchas you only learn after debugging once. Read [`KNOWLEDGE_BASE.md`](./KNOWLEDGE_BASE.md) first for the why.
 
 Order is roughly bottom-up: **Foundation → AI → Admin → Student**.

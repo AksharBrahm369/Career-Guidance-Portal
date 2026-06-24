@@ -22,6 +22,10 @@ dist/
 npm-debug.log*
 pnpm-debug.log*
 
+# local app data
+data/*.json
+!data/.gitkeep
+
 # editor
 .vscode/
 .idea/

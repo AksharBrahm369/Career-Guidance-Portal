@@ -21,6 +21,19 @@ export interface ProviderSpec {
   build(): LanguageModel;
 }
 
+export class AIProviderConfigurationError extends Error {
+  constructor(
+    readonly providerId: ProviderId,
+    readonly envVarName: string,
+  ) {
+    super(
+      `AI provider "${providerId}" is selected, but ${envVarName} is missing or still a placeholder. ` +
+        `Add a valid ${envVarName} in .env.local, or switch AI_PROVIDER/AI_FETCH_PROVIDER to a provider with a valid key.`,
+    );
+    this.name = "AIProviderConfigurationError";
+  }
+}
+
 export const PROVIDERS: Record<ProviderId, ProviderSpec> = {
   anthropic: {
     id: "anthropic",
@@ -62,21 +75,41 @@ export function resolveProvider(feature: FeatureId): ProviderSpec {
 }
 
 export function ensureProviderConfigured(spec: ProviderSpec): void {
-  const key =
-    spec.id === "anthropic"
-      ? env.ANTHROPIC_API_KEY
-      : spec.id === "google"
-        ? env.GOOGLE_GENERATIVE_AI_API_KEY
-        : env.OPENAI_API_KEY;
-  if (!key) {
-    throw new Error(
-      `AI provider "${spec.id}" selected but its API key env var is not set. ` +
-      `Set ${spec.id === "anthropic"
-        ? "ANTHROPIC_API_KEY"
-        : spec.id === "google"
-          ? "GOOGLE_GENERATIVE_AI_API_KEY"
-          : "OPENAI_API_KEY"
-      }.`,
-    );
+  const envVarName = providerKeyEnvVar(spec.id);
+  const key = providerKey(spec.id)?.trim();
+  if (!key || isPlaceholderKey(key)) {
+    throw new AIProviderConfigurationError(spec.id, envVarName);
   }
+}
+
+function providerKey(id: ProviderId): string | undefined {
+  switch (id) {
+    case "anthropic":
+      return env.ANTHROPIC_API_KEY;
+    case "google":
+      return env.GOOGLE_GENERATIVE_AI_API_KEY;
+    case "openai":
+      return env.OPENAI_API_KEY;
+  }
+}
+
+function providerKeyEnvVar(id: ProviderId): string {
+  switch (id) {
+    case "anthropic":
+      return "ANTHROPIC_API_KEY";
+    case "google":
+      return "GOOGLE_GENERATIVE_AI_API_KEY";
+    case "openai":
+      return "OPENAI_API_KEY";
+  }
+}
+
+function isPlaceholderKey(key: string): boolean {
+  const normalized = key.trim().toLowerCase();
+  return (
+    normalized.includes("placeholder") ||
+    normalized.includes("xxxxx") ||
+    normalized === "sk-..." ||
+    normalized === "aiza..."
+  );
 }

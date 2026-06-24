@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { adminErrorResponse, requireAdmin } from "@/lib/auth/require-admin";
 import { FetchFailedError, safeFetchCourseBatch } from "@/lib/ai/safe-fetch";
+import { AIProviderConfigurationError } from "@/lib/ai/providers";
 import {
   getExistingCourseNames,
   persistFetchedCourse,
@@ -103,13 +104,38 @@ export async function POST(req: Request) {
       courses: persisted,
     });
   } catch (err) {
+    if (err instanceof AIProviderConfigurationError) {
+      return Response.json(
+        { error: "ai_provider_not_configured", message: err.message },
+        { status: 503 },
+      );
+    }
     if (err instanceof FetchFailedError) {
       return Response.json({ error: "fetch_failed", message: err.message }, { status: 502 });
     }
     console.error("AI fetch error:", err);
+    const authMessage = aiProviderAuthMessage(err);
+    if (authMessage) {
+      return Response.json(
+        { error: "ai_provider_auth_failed", message: authMessage },
+        { status: 502 },
+      );
+    }
     return Response.json(
       { error: "ai_provider_error", message: err instanceof Error ? err.message : String(err) },
       { status: 502 },
     );
   }
+}
+
+function aiProviderAuthMessage(err: unknown): string | null {
+  const message = err instanceof Error ? err.message : String(err);
+  if (!/invalid x-api-key|invalid api key|api key|unauthorized|authentication/i.test(message)) {
+    return null;
+  }
+  return (
+    "The selected AI provider rejected the configured API key. " +
+    "Your .env.local currently selects Anthropic; set a valid ANTHROPIC_API_KEY, " +
+    "or set AI_PROVIDER/AI_FETCH_PROVIDER to google or openai with that provider's valid key."
+  );
 }
