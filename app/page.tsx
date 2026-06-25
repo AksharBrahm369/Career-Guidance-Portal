@@ -18,7 +18,7 @@ export default function Home() {
         <Link className="underline" href="/courses">
           Course catalogue
         </Link>
-        <Link className="underline" href="/admin">
+        <Link className="underline" href="/admin/login">
           Admin panel
         </Link>
       </nav>

@@ -195,7 +195,7 @@ username : sevak@hp
 pass : HPSevakDas@369
 
 
-supabse details
+supabase details
 
 username : Career Guidance Portal
 pass : Career-guidance-portal
