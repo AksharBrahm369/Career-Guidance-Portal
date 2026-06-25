@@ -3,7 +3,6 @@
 import { useState } from "react";
 import { Eye, EyeOff, Loader2, Lock, Phone, User } from "lucide-react";
 
-import { authClient } from "@/lib/auth-client";
 import { normalizePhone } from "@/lib/phone";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
@@ -159,9 +158,14 @@ export function StudentAuthForm({ mode }: { mode: "signup" | "login" }) {
           return;
         }
       } else {
-        const r = await authClient.signIn.phoneNumber({ phoneNumber: canonicalPhone, password });
-        if (r.error) {
-          setFormError(loginErrorMessage(r.error));
+        const res = await fetch("/api/student/login", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ phone: canonicalPhone, password }),
+        });
+        if (!res.ok) {
+          const detail = await res.json().catch(() => ({}));
+          setFormError(loginErrorMessage(detail));
           return;
         }
       }

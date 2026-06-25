@@ -8,6 +8,10 @@ import { env } from "@/lib/env";
 import * as authSchema from "@/db/schema/auth";
 
 const isProd = env.NODE_ENV === "production";
+const configuredTrustedOrigins =
+  process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",")
+    .map((s) => s.trim())
+    .filter(Boolean) ?? [];
 const devTrustedOrigins = isProd
   ? []
   : [
@@ -15,19 +19,62 @@ const devTrustedOrigins = isProd
       "http://localhost:3001",
       "http://127.0.0.1:3000",
       "http://127.0.0.1:3001",
+      "http://[::1]:3000",
+      "http://[::1]:3001",
     ];
 
-// All real front-end origins. baseURL is auto-trusted; this also allow-lists
-// Vercel preview URLs via BETTER_AUTH_TRUSTED_ORIGINS (comma-separated env).
-const trustedOrigins = Array.from(
-  new Set([
-    env.BETTER_AUTH_URL,
-    ...devTrustedOrigins,
-    ...(process.env.BETTER_AUTH_TRUSTED_ORIGINS?.split(",")
-      .map((s) => s.trim())
-      .filter(Boolean) ?? []),
-  ]),
-);
+function isPrivateIpv4(hostname: string): boolean {
+  const parts = hostname.split(".").map((part) => Number(part));
+  if (
+    parts.length !== 4 ||
+    parts.some((part) => !Number.isInteger(part) || part < 0 || part > 255)
+  ) {
+    return false;
+  }
+  const [a, b] = parts as [number, number, number, number];
+  return a === 10 || (a === 172 && b >= 16 && b <= 31) || (a === 192 && b === 168);
+}
+
+function isTrustedDevOrigin(value: string | null): string | null {
+  if (!value || value === "null") return null;
+  try {
+    const url = new URL(value);
+    if (url.protocol !== "http:" && url.protocol !== "https:") return null;
+    if (
+      url.hostname === "localhost" ||
+      url.hostname === "127.0.0.1" ||
+      url.hostname === "::1" ||
+      url.hostname === "[::1]" ||
+      isPrivateIpv4(url.hostname)
+    ) {
+      return url.origin;
+    }
+  } catch {
+    return null;
+  }
+  return null;
+}
+
+function devRequestOrigin(request?: Request): string[] {
+  if (isProd || !request) return [];
+  const headers = request.headers;
+  const origin = isTrustedDevOrigin(headers.get("origin"));
+  const referer = isTrustedDevOrigin(headers.get("referer"));
+  return [origin, referer].filter((value): value is string => Boolean(value));
+}
+
+// All real front-end origins. In production this stays explicitly configured.
+// In development, also trust loopback/private-LAN origins from the current
+// request so opening the dev server via its Network URL does not break auth.
+const trustedOrigins = (request?: Request) =>
+  Array.from(
+    new Set([
+      env.BETTER_AUTH_URL,
+      ...configuredTrustedOrigins,
+      ...devTrustedOrigins,
+      ...devRequestOrigin(request),
+    ]),
+  );
 
 // Note: no `import "server-only"` here — the Better Auth CLI loads this file in
 // plain Node to generate the schema. It is still effectively server-only (only
