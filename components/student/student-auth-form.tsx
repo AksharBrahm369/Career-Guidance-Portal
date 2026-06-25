@@ -19,6 +19,40 @@ type FieldName = "name" | "phone" | "password";
 type Touched = Partial<Record<FieldName, boolean>>;
 type FieldErrors = Partial<Record<FieldName, string>>;
 
+function authErrorCode(error: unknown): string | undefined {
+  if (!error || typeof error !== "object") return undefined;
+  const code = (error as { code?: unknown }).code;
+  return typeof code === "string" ? code : undefined;
+}
+
+function authErrorMessage(error: unknown): string | undefined {
+  if (!error || typeof error !== "object") return undefined;
+  const message = (error as { message?: unknown }).message;
+  return typeof message === "string" ? message : undefined;
+}
+
+function loginErrorMessage(error: unknown): string {
+  const code = authErrorCode(error);
+
+  if (code === "INVALID_PHONE_NUMBER_OR_PASSWORD") {
+    return "Hmm, that phone or password didn't match. Give it another go.";
+  }
+
+  if (code === "BANNED_USER") {
+    return "This account is currently blocked. Please contact the admin.";
+  }
+
+  if (code === "TOO_MANY_REQUESTS" || code === "TOO_MANY_ATTEMPTS") {
+    return "Too many login attempts. Wait a minute, then try again.";
+  }
+
+  if (code === "FAILED_TO_CREATE_SESSION") {
+    return "Your password matched, but we couldn't start a session. Please try again.";
+  }
+
+  return authErrorMessage(error) ?? "Log in failed. Please try again.";
+}
+
 /**
  * Per-field validation. Mirrors the original input constraints exactly
  * (name required on signup, phone required + ≥6 chars once digits-only,
@@ -76,6 +110,7 @@ export function StudentAuthForm({ mode }: { mode: "signup" | "login" }) {
   // Re-validate a field on change ONLY once it has been touched, so the first
   // keystroke never flashes an error but corrections clear it live.
   function handleChange(field: FieldName, value: string) {
+    setFormError(null);
     if (field === "name") setName(value);
     else if (field === "phone") setPhone(value);
     else setPassword(value);
@@ -126,7 +161,7 @@ export function StudentAuthForm({ mode }: { mode: "signup" | "login" }) {
       } else {
         const r = await authClient.signIn.phoneNumber({ phoneNumber: canonicalPhone, password });
         if (r.error) {
-          setFormError("Hmm, that phone or password didn't match. Give it another go.");
+          setFormError(loginErrorMessage(r.error));
           return;
         }
       }
