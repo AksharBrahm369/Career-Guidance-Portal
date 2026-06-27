@@ -1,6 +1,7 @@
 export * from "./enums";
 export * from "./institutes";
 export * from "./courses";
+export * from "./course-learning-resources";
 export * from "./career-clusters";
 export * from "./assessments";
 export * from "./question-bank";

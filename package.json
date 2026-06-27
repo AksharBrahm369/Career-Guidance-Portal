@@ -23,7 +23,8 @@
     "create-admin": "tsx -r tsconfig-paths/register scripts/create-admin.ts",
     "seed:clusters": "tsx -r tsconfig-paths/register scripts/seed-clusters.ts",
     "seed:demo-catalogue": "tsx -r tsconfig-paths/register scripts/seed-demo-catalogue.ts",
-    "seed:question-bank": "tsx -r tsconfig-paths/register --import ./scripts/stubs/register-server-only.mjs scripts/seed-question-bank.ts"
+    "seed:question-bank": "tsx -r tsconfig-paths/register --import ./scripts/stubs/register-server-only.mjs scripts/seed-question-bank.ts",
+    "backfill:learning-resources": "tsx -r tsconfig-paths/register scripts/backfill-learning-resources.ts"
   },
   "dependencies": {
     "@ai-sdk/anthropic": "^3.0.71",

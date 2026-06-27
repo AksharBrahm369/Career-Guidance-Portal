@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   Banknote,
+  BookOpen,
   Building2,
   Clock,
   ExternalLink,
@@ -17,16 +18,11 @@ import { QAChat } from "@/components/student/qa-chat";
 import { AiSafetyBadge } from "@/components/student/ai-safety-badge";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import {
   getInstitutesForCourse,
+  getPublishedLearningResourcesForCourse,
   getPublishedCourseRowBySlug,
   getRelatedPublishedCourses,
 } from "@/lib/student/courses";
@@ -40,11 +36,7 @@ const STREAM_LABEL: Record<string, string> = {
   vocational: "Vocational",
 };
 
-export default async function CourseDetailPage({
-  params,
-}: {
-  params: Promise<{ slug: string }>;
-}) {
+export default async function CourseDetailPage({ params }: { params: Promise<{ slug: string }> }) {
   const { slug } = await params;
   const course = await getPublishedCourseRowBySlug(slug);
   if (!course) notFound();
@@ -52,19 +44,15 @@ export default async function CourseDetailPage({
   // institutes and related courses both depend only on the resolved course
   // (its id + clusters) and are independent of each other — fetch in parallel
   // instead of serializing related behind the institutes round-trip.
-  const [linkedInstitutes, related] = await Promise.all([
+  const [linkedInstitutes, learningResources, related] = await Promise.all([
     getInstitutesForCourse(course.id),
+    getPublishedLearningResourcesForCourse(course.id),
     getRelatedPublishedCourses(course.id, course.careerClusters),
   ]);
 
   return (
     <article className="flex flex-col gap-6">
-      <Button
-        asChild
-        variant="ghost"
-        size="sm"
-        className="-ml-2 self-start text-muted-foreground"
-      >
+      <Button asChild variant="ghost" size="sm" className="-ml-2 self-start text-muted-foreground">
         <Link href="/courses">
           <ArrowLeft data-icon="inline-start" />
           Back to catalogue
@@ -125,9 +113,7 @@ export default async function CourseDetailPage({
               <div className="flex flex-col gap-1.5">
                 <div className="flex items-center gap-2 text-sm font-medium">
                   <AiSafetyBadge tag={course.aiSafetyTag} />
-                  <span className="text-muted-foreground">
-                    What this means for your future
-                  </span>
+                  <span className="text-muted-foreground">What this means for your future</span>
                 </div>
                 <p className="text-sm leading-relaxed text-muted-foreground">
                   {course.aiSafetyReasoning}
@@ -148,9 +134,7 @@ export default async function CourseDetailPage({
             </CardTitle>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <DetailRow label="Who can apply">
-              {course.eligibilityCriteria}
-            </DetailRow>
+            <DetailRow label="Who can apply">{course.eligibilityCriteria}</DetailRow>
             <Separator />
             <DetailRow label="Entrance exams">
               {course.entranceExams.length ? (
@@ -194,7 +178,7 @@ export default async function CourseDetailPage({
           <CardTitle className="flex items-center gap-2 text-lg">
             <Building2 className="size-5 text-primary" aria-hidden />
             Where it&apos;s offered
-            <span className="text-sm font-normal text-muted-foreground tabular-nums">
+            <span className="text-sm font-normal tabular-nums text-muted-foreground">
               ({linkedInstitutes.length})
             </span>
           </CardTitle>
@@ -207,26 +191,16 @@ export default async function CourseDetailPage({
           ) : (
             <ul className="flex flex-col divide-y rounded-lg border">
               {linkedInstitutes.map((i) => (
-                <li
-                  key={i.id}
-                  className="flex items-center justify-between gap-3 p-3"
-                >
+                <li key={i.id} className="flex items-center justify-between gap-3 p-3">
                   <div className="flex min-w-0 flex-col gap-0.5">
-                    <span className="truncate text-sm font-medium">
-                      {i.name}
-                    </span>
+                    <span className="truncate text-sm font-medium">{i.name}</span>
                     <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
                       <MapPin className="size-3" aria-hidden />
                       {i.city}, {i.state} · {i.instituteType}
                     </span>
                   </div>
                   {i.websiteUrl ? (
-                    <Button
-                      asChild
-                      variant="ghost"
-                      size="sm"
-                      className="shrink-0"
-                    >
+                    <Button asChild variant="ghost" size="sm" className="shrink-0">
                       <a href={i.websiteUrl} target="_blank" rel="noreferrer">
                         Visit
                         <ExternalLink data-icon="inline-end" />
@@ -240,6 +214,80 @@ export default async function CourseDetailPage({
         </CardContent>
       </Card>
 
+      {/* Learn this course */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2 text-lg">
+            <BookOpen className="size-5 text-primary" aria-hidden />
+            Learn This Course
+          </CardTitle>
+          <CardDescription>
+            Free and beginner-friendly resources selected for this course.
+          </CardDescription>
+        </CardHeader>
+        <CardContent>
+          {learningResources.length === 0 ? (
+            <p className="text-sm text-muted-foreground">
+              Learning resources for this course will be added soon.
+            </p>
+          ) : (
+            <div className="grid grid-cols-1 gap-3 lg:grid-cols-2">
+              {learningResources.map((resource) => (
+                <article
+                  key={resource.id}
+                  className="flex min-w-0 flex-col overflow-hidden rounded-lg border bg-background"
+                >
+                  {resource.thumbnailUrl ? (
+                    // eslint-disable-next-line @next/next/no-img-element -- Admin-reviewed external thumbnails can come from multiple providers.
+                    <img
+                      src={resource.thumbnailUrl}
+                      alt=""
+                      className="aspect-video w-full bg-muted object-cover"
+                      loading="lazy"
+                    />
+                  ) : null}
+                  <div className="flex flex-1 flex-col gap-3 p-4">
+                    <div className="flex flex-col gap-2">
+                      <div className="flex flex-wrap gap-1.5">
+                        <Badge variant="secondary" className="font-normal">
+                          {resource.platform}
+                        </Badge>
+                        <Badge variant="outline" className="font-normal">
+                          {resource.resourceType}
+                        </Badge>
+                        <Badge variant="outline" className="font-normal">
+                          {resource.difficulty}
+                        </Badge>
+                        <Badge variant="outline" className="font-normal">
+                          {resource.language}
+                        </Badge>
+                        {!resource.isFree ? (
+                          <Badge variant="destructive" className="font-normal">
+                            Paid
+                          </Badge>
+                        ) : null}
+                      </div>
+                      <h2 className="font-heading text-base font-semibold leading-snug">
+                        {resource.title}
+                      </h2>
+                    </div>
+                    <p className="text-sm leading-relaxed text-muted-foreground">
+                      {resource.description}
+                    </p>
+                    <Button asChild size="sm" className="mt-auto self-start">
+                      <a href={resource.url} target="_blank" rel="noopener noreferrer">
+                        Start Learning
+                        <ExternalLink data-icon="inline-end" />
+                      </a>
+                    </Button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </CardContent>
+      </Card>
+
       {/* Q&A — prominent */}
       <Card className="border-primary/30 bg-primary/[0.03]">
         <CardHeader>
@@ -248,8 +296,8 @@ export default async function CourseDetailPage({
             Ask about this course
           </CardTitle>
           <CardDescription>
-            Curious about jobs, daily life, or what comes after? Ask anything —
-            answers are about this course only.
+            Curious about jobs, daily life, or what comes after? Ask anything — answers are about
+            this course only.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -265,9 +313,7 @@ export default async function CourseDetailPage({
               <ScrollText className="size-4 text-muted-foreground" aria-hidden />
               Sources
             </CardTitle>
-            <CardDescription>
-              Where this information comes from.
-            </CardDescription>
+            <CardDescription>Where this information comes from.</CardDescription>
           </CardHeader>
           <CardContent>
             <ul className="flex flex-col gap-2">
@@ -292,9 +338,7 @@ export default async function CourseDetailPage({
       {/* Related */}
       {related.length > 0 ? (
         <section className="flex flex-col gap-3">
-          <h2 className="font-heading text-lg font-semibold tracking-tight">
-            Related courses
-          </h2>
+          <h2 className="font-heading text-lg font-semibold tracking-tight">Related courses</h2>
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
             {related.map((r) => (
               <Link
@@ -326,13 +370,7 @@ export default async function CourseDetailPage({
   );
 }
 
-function DetailRow({
-  label,
-  children,
-}: {
-  label: string;
-  children: React.ReactNode;
-}) {
+function DetailRow({ label, children }: { label: string; children: React.ReactNode }) {
   return (
     <div className="flex flex-col gap-1">
       <span className="text-xs font-medium uppercase tracking-wide text-muted-foreground">

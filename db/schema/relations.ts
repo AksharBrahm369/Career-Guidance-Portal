@@ -2,6 +2,7 @@ import { relations } from "drizzle-orm";
 import { user } from "./auth";
 import { assessments } from "./assessments";
 import { auditLog } from "./audit-log";
+import { courseLearningResources } from "./course-learning-resources";
 import { courseInstitutes, courses } from "./courses";
 import { institutes } from "./institutes";
 
@@ -16,6 +17,7 @@ export const coursesRelations = relations(courses, ({ one, many }) => ({
     references: [user.id],
   }),
   institutes: many(courseInstitutes),
+  learningResources: many(courseLearningResources),
 }));
 
 export const institutesRelations = relations(institutes, ({ many }) => ({
@@ -30,6 +32,13 @@ export const courseInstitutesRelations = relations(courseInstitutes, ({ one }) =
   institute: one(institutes, {
     fields: [courseInstitutes.instituteId],
     references: [institutes.id],
+  }),
+}));
+
+export const courseLearningResourcesRelations = relations(courseLearningResources, ({ one }) => ({
+  course: one(courses, {
+    fields: [courseLearningResources.courseId],
+    references: [courses.id],
   }),
 }));
 

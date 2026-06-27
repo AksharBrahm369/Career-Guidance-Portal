@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import {
   auditLog,
   courseInstitutes,
+  courseLearningResources,
   courses,
   institutes,
   type NewCourse,
@@ -11,6 +12,7 @@ import {
 } from "@/db/schema";
 import { uniqueSlug } from "@/lib/slug";
 import type { CourseFetchResult } from "@/lib/ai/safe-fetch";
+import { buildDefaultLearningResource } from "@/lib/admin/learning-resources";
 
 /** Extra fields accepted on the manual-create path; absent on AI-fetch. */
 export interface ManualExtras {
@@ -124,6 +126,17 @@ export async function persistFetchedCourse(
         )
         .onConflictDoNothing();
     }
+
+    await tx
+      .insert(courseLearningResources)
+      .values({
+        courseId: insertedCourse.id,
+        ...buildDefaultLearningResource(data.courseName, {
+          status: "draft",
+          source: ctx.source === "ai_fetch" ? "ai" : "manual",
+        }),
+      })
+      .onConflictDoNothing();
 
     await tx.insert(auditLog).values({
       adminId: ctx.adminId,

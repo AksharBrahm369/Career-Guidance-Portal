@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { CourseLifecycleActions } from "@/components/admin/course-lifecycle-actions";
+import { LearningResourcesManager } from "@/components/admin/learning-resources-manager";
 import { Pagination } from "@/components/pagination";
 import { AdminPageHeader } from "@/components/admin/shell/page-header";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
@@ -13,11 +14,7 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  ADMIN_STATUSES,
-  listAdminCourses,
-  type AdminStatus,
-} from "@/lib/admin/courses-list";
+import { ADMIN_STATUSES, listAdminCourses, type AdminStatus } from "@/lib/admin/courses-list";
 import { cn } from "@/lib/utils";
 
 export const dynamic = "force-dynamic";
@@ -143,7 +140,10 @@ export default async function AdminCataloguePage({ searchParams }: PageProps) {
                       {formatDate(dateForStatus(status, c))}
                     </TableCell>
                     <TableCell className="text-right">
-                      <CourseLifecycleActions courseId={c.id} status={status} />
+                      <div className="flex flex-wrap justify-end gap-1.5">
+                        <LearningResourcesManager courseId={c.id} courseName={c.courseName} />
+                        <CourseLifecycleActions courseId={c.id} status={status} />
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { Loader2 } from "lucide-react";
+import { LearningResourcesManager } from "@/components/admin/learning-resources-manager";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 
@@ -36,6 +37,10 @@ interface BatchResponse {
 type FetchResponse = SingleResponse | BatchResponse;
 
 function CourseCard({ item, index }: { item: FetchedCourse; index?: number }) {
+  const learningSearchUrl = `https://www.youtube.com/results?search_query=${encodeURIComponent(
+    `${item.course.courseName} beginner course tutorial`,
+  )}`;
+
   return (
     <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
       <div className="flex items-start justify-between gap-2">
@@ -51,12 +56,15 @@ function CourseCard({ item, index }: { item: FetchedCourse; index?: number }) {
             <span className="rounded bg-muted px-2 py-0.5">{item.course.tenureYears} yrs</span>
           </div>
         </div>
-        <Link
-          href="/admin/review"
-          className="shrink-0 rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground"
-        >
-          Open in Review Queue
-        </Link>
+        <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
+          <LearningResourcesManager courseId={item.courseId} courseName={item.course.courseName} />
+          <Link
+            href="/admin/review"
+            className="rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground"
+          >
+            Open in Review Queue
+          </Link>
+        </div>
       </div>
 
       {item.warnings.length > 0 ? (
@@ -68,6 +76,20 @@ function CourseCard({ item, index }: { item: FetchedCourse; index?: number }) {
       ) : null}
 
       <p className="text-sm">{item.course.description}</p>
+
+      <div className="rounded-md border bg-muted/30 p-3 text-sm">
+        <div className="mb-1 text-xs font-medium uppercase tracking-wide text-muted-foreground">
+          Learning link
+        </div>
+        <a
+          href={learningSearchUrl}
+          target="_blank"
+          rel="noopener noreferrer"
+          className="font-medium text-primary underline-offset-4 hover:underline"
+        >
+          Open YouTube learning search for this course
+        </a>
+      </div>
 
       <div className="text-xs text-muted-foreground">Career clusters</div>
       <div className="flex flex-wrap gap-1.5">
@@ -95,7 +117,8 @@ function CourseCard({ item, index }: { item: FetchedCourse; index?: number }) {
       </ul>
 
       <div className="text-xs text-muted-foreground">
-        Saved as <code>pending_review</code>. Review &amp; publish from the queue.
+        Saved as <code>pending_review</code>. Add learning resources, then review &amp; publish from
+        the queue.
       </div>
     </div>
   );

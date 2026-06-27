@@ -3,6 +3,7 @@
 import { useRouter } from "next/navigation";
 import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
+import { LearningResourcesManager } from "@/components/admin/learning-resources-manager";
 import { SourceUrlsEditor } from "@/components/admin/source-urls-editor";
 import { formatInvalidTransition } from "@/lib/admin/course-transitions";
 
@@ -135,6 +136,7 @@ export function ReviewCard({ course }: { course: CourseRow }) {
           </div>
         </div>
         <div className="flex flex-wrap gap-1.5 text-xs">
+          <LearningResourcesManager courseId={course.id} courseName={course.courseName} />
           <button
             onClick={() => setExpanded((v) => !v)}
             className="rounded-md border px-2.5 py-1"

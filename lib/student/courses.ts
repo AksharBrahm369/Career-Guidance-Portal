@@ -1,7 +1,7 @@
 import "server-only";
 import { and, arrayOverlaps, desc, eq, inArray, ne, sql, type SQL } from "drizzle-orm";
 import { db } from "@/lib/db";
-import { courseInstitutes, courses, institutes } from "@/db/schema";
+import { courseInstitutes, courseLearningResources, courses, institutes } from "@/db/schema";
 
 export type StreamFilter = "science" | "commerce" | "arts" | "vocational";
 export type AiSafetyFilter = "ai_safe" | "ai_augmented" | "ai_risk";
@@ -111,6 +111,19 @@ export async function getInstitutesForCourse(courseId: string) {
     : [];
 }
 
+export async function getPublishedLearningResourcesForCourse(courseId: string) {
+  return db
+    .select()
+    .from(courseLearningResources)
+    .where(
+      and(
+        eq(courseLearningResources.courseId, courseId),
+        eq(courseLearningResources.status, "published"),
+      ),
+    )
+    .orderBy(courseLearningResources.resourceType, courseLearningResources.title);
+}
+
 export async function getPublishedCourseBySlug(slug: string) {
   const course = await getPublishedCourseRowBySlug(slug);
   if (!course) return null;
@@ -118,11 +131,7 @@ export async function getPublishedCourseBySlug(slug: string) {
   return { course, institutes: linkedInstitutes };
 }
 
-export async function getRelatedPublishedCourses(
-  excludeId: string,
-  clusters: string[],
-  limit = 4,
-) {
+export async function getRelatedPublishedCourses(excludeId: string, clusters: string[], limit = 4) {
   if (clusters.length === 0) return [];
   const matching = await db
     .select({

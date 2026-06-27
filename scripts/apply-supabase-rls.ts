@@ -9,6 +9,7 @@ alter table public.assessments enable row level security;
 alter table public.audit_log enable row level security;
 alter table public.career_clusters enable row level security;
 alter table public.course_institutes enable row level security;
+alter table public.course_learning_resources enable row level security;
 alter table public.courses enable row level security;
 alter table public.institutes enable row level security;
 alter table public.question_bank enable row level security;
@@ -54,12 +55,26 @@ create policy "public_read_published_course_institutes"
     )
   );
 
+drop policy if exists "public_read_published_course_learning_resources" on public.course_learning_resources;
+create policy "public_read_published_course_learning_resources"
+  on public.course_learning_resources
+  for select
+  to anon, authenticated
+  using (
+    status = 'published'
+    and exists (
+      select 1 from public.courses c
+      where c.id = course_id and c.status = 'published'
+    )
+  );
+
 revoke all on
   public.account,
   public.assessments,
   public.audit_log,
   public.career_clusters,
   public.course_institutes,
+  public.course_learning_resources,
   public.courses,
   public.institutes,
   public.question_bank,
@@ -84,7 +99,8 @@ revoke insert, update, delete on
   public.career_clusters,
   public.courses,
   public.institutes,
-  public.course_institutes
+  public.course_institutes,
+  public.course_learning_resources
 from anon, authenticated, public;
 
 grant usage on schema public to anon, authenticated;
@@ -92,7 +108,8 @@ grant select on
   public.career_clusters,
   public.courses,
   public.institutes,
-  public.course_institutes
+  public.course_institutes,
+  public.course_learning_resources
 to anon, authenticated;
 `;
 

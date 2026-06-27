@@ -1,8 +1,13 @@
 import "./load-env";
 import { eq } from "drizzle-orm";
 import { db } from "../lib/db";
-import { courseInstitutes, courses, institutes } from "../db/schema";
-import { DEMO_COURSES, DEMO_INSTITUTES } from "../db/seed/courses.demo";
+import { courseInstitutes, courseLearningResources, courses, institutes } from "../db/schema";
+import {
+  DEMO_COURSES,
+  DEMO_INSTITUTES,
+  DEMO_LEARNING_RESOURCES,
+  type DemoCourse,
+} from "../db/seed/courses.demo";
 
 async function main() {
   const instituteIdBySlug = new Map<string, string>();
@@ -35,6 +40,7 @@ async function main() {
   let courseIns = 0;
   let courseSkip = 0;
   let linkIns = 0;
+  let resourceIns = 0;
   for (const c of DEMO_COURSES) {
     let course = await db.query.courses.findFirst({ where: eq(courses.slug, c.slug) });
     if (course) {
@@ -73,12 +79,43 @@ async function main() {
         .returning({ id: courseInstitutes.id });
       if (res.length > 0) linkIns++;
     }
+
+    for (const resource of resourcesForCourse(c)) {
+      const res = await db
+        .insert(courseLearningResources)
+        .values({
+          courseId: course.id,
+          title: resource.title,
+          url: resource.url,
+          platform: resource.platform,
+          resourceType: resource.resourceType,
+          description: resource.description,
+          thumbnailUrl: resource.thumbnailUrl ?? null,
+          language: resource.language,
+          difficulty: resource.difficulty,
+          isFree: resource.isFree,
+          status: "published",
+          source: "manual",
+        })
+        .onConflictDoNothing()
+        .returning({ id: courseLearningResources.id });
+      if (res.length > 0) resourceIns++;
+    }
   }
 
   console.log(
     `✓ Demo catalogue: institutes ${instIns} inserted / ${instSkip} skipped; courses ${courseIns} inserted / ${courseSkip} skipped; links ${linkIns} inserted`,
   );
+  console.log(`Learning resources ${resourceIns} inserted`);
   process.exit(0);
+}
+
+function resourcesForCourse(course: DemoCourse) {
+  const name = course.courseName.toLowerCase();
+  return DEMO_LEARNING_RESOURCES.filter((resource) => {
+    if (resource.courseSlug === course.slug) return true;
+    return resource.courseNameIncludes?.some((match) => name.includes(match)) ?? false;
+  });
 }
 
 main().catch((err) => {
