@@ -43,7 +43,7 @@ export const CourseFetchResult = z.object({
 export type CourseFetchResult = z.infer<typeof CourseFetchResult>;
 export type FetchedInstitute = z.infer<typeof FetchedInstitute>;
 
-const SYSTEM_PROMPT = `You are a career guidance research assistant for an Indian education platform.
+const SYSTEM_PROMPT = `You are a Learning  research assistant for an Indian education platform.
 
 Your task is to research academic courses offered in India based on the user's query and return a structured list of them.
 Focus exclusively on courses available at Indian institutes for students who completed grades 10–12.

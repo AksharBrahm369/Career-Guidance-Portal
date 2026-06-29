@@ -81,7 +81,7 @@ export function AdminShell({ email, children }: { email: string; children: React
                     <GraduationCap className="size-4" aria-hidden />
                   </div>
                   <div className="grid flex-1 text-left text-sm leading-tight">
-                    <span className="truncate font-semibold">Career Box</span>
+                    <span className="truncate font-semibold">Career Portal</span>
                     <span className="truncate text-xs text-muted-foreground">Admin Panel</span>
                   </div>
                 </Link>
@@ -154,7 +154,9 @@ export function AdminShell({ email, children }: { email: string; children: React
             </Button>
           </div>
         </header>
-        <main className="flex flex-1 flex-col gap-6 p-4 sm:p-6">{children}</main>
+        <main className="mx-auto flex w-full max-w-7xl flex-1 flex-col gap-6 p-4 sm:p-6">
+          {children}
+        </main>
       </SidebarInset>
     </SidebarProvider>
   );

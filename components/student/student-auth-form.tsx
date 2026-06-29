@@ -173,7 +173,7 @@ export function StudentAuthForm({ mode }: { mode: "signup" | "login" }) {
       // guaranteed to ride along on the next request and the RSC tree re-renders
       // with the authenticated session - avoids a race where requireStudent()
       // 401s on a stale cached payload.
-      window.location.assign("/assessment");
+      window.location.assign("/student");
     } finally {
       setBusy(false);
     }

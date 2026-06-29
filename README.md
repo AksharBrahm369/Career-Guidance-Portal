@@ -1,6 +1,6 @@
-# Career Guidance Platform
+# Learning  Platform
 
-A pan-India career guidance platform for students in grades 9–12. Two independent parts:
+A pan-India Learning  platform for students in grades 9–12. Two independent parts:
 
 1. **Admin panel** — AI-assisted course/institute fetch, review queue, and published catalogue.
 2. **Student experience** — catalogue browse, per-course AI Q&A, and a five-module assessment (interests, work style, aptitude, subject liking, marks) producing a deterministic career-cluster + course recommendation.
@@ -198,5 +198,5 @@ pass : HPSevakDas@369
 
 supabase details
 
-username : Career Guidance Portal
+username : Learning  Portal
 pass : Career-guidance-portal

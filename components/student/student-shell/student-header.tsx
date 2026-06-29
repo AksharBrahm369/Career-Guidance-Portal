@@ -16,6 +16,7 @@ import {
 } from "@/components/ui/sheet";
 
 const NAV = [
+  { href: "/student", label: "Dashboard" },
   { href: "/courses", label: "Courses" },
   { href: "/assessment", label: "Assessment" },
 ] as const;
@@ -30,7 +31,7 @@ function Wordmark({ onClick }: { onClick?: () => void }) {
       <span className="flex size-8 items-center justify-center rounded-lg bg-primary text-primary-foreground">
         <Compass className="size-5" aria-hidden="true" />
       </span>
-      <span>Career Box</span>
+      <span>Career Portal</span>
     </Link>
   );
 }
@@ -58,7 +59,7 @@ export function StudentHeader() {
 
   return (
     <header className="sticky top-0 z-40 border-b border-border bg-background/85 backdrop-blur supports-[backdrop-filter]:bg-background/70">
-      <div className="mx-auto flex h-16 max-w-5xl items-center justify-between gap-4 px-4 sm:px-6">
+      <div className="mx-auto flex h-16 max-w-6xl items-center justify-between gap-4 px-4 sm:px-6">
         <Wordmark />
 
         {/* Desktop nav + account */}

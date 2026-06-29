@@ -1,4 +1,4 @@
-# Knowledge Base — Career Guidance Platform
+# Knowledge Base — Learning  Platform
 
 > Current persistence note: runtime data now lives in `data/local-store.json`
 > through the local adapter in `lib/db/index.ts`. Older Postgres/Drizzle
@@ -13,7 +13,7 @@ A single reference for **what this app is, why it's built this way, and the rule
 
 ## 1. Product vision
 
-A pan-India career guidance platform for students in **grades 9–12**. Two independent halves share a database and an admin team but otherwise live separate lives.
+A pan-India Learning  platform for students in **grades 9–12**. Two independent halves share a database and an admin team but otherwise live separate lives.
 
 1. **Admin side** — operators (initially the founder + a few researchers) maintain an authoritative catalogue of undergraduate and post-12 courses + the institutes that offer them across India. AI helps **fetch** new candidate courses and answer student questions; humans always approve before anything ships student-side.
 2. **Student side** — a mobile-first browse experience for the catalogue plus a resumable five-module assessment (interests, work style, aptitude, subject liking, marks) whose deterministic output is a ranked set of **career clusters** plus a curated short list of matching published courses.

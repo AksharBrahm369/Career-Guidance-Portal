@@ -2,7 +2,8 @@
 
 import { useRouter } from "next/navigation";
 import { useState } from "react";
-import { Loader2 } from "lucide-react";
+import { Loader2, Plus } from "lucide-react";
+import { Button } from "@/components/ui/button";
 
 interface InstituteDraft {
   name: string;
@@ -269,17 +270,22 @@ export function ManualCourseForm() {
       <div className="sm:col-span-2">
         <div className="mb-2 flex items-center justify-between">
           <h3 className="text-sm font-semibold">Institutes</h3>
-          <button
+          <Button
             type="button"
             onClick={() => setInstitutes([...institutes, { ...EMPTY_INSTITUTE }])}
-            className="rounded-md border px-2 py-1 text-xs"
+            variant="outline"
+            size="sm"
           >
-            + Add institute
-          </button>
+            <Plus aria-hidden />
+            Add institute
+          </Button>
         </div>
         <div className="flex flex-col gap-2">
           {institutes.map((inst, idx) => (
-            <div key={idx} className="grid grid-cols-2 gap-2 rounded-md border p-2 sm:grid-cols-4">
+            <div
+              key={idx}
+              className="grid grid-cols-1 gap-2 rounded-md border bg-background p-3 sm:grid-cols-2 lg:grid-cols-4"
+            >
               <input
                 className={inputCls}
                 placeholder="Name"
@@ -334,20 +340,19 @@ export function ManualCourseForm() {
       </div>
 
       {error ? (
-        <div className="rounded-md border border-destructive/40 bg-destructive/5 p-2 text-sm text-destructive sm:col-span-2">
+        <div
+          role="alert"
+          className="rounded-md border border-destructive/40 bg-destructive/5 p-3 text-sm text-destructive sm:col-span-2"
+        >
           {error}
         </div>
       ) : null}
 
       <div className="flex gap-2 sm:col-span-2">
-        <button
-          type="submit"
-          disabled={submitting}
-          className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground disabled:opacity-50"
-        >
+        <Button type="submit" disabled={submitting} className="w-full sm:w-auto">
           {submitting ? <Loader2 className="size-4 animate-spin" aria-hidden="true" /> : null}
           {submitting ? "Saving…" : "Save to Review Queue"}
-        </button>
+        </Button>
       </div>
     </form>
   );

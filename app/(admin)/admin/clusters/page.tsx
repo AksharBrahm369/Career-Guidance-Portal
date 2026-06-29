@@ -4,13 +4,7 @@ import { ClusterForm } from "@/components/admin/cluster-form";
 import { AdminPageHeader } from "@/components/admin/shell/page-header";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Badge } from "@/components/ui/badge";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Table,
   TableBody,
@@ -59,41 +53,81 @@ export default async function ClustersPage() {
               </AlertDescription>
             </Alert>
           ) : (
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Key</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Lens weights</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
+            <>
+              <div className="grid gap-3 md:hidden">
                 {clusters.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell className="font-medium">{c.name}</TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{c.key}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      {c.active ? (
-                        <Badge variant="secondary">Active</Badge>
-                      ) : (
-                        <Badge variant="outline">Inactive</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell className="max-w-xs">
-                      <code className="block truncate text-xs text-muted-foreground">
-                        {JSON.stringify(c.lensWeights)}
-                      </code>
-                    </TableCell>
-                  </TableRow>
+                  <ClusterMobileCard key={c.id} cluster={c} />
                 ))}
-              </TableBody>
-            </Table>
+              </div>
+              <div className="hidden md:block">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Key</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead>Lens weights</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {clusters.map((c) => (
+                      <TableRow key={c.id}>
+                        <TableCell className="font-medium">{c.name}</TableCell>
+                        <TableCell>
+                          <Badge variant="outline">{c.key}</Badge>
+                        </TableCell>
+                        <TableCell>
+                          {c.active ? (
+                            <Badge variant="secondary">Active</Badge>
+                          ) : (
+                            <Badge variant="outline">Inactive</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="max-w-xs">
+                          <code className="block truncate text-xs text-muted-foreground">
+                            {JSON.stringify(c.lensWeights)}
+                          </code>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </>
           )}
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+type ClusterRow = {
+  id: string;
+  name: string;
+  key: string;
+  active: boolean;
+  lensWeights: unknown;
+};
+
+function ClusterMobileCard({ cluster }: { cluster: ClusterRow }) {
+  return (
+    <div className="rounded-lg border bg-background p-4">
+      <div className="flex items-start justify-between gap-3">
+        <div className="min-w-0">
+          <h3 className="truncate font-medium">{cluster.name}</h3>
+          <Badge variant="outline" className="mt-1">
+            {cluster.key}
+          </Badge>
+        </div>
+        {cluster.active ? (
+          <Badge variant="secondary">Active</Badge>
+        ) : (
+          <Badge variant="outline">Inactive</Badge>
+        )}
+      </div>
+      <code className="mt-3 block max-h-24 overflow-auto rounded-md bg-muted p-2 text-xs text-muted-foreground">
+        {JSON.stringify(cluster.lensWeights)}
+      </code>
     </div>
   );
 }

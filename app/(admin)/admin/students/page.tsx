@@ -133,98 +133,173 @@ export default async function StudentsPage({
             </AlertDescription>
           </Alert>
         ) : (
-          <Card>
-            <CardContent className="p-0">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Name</TableHead>
-                    <TableHead>Phone</TableHead>
-                    <TableHead>Grade</TableHead>
-                    <TableHead>Assessment</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="w-12 text-right">
-                      <span className="sr-only">Actions</span>
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {students.map((s) => (
-                    <TableRow key={s.id}>
-                      <TableCell>
-                        <Link
-                          href={`/admin/students/${s.id}`}
-                          className="flex items-center gap-3 font-medium hover:underline"
-                        >
-                          <Avatar className="size-9">
-                            <AvatarFallback className="text-xs font-medium">
-                              {initials(s.name)}
-                            </AvatarFallback>
-                          </Avatar>
-                          {s.name}
-                        </Link>
-                      </TableCell>
-                      <TableCell className="tabular-nums text-muted-foreground">
-                        {s.phoneNumber ?? "—"}
-                      </TableCell>
-                      <TableCell>
-                        {s.grade != null ? (
-                          <Badge variant="outline">
-                            <GraduationCapIcon className="size-3" />
-                            Grade {s.grade}
-                          </Badge>
-                        ) : (
-                          <span className="text-muted-foreground">—</span>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {s.lastAssessmentAt ? (
-                          <Badge variant="secondary">
-                            Completed {formatDate(s.lastAssessmentAt)}
-                          </Badge>
-                        ) : (
-                          <Badge variant="outline" className="text-muted-foreground">
-                            Not started
-                          </Badge>
-                        )}
-                      </TableCell>
-                      <TableCell>
-                        {s.banned ? (
-                          <Badge variant="destructive">Banned</Badge>
-                        ) : (
-                          <Badge variant="secondary">Active</Badge>
-                        )}
-                      </TableCell>
-                      <TableCell className="text-right">
-                        <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                            <Button variant="ghost" size="icon" className="size-8">
-                              <MoreHorizontalIcon />
-                              <span className="sr-only">Open actions for {s.name}</span>
-                            </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
-                            <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                            <DropdownMenuSeparator />
-                            <DropdownMenuGroup>
-                              <DropdownMenuItem asChild>
-                                <Link href={`/admin/students/${s.id}`}>
-                                  <EyeIcon />
-                                  View student
-                                </Link>
-                              </DropdownMenuItem>
-                            </DropdownMenuGroup>
-                          </DropdownMenuContent>
-                        </DropdownMenu>
-                      </TableCell>
+          <>
+            <div className="grid gap-3 md:hidden">
+              {students.map((s) => (
+                <StudentMobileCard key={s.id} student={s} />
+              ))}
+            </div>
+
+            <Card className="hidden overflow-hidden md:block">
+              <CardContent className="p-0">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Phone</TableHead>
+                      <TableHead>Grade</TableHead>
+                      <TableHead>Assessment</TableHead>
+                      <TableHead>Status</TableHead>
+                      <TableHead className="w-12 text-right">
+                        <span className="sr-only">Actions</span>
+                      </TableHead>
                     </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </CardContent>
-          </Card>
+                  </TableHeader>
+                  <TableBody>
+                    {students.map((s) => (
+                      <TableRow key={s.id}>
+                        <TableCell>
+                          <Link
+                            href={`/admin/students/${s.id}`}
+                            className="flex items-center gap-3 font-medium hover:underline"
+                          >
+                            <Avatar className="size-9">
+                              <AvatarFallback className="text-xs font-medium">
+                                {initials(s.name)}
+                              </AvatarFallback>
+                            </Avatar>
+                            {s.name}
+                          </Link>
+                        </TableCell>
+                        <TableCell className="tabular-nums text-muted-foreground">
+                          {s.phoneNumber ?? "—"}
+                        </TableCell>
+                        <TableCell>
+                          {s.grade != null ? (
+                            <Badge variant="outline">
+                              <GraduationCapIcon className="size-3" />
+                              Grade {s.grade}
+                            </Badge>
+                          ) : (
+                            <span className="text-muted-foreground">—</span>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {s.lastAssessmentAt ? (
+                            <Badge variant="secondary">
+                              Completed {formatDate(s.lastAssessmentAt)}
+                            </Badge>
+                          ) : (
+                            <Badge variant="outline" className="text-muted-foreground">
+                              Not started
+                            </Badge>
+                          )}
+                        </TableCell>
+                        <TableCell>
+                          {s.banned ? (
+                            <Badge variant="destructive">Banned</Badge>
+                          ) : (
+                            <Badge variant="secondary">Active</Badge>
+                          )}
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button variant="ghost" size="icon" className="size-8">
+                                <MoreHorizontalIcon />
+                                <span className="sr-only">Open actions for {s.name}</span>
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                              <DropdownMenuSeparator />
+                              <DropdownMenuGroup>
+                                <DropdownMenuItem asChild>
+                                  <Link href={`/admin/students/${s.id}`}>
+                                    <EyeIcon />
+                                    View student
+                                  </Link>
+                                </DropdownMenuItem>
+                              </DropdownMenuGroup>
+                            </DropdownMenuContent>
+                          </DropdownMenu>
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </CardContent>
+            </Card>
+          </>
         )}
       </div>
     </div>
+  );
+}
+
+type StudentRow = {
+  id: string;
+  name: string | null;
+  phoneNumber: string | null;
+  grade: number | null;
+  banned: boolean | null;
+  lastAssessmentAt: Date | null;
+};
+
+function StudentMobileCard({ student }: { student: StudentRow }) {
+  return (
+    <Card>
+      <CardContent className="flex flex-col gap-4 p-4">
+        <div className="flex items-start gap-3">
+          <Avatar className="size-10">
+            <AvatarFallback className="text-xs font-medium">
+              {initials(student.name)}
+            </AvatarFallback>
+          </Avatar>
+          <div className="min-w-0 flex-1">
+            <Link
+              href={`/admin/students/${student.id}`}
+              className="block truncate font-medium hover:underline"
+            >
+              {student.name}
+            </Link>
+            <p className="mt-0.5 text-sm tabular-nums text-muted-foreground">
+              {student.phoneNumber ?? "No phone"}
+            </p>
+          </div>
+          {student.banned ? (
+            <Badge variant="destructive">Banned</Badge>
+          ) : (
+            <Badge variant="secondary">Active</Badge>
+          )}
+        </div>
+
+        <div className="grid grid-cols-2 gap-3 text-sm">
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Grade
+            </p>
+            <p>{student.grade != null ? `Grade ${student.grade}` : "Not set"}</p>
+          </div>
+          <div>
+            <p className="text-xs font-medium uppercase tracking-wide text-muted-foreground">
+              Assessment
+            </p>
+            <p>
+              {student.lastAssessmentAt
+                ? `Completed ${formatDate(student.lastAssessmentAt)}`
+                : "Not started"}
+            </p>
+          </div>
+        </div>
+
+        <Button asChild variant="outline" size="sm" className="w-full">
+          <Link href={`/admin/students/${student.id}`}>
+            <EyeIcon aria-hidden />
+            View student
+          </Link>
+        </Button>
+      </CardContent>
+    </Card>
   );
 }

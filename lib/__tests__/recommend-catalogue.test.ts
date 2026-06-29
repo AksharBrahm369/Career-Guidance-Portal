@@ -5,6 +5,7 @@ describe("normalizeCourseClusterKeys", () => {
   const clusters = [
     { key: "engineering-technology", name: "Engineering & Technology" },
     { key: "healthcare-life-sciences", name: "Healthcare & Life Sciences" },
+    { key: "commerce-management", name: "Commerce & Management" },
   ];
 
   it("maps course cluster display names to engine keys", () => {
@@ -14,5 +15,14 @@ describe("normalizeCourseClusterKeys", () => {
         clusters,
       ),
     ).toEqual(["engineering-technology", "healthcare-life-sciences", "Unknown"]);
+  });
+
+  it("maps common live fetched cluster labels onto starter cluster keys", () => {
+    expect(
+      normalizeCourseClusterKeys(
+        ["Software Development", "IT & Systems", "Management & Administration"],
+        clusters,
+      ),
+    ).toEqual(["engineering-technology", "commerce-management"]);
   });
 });

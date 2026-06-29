@@ -32,7 +32,7 @@ export function StudentSearch() {
   }, [value, router]);
 
   return (
-    <div className="relative max-w-sm">
+    <div className="relative w-full max-w-sm">
       <SearchIcon
         aria-hidden
         className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-muted-foreground"

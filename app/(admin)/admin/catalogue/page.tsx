@@ -105,56 +105,115 @@ export default async function AdminCataloguePage({ searchParams }: PageProps) {
           </AlertDescription>
         </Alert>
       ) : (
-        <Card>
-          <CardContent className="p-0">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Course</TableHead>
-                  <TableHead>Stream</TableHead>
-                  <TableHead>AI safety</TableHead>
-                  <TableHead>{dateLabel(status)}</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {data.rows.map((c) => (
-                  <TableRow key={c.id}>
-                    <TableCell className="font-medium">
-                      {c.courseName}
-                      {status === "rejected" && c.rejectionReason ? (
-                        <div className="mt-0.5 line-clamp-2 max-w-md text-xs font-normal text-destructive">
-                          {c.rejectionReason}
-                        </div>
-                      ) : null}
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant="outline">{c.stream}</Badge>
-                    </TableCell>
-                    <TableCell>
-                      <Badge variant={safetyVariant(c.aiSafetyTag)}>
-                        {SAFETY_LABELS[c.aiSafetyTag] ?? c.aiSafetyTag}
-                      </Badge>
-                    </TableCell>
-                    <TableCell className="text-xs text-muted-foreground">
-                      {formatDate(dateForStatus(status, c))}
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex flex-wrap justify-end gap-1.5">
-                        <LearningResourcesManager courseId={c.id} courseName={c.courseName} />
-                        <CourseLifecycleActions courseId={c.id} status={status} />
-                      </div>
-                    </TableCell>
+        <>
+          <div className="grid gap-3 md:hidden">
+            {data.rows.map((c) => (
+              <CourseMobileCard key={c.id} course={c} status={status} />
+            ))}
+          </div>
+
+          <Card className="hidden overflow-hidden md:block">
+            <CardContent className="p-0">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Course</TableHead>
+                    <TableHead>Stream</TableHead>
+                    <TableHead>AI safety</TableHead>
+                    <TableHead>{dateLabel(status)}</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </CardContent>
-        </Card>
+                </TableHeader>
+                <TableBody>
+                  {data.rows.map((c) => (
+                    <TableRow key={c.id}>
+                      <TableCell className="font-medium">
+                        {c.courseName}
+                        {status === "rejected" && c.rejectionReason ? (
+                          <div className="mt-0.5 line-clamp-2 max-w-md text-xs font-normal text-destructive">
+                            {c.rejectionReason}
+                          </div>
+                        ) : null}
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant="outline">{c.stream}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge variant={safetyVariant(c.aiSafetyTag)}>
+                          {SAFETY_LABELS[c.aiSafetyTag] ?? c.aiSafetyTag}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-xs text-muted-foreground">
+                        {formatDate(dateForStatus(status, c))}
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <div className="flex flex-wrap justify-end gap-1.5">
+                          <LearningResourcesManager courseId={c.id} courseName={c.courseName} />
+                          <CourseLifecycleActions courseId={c.id} status={status} />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </CardContent>
+          </Card>
+        </>
       )}
 
       <Pagination page={data.page} pageCount={data.pageCount} hrefForPage={hrefForPage} />
     </div>
+  );
+}
+
+type AdminCourseRow = {
+  id: string;
+  courseName: string;
+  stream: string;
+  aiSafetyTag: string;
+  rejectionReason: string | null;
+  publishedAt: Date | null;
+  createdAt: Date;
+  updatedAt: Date;
+};
+
+function CourseMobileCard({ course, status }: { course: AdminCourseRow; status: AdminStatus }) {
+  return (
+    <Card>
+      <CardContent className="flex flex-col gap-4 p-4">
+        <div className="flex items-start justify-between gap-3">
+          <div className="min-w-0">
+            <h2 className="line-clamp-2 font-heading text-base font-semibold leading-snug">
+              {course.courseName}
+            </h2>
+            <p className="mt-1 text-xs text-muted-foreground">
+              {dateLabel(status)}: {formatDate(dateForStatus(status, course))}
+            </p>
+          </div>
+          <Badge variant="outline" className="shrink-0">
+            {course.stream}
+          </Badge>
+        </div>
+
+        <div className="flex flex-wrap gap-1.5">
+          <Badge variant={safetyVariant(course.aiSafetyTag)}>
+            {SAFETY_LABELS[course.aiSafetyTag] ?? course.aiSafetyTag}
+          </Badge>
+          <Badge variant="secondary">{TAB_LABELS[status]}</Badge>
+        </div>
+
+        {status === "rejected" && course.rejectionReason ? (
+          <p className="rounded-md border border-destructive/30 bg-destructive/5 p-2 text-xs text-destructive">
+            {course.rejectionReason}
+          </p>
+        ) : null}
+
+        <div className="flex flex-wrap gap-2">
+          <LearningResourcesManager courseId={course.id} courseName={course.courseName} />
+          <CourseLifecycleActions courseId={course.id} status={status} />
+        </div>
+      </CardContent>
+    </Card>
   );
 }
 

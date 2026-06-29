@@ -1,4 +1,4 @@
-# Modules — Career Guidance Platform
+# Modules — Learning  Platform
 
 > Current persistence note: the app now stores runtime data locally in
 > `data/local-store.json` through `lib/db/index.ts`. Older Drizzle/Postgres

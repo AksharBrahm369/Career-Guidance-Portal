@@ -16,9 +16,11 @@ export function PageLoader({
       aria-live="polite"
       aria-label={label}
     >
-      <div className="flex items-center gap-3 rounded-md border bg-card px-4 py-3 text-sm text-muted-foreground shadow-sm">
-        <Loader2 className="size-4 animate-spin text-primary" aria-hidden="true" />
-        <span>{label}</span>
+      <div className="flex min-w-48 items-center gap-3 rounded-lg border bg-card px-4 py-3 text-sm text-muted-foreground shadow-sm">
+        <span className="flex size-9 items-center justify-center rounded-full bg-primary/10 text-primary">
+          <Loader2 className="size-4 animate-spin" aria-hidden="true" />
+        </span>
+        <span className="font-medium">{label}</span>
       </div>
     </div>
   );
@@ -32,7 +34,7 @@ export function AuthSkeleton() {
         <Skeleton className="h-4 w-72 max-w-full" />
         <Skeleton className="h-4 w-52 max-w-full" />
       </div>
-      <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+      <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 shadow-sm">
         <Skeleton className="h-4 w-20" />
         <Skeleton className="h-10 w-full" />
         <Skeleton className="h-4 w-24" />
@@ -52,7 +54,7 @@ export function AdminPageSkeleton() {
       </div>
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="rounded-lg border bg-card p-4">
+          <div key={i} className="rounded-lg border bg-card p-4 shadow-sm">
             <Skeleton className="h-4 w-24" />
             <Skeleton className="mt-5 h-8 w-16" />
             <Skeleton className="mt-3 h-4 w-32" />
@@ -91,13 +93,13 @@ export function CourseDetailSkeleton() {
         <Skeleton className="h-4 w-2/3 max-w-2xl" />
       </div>
       <div className="grid gap-4 lg:grid-cols-[1fr_20rem]">
-        <div className="flex flex-col gap-4 rounded-lg border bg-card p-4">
+        <div className="flex flex-col gap-4 rounded-lg border bg-card p-4 shadow-sm">
           <Skeleton className="h-6 w-44" />
           <Skeleton className="h-4 w-full" />
           <Skeleton className="h-4 w-11/12" />
           <Skeleton className="h-4 w-4/5" />
         </div>
-        <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+        <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 shadow-sm">
           <Skeleton className="h-5 w-32" />
           <Skeleton className="h-9 w-full" />
           <Skeleton className="h-9 w-full" />

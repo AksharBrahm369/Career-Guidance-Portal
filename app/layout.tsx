@@ -3,8 +3,8 @@ import { fontHeading, fontSans } from "./fonts";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Career Guidance Platform",
-  description: "Helping students in grades 9–12 find their path.",
+  title: "Learning  Portal",
+ 
 };
 
 export const viewport: Viewport = {

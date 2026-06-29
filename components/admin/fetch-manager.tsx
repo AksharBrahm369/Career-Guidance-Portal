@@ -42,7 +42,7 @@ function CourseCard({ item, index }: { item: FetchedCourse; index?: number }) {
   )}`;
 
   return (
-    <div className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+    <div className="flex flex-col gap-3 rounded-lg border bg-card p-4 shadow-sm">
       <div className="flex items-start justify-between gap-2">
         <div>
           {index !== undefined && (
@@ -58,12 +58,9 @@ function CourseCard({ item, index }: { item: FetchedCourse; index?: number }) {
         </div>
         <div className="flex shrink-0 flex-wrap justify-end gap-1.5">
           <LearningResourcesManager courseId={item.courseId} courseName={item.course.courseName} />
-          <Link
-            href="/admin/review"
-            className="rounded-md bg-primary px-3 py-1.5 text-xs text-primary-foreground"
-          >
-            Open in Review Queue
-          </Link>
+          <Button asChild size="sm">
+            <Link href="/admin/review">Open in Review Queue</Link>
+          </Button>
         </div>
       </div>
 
@@ -167,7 +164,10 @@ export function FetchManager() {
 
   return (
     <div className="flex flex-col gap-6">
-      <form onSubmit={onSubmit} className="flex flex-col gap-3 rounded-lg border bg-card p-4">
+      <form
+        onSubmit={onSubmit}
+        className="flex flex-col gap-4 rounded-lg border bg-card p-4 shadow-sm"
+      >
         <label className="flex flex-col gap-1 text-sm font-medium">
           Query
           <input
@@ -175,7 +175,7 @@ export function FetchManager() {
             value={query}
             onChange={(e) => setQuery(e.target.value)}
             placeholder='e.g. "Marine Biology" or "All BSc IT courses"'
-            className="rounded-md border border-input bg-background px-3 py-2 text-sm font-normal"
+            className="min-h-11 rounded-md border border-input bg-background px-3 py-2 text-base font-normal focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 md:text-sm"
             required
             minLength={2}
             maxLength={200}

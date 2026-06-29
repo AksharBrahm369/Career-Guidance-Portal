@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 interface Props {
   page: number;
@@ -17,27 +18,43 @@ export function Pagination({ page, pageCount, hrefForPage, className }: Props) {
   return (
     <nav
       aria-label="Pagination"
-      className={`flex items-center justify-between text-sm ${className ?? ""}`}
+      className={`flex flex-col items-stretch gap-3 text-sm sm:flex-row sm:items-center sm:justify-between ${className ?? ""}`}
     >
       {prevDisabled ? (
-        <span aria-hidden className="text-muted-foreground">
-          ← Previous
+        <span
+          aria-disabled="true"
+          className="inline-flex h-10 items-center justify-center gap-1.5 rounded-md border bg-muted/40 px-3 text-muted-foreground sm:justify-start"
+        >
+          <ChevronLeft className="size-4" aria-hidden />
+          Previous
         </span>
       ) : (
-        <Link href={hrefForPage(page - 1)} className="rounded-md border px-3 py-1.5">
-          ← Previous
+        <Link
+          href={hrefForPage(page - 1)}
+          className="inline-flex h-10 items-center justify-center gap-1.5 rounded-md border bg-background px-3 font-medium shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:justify-start"
+        >
+          <ChevronLeft className="size-4" aria-hidden />
+          Previous
         </Link>
       )}
-      <span className="text-xs text-muted-foreground">
+      <span className="text-center text-xs text-muted-foreground">
         Page {page} / {pageCount}
       </span>
       {nextDisabled ? (
-        <span aria-hidden className="text-muted-foreground">
-          Next →
+        <span
+          aria-disabled="true"
+          className="inline-flex h-10 items-center justify-center gap-1.5 rounded-md border bg-muted/40 px-3 text-muted-foreground sm:justify-end"
+        >
+          Next
+          <ChevronRight className="size-4" aria-hidden />
         </span>
       ) : (
-        <Link href={hrefForPage(page + 1)} className="rounded-md border px-3 py-1.5">
-          Next →
+        <Link
+          href={hrefForPage(page + 1)}
+          className="inline-flex h-10 items-center justify-center gap-1.5 rounded-md border bg-background px-3 font-medium shadow-sm transition-colors hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:justify-end"
+        >
+          Next
+          <ChevronRight className="size-4" aria-hidden />
         </Link>
       )}
     </nav>

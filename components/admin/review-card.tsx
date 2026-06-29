@@ -5,6 +5,7 @@ import { useState, useTransition } from "react";
 import { Loader2 } from "lucide-react";
 import { LearningResourcesManager } from "@/components/admin/learning-resources-manager";
 import { SourceUrlsEditor } from "@/components/admin/source-urls-editor";
+import { Button } from "@/components/ui/button";
 import { formatInvalidTransition } from "@/lib/admin/course-transitions";
 
 interface CourseRow {
@@ -121,7 +122,7 @@ export function ReviewCard({ course }: { course: CourseRow }) {
   }
 
   return (
-    <div className="rounded-lg border bg-card p-4">
+    <div className="rounded-lg border bg-card p-4 shadow-sm">
       <div className="flex flex-wrap items-start justify-between gap-2">
         <div>
           <h2 className="text-lg font-semibold">{course.courseName}</h2>
@@ -137,35 +138,38 @@ export function ReviewCard({ course }: { course: CourseRow }) {
         </div>
         <div className="flex flex-wrap gap-1.5 text-xs">
           <LearningResourcesManager courseId={course.id} courseName={course.courseName} />
-          <button
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={() => setExpanded((v) => !v)}
-            className="rounded-md border px-2.5 py-1"
             disabled={pending}
           >
             {expanded ? "Collapse" : "Expand"}
-          </button>
-          <button
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={() => setEditing((v) => !v)}
-            className="rounded-md border px-2.5 py-1"
             disabled={pending}
           >
             {editing ? "Cancel edit" : "Edit"}
-          </button>
-          <button
+          </Button>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
             onClick={reject}
-            className="rounded-md border border-destructive/40 px-2.5 py-1 text-destructive"
             disabled={pending}
+            className="border-destructive/40 text-destructive hover:bg-destructive/10 hover:text-destructive"
           >
             Reject
-          </button>
-          <button
-            onClick={publish}
-            className="inline-flex items-center gap-1.5 rounded-md bg-primary px-3 py-1 text-primary-foreground"
-            disabled={pending}
-          >
+          </Button>
+          <Button type="button" size="sm" onClick={publish} disabled={pending}>
             {pending ? <Loader2 className="size-3.5 animate-spin" aria-hidden="true" /> : null}
             {pending ? "…" : editing ? "Save & Publish" : "Publish"}
-          </button>
+          </Button>
         </div>
       </div>
 

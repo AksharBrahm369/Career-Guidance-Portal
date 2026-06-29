@@ -5,7 +5,7 @@ import { db } from "@/lib/db";
 import { assessments } from "@/db/schema";
 import { dimensionMaxScores } from "@/lib/assessment/display";
 import { getActiveItems } from "@/lib/assessment/items";
-import { isLowSignal } from "@/lib/recommendation";
+import { getAssessmentRecommendationView } from "@/lib/recommendation/assessment";
 import { AssessmentFlow } from "@/components/student/assessment/assessment-flow";
 import { CapturedProfile } from "@/components/student/assessment/captured-profile";
 import type { ClientItem } from "@/components/student/assessment/types";
@@ -47,8 +47,7 @@ export default async function AssessmentEntryPage() {
   ]);
 
   if (latest && latest.status === "completed") {
-    const confidence = (latest.confidence as "high" | "moderate" | "low" | null) ?? null;
-    const recommendedCourses = latest.recommendedCourses ?? [];
+    const recommendationView = await getAssessmentRecommendationView(latest);
     return (
       <CapturedProfile
         interestData={latest.interestData ?? {}}
@@ -56,10 +55,10 @@ export default async function AssessmentEntryPage() {
         aptitudeScores={latest.aptitudeScores ?? {}}
         subjectAffinities={latest.subjectAffinities ?? {}}
         marks={latest.marks ?? null}
-        confidence={confidence}
-        clusterScores={latest.clusterScores ?? []}
-        recommendedCourses={recommendedCourses}
-        lowSignal={isLowSignal(recommendedCourses, confidence)}
+        confidence={recommendationView.confidence}
+        clusterScores={recommendationView.clusterScores}
+        recommendedCourses={recommendationView.recommendedCourses}
+        lowSignal={recommendationView.lowSignal}
         interestMaxScores={dimensionMaxScores(interestItems)}
         workStyleMaxScores={dimensionMaxScores(workStyleItems)}
       />

@@ -239,12 +239,8 @@ export function CapturedProfile({
     <section className="flex flex-col gap-5">
       {/* Hero — the celebratory top of the results. */}
       <Reveal index={slot++}>
-        <div className="relative overflow-hidden rounded-2xl border bg-gradient-to-br from-primary/10 via-card to-card p-5 sm:p-7">
-          <div
-            aria-hidden
-            className="pointer-events-none absolute -right-10 -top-10 size-40 rounded-full bg-primary/10 blur-3xl"
-          />
-          <div className="relative flex flex-col gap-4">
+        <div className="rounded-lg border bg-card p-5 shadow-sm sm:p-7">
+          <div className="flex flex-col gap-4">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="flex flex-col gap-2">
                 <span className="inline-flex w-fit items-center gap-1.5 rounded-full bg-primary/10 px-3 py-1 text-xs font-semibold text-primary">
@@ -459,7 +455,7 @@ export function CapturedProfile({
                   <Link
                     href={`/courses/${course.slug}`}
                     className={cn(
-                      "group block rounded-2xl border bg-card p-4 transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:p-5",
+                      "group block rounded-lg border bg-card p-4 transition-colors hover:border-primary focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 sm:p-5",
                       isTop && "border-primary/60 ring-1 ring-primary/30",
                     )}
                   >

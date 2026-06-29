@@ -146,7 +146,7 @@ async function buildSearchPlan(
     const { experimental_output } = await generateText({
       model,
       system:
-        "You create search plans for an Indian career guidance portal. Return search keywords only, never URLs. Prefer free, beginner-friendly, trusted resources. Avoid adult, political, clickbait, or unrelated topics.",
+        "You create search plans for an Indian Learning  portal. Return search keywords only, never URLs. Prefer free, beginner-friendly, trusted resources. Avoid adult, political, clickbait, or unrelated topics.",
       prompt: `Create 3 to 5 learning resource searches for this course.
 
 Course: ${course.courseName}

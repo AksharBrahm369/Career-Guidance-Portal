@@ -201,7 +201,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                   </div>
                   {i.websiteUrl ? (
                     <Button asChild variant="ghost" size="sm" className="shrink-0">
-                      <a href={i.websiteUrl} target="_blank" rel="noreferrer">
+                      <a href={i.websiteUrl} target="_blank" rel="noopener noreferrer">
                         Visit
                         <ExternalLink data-icon="inline-end" />
                       </a>
@@ -322,7 +322,7 @@ export default async function CourseDetailPage({ params }: { params: Promise<{ s
                   <a
                     href={u}
                     target="_blank"
-                    rel="noreferrer"
+                    rel="noopener noreferrer"
                     className="inline-flex items-start gap-1.5 text-xs text-muted-foreground underline-offset-4 hover:text-primary hover:underline"
                   >
                     <Link2 className="mt-0.5 size-3 shrink-0" aria-hidden />

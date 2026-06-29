@@ -8,20 +8,18 @@ export default function StudentLoginPage() {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col items-center gap-3 text-center">
-        <span className="flex size-12 items-center justify-center rounded-[var(--radius)] bg-primary/10 text-primary">
+        <span className="flex size-12 items-center justify-center rounded-lg bg-primary/10 text-primary">
           <Sparkles className="size-6" aria-hidden="true" />
         </span>
         <div className="flex flex-col gap-1.5">
           <h1 className="font-heading text-3xl font-bold tracking-tight text-foreground">
             Welcome back
           </h1>
-          <p className="text-base text-muted-foreground">
-            Log in to pick up where you left off.
-          </p>
+          <p className="text-base text-muted-foreground">Log in to pick up where you left off.</p>
         </div>
       </div>
 
-      <Card className="rounded-[calc(var(--radius)+0.25rem)] shadow-sm">
+      <Card>
         <CardHeader className="sr-only">Log in to your account</CardHeader>
         <CardContent className="pt-6">
           <StudentAuthForm mode="login" />

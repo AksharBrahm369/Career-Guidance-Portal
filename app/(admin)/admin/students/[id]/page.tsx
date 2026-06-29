@@ -14,7 +14,7 @@ import { dimensionMaxScores } from "@/lib/assessment/display";
 import { getActiveItems } from "@/lib/assessment/items";
 import { db } from "@/lib/db";
 import { assessments, user } from "@/db/schema";
-import { isLowSignal } from "@/lib/recommendation";
+import { getAssessmentRecommendationView } from "@/lib/recommendation/assessment";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -94,6 +94,9 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
   const [student, latestAssessment, interestItems, workStyleItems] = await dataPromise;
 
   if (!student) notFound();
+  const recommendationView = latestAssessment
+    ? await getAssessmentRecommendationView(latestAssessment)
+    : null;
 
   return (
     <div className="flex flex-col gap-6">
@@ -162,26 +165,19 @@ export default async function StudentDetailPage({ params }: { params: Promise<{ 
                 </CardDescription>
               </CardHeader>
               <CardContent>
-                {(() => {
-                  const confidence =
-                    (latestAssessment.confidence as "high" | "moderate" | "low" | null) ?? null;
-                  const recommendedCourses = latestAssessment.recommendedCourses ?? [];
-                  return (
-                    <CapturedProfile
-                      interestData={latestAssessment.interestData ?? {}}
-                      workStyleScores={latestAssessment.workStyleScores ?? {}}
-                      aptitudeScores={latestAssessment.aptitudeScores ?? {}}
-                      subjectAffinities={latestAssessment.subjectAffinities ?? {}}
-                      marks={latestAssessment.marks ?? null}
-                      confidence={confidence}
-                      clusterScores={latestAssessment.clusterScores ?? []}
-                      recommendedCourses={recommendedCourses}
-                      lowSignal={isLowSignal(recommendedCourses, confidence)}
-                      interestMaxScores={dimensionMaxScores(interestItems)}
-                      workStyleMaxScores={dimensionMaxScores(workStyleItems)}
-                    />
-                  );
-                })()}
+                <CapturedProfile
+                  interestData={latestAssessment.interestData ?? {}}
+                  workStyleScores={latestAssessment.workStyleScores ?? {}}
+                  aptitudeScores={latestAssessment.aptitudeScores ?? {}}
+                  subjectAffinities={latestAssessment.subjectAffinities ?? {}}
+                  marks={latestAssessment.marks ?? null}
+                  confidence={recommendationView?.confidence ?? null}
+                  clusterScores={recommendationView?.clusterScores ?? []}
+                  recommendedCourses={recommendationView?.recommendedCourses ?? []}
+                  lowSignal={recommendationView?.lowSignal ?? true}
+                  interestMaxScores={dimensionMaxScores(interestItems)}
+                  workStyleMaxScores={dimensionMaxScores(workStyleItems)}
+                />
               </CardContent>
             </Card>
           ) : (

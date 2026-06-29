@@ -64,4 +64,85 @@ describe("rankCourses", () => {
     const out = rankCourses(student, clusterScores, [blocked]);
     expect(out.find((r) => r.slug === "mbbs")).toBeUndefined();
   });
+
+  it("varies fit scores for live courses even when requiredSubjects is empty", () => {
+    const liveStudent: StudentProfile = {
+      ...student,
+      aptitude: {
+        logical: { raw: 2, total: 20, band: "developing" },
+        numerical: { raw: 2, total: 21, band: "developing" },
+        spatial: { raw: 6, total: 12, band: "moderate" },
+      },
+      marks: {
+        board: "CBSE",
+        stream: "science",
+        subjects: { Biology: 99, English: 90, Physics: 70, Chemistry: 70, Mathematics: 60 },
+        strengths: ["Biology", "English", "Physics", "Chemistry", "Mathematics"],
+      },
+      subjectAffinities: {
+        Biology: 0.4,
+        English: 1,
+        Physics: 1,
+        Chemistry: 0.8,
+        Mathematics: 0.6,
+        "Computer Science": 1,
+      },
+    };
+    const liveCourses: CourseInput[] = [
+      {
+        id: "live-1",
+        slug: "mobile-cse",
+        courseName: "B.Tech in Computer Science and Engineering (Mobile Computing)",
+        stream: "science",
+        careerClusters: ["engineering-technology"],
+        requiredSubjects: [],
+        eligibilityCriteria: "10+2 with Physics, Chemistry, and Mathematics as compulsory subjects.",
+        description: "Programming, data structures, algorithms, and mobile application development.",
+        entranceExams: ["JEE Main"],
+        eligibility: null,
+      },
+      {
+        id: "live-2",
+        slug: "shipbuilding",
+        courseName: "B.Tech in Shipbuilding Technology",
+        stream: "science",
+        careerClusters: ["engineering-technology"],
+        requiredSubjects: [],
+        eligibilityCriteria: "Passed 10+2 with Physics, Chemistry, and Mathematics (PCM).",
+        description: "Ship production methods, marine materials, fabrication, and repair.",
+        entranceExams: ["IMU CET"],
+        eligibility: null,
+      },
+      {
+        id: "live-3",
+        slug: "aviation-business",
+        courseName: "BBA Aviation",
+        stream: "science",
+        careerClusters: ["commerce-management"],
+        requiredSubjects: [],
+        eligibilityCriteria: "10+2 in any stream with a minimum aggregate percentage.",
+        description: "Airline management, airport operations, logistics, marketing, and finance.",
+        entranceExams: ["CUET"],
+        eligibility: null,
+      },
+    ];
+    const liveClusters: ClusterScore[] = [
+      ...clusterScores,
+      {
+        clusterKey: "commerce-management",
+        name: "Commerce & Management",
+        score: 0.65,
+        breakdown: { interests: 0.2, aptitude: 0.1, workStyle: 0.2, marks: 0.15 },
+      },
+    ];
+
+    const out = rankCourses(liveStudent, liveClusters, liveCourses);
+    const scores = new Set(out.map((course) => course.fitScore));
+
+    expect(out).toHaveLength(3);
+    expect(scores.size).toBeGreaterThan(1);
+    expect(out.find((course) => course.slug === "mobile-cse")?.reasons).toContain(
+      "You enjoy Computer Science",
+    );
+  });
 });

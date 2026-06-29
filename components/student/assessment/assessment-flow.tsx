@@ -141,8 +141,8 @@ export function AssessmentFlow({ attemptId: initialAttemptId, initialResponses, 
   if (!attemptId) {
     return (
       <section className="mx-auto flex max-w-2xl flex-col gap-6">
-        <div className="flex flex-col items-center gap-4 rounded-2xl border bg-card p-6 text-center shadow-sm sm:p-10">
-          <span className="flex size-14 items-center justify-center rounded-2xl bg-accent/15 text-accent">
+        <div className="flex flex-col items-center gap-4 rounded-lg border bg-card p-6 text-center shadow-sm sm:p-10">
+          <span className="flex size-14 items-center justify-center rounded-lg bg-accent/15 text-accent">
             <Sparkles className="size-7" aria-hidden />
           </span>
           <div className="flex flex-col gap-2">

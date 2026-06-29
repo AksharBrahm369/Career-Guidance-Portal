@@ -10,29 +10,28 @@
     --card-foreground: 222.2 47.4% 11.2%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 47.4% 11.2%;
-    /* ui-ux-pro-max: indigo primary (trust + clarity) on slate neutrals */
-    --primary: 243 75% 58%;
+    --primary: 173 58% 31%;
     --primary-foreground: 0 0% 100%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
     --muted: 210 40% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 226 100% 97%;
-    --accent-foreground: 243 75% 48%;
+    --accent: 38 85% 94%;
+    --accent-foreground: 27 45% 23%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
     --border: 214.3 31.8% 91.4%;
     --input: 214.3 31.8% 91.4%;
-    --ring: 243 75% 58%;
-    --radius: 0.625rem;
+    --ring: 173 58% 31%;
+    --radius: 0.5rem;
     --sidebar-background: 0 0% 98%;
     --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 243 75% 58%;
+    --sidebar-primary: 173 58% 31%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 226 100% 97%;
-    --sidebar-accent-foreground: 243 75% 48%;
+    --sidebar-accent: 38 85% 94%;
+    --sidebar-accent-foreground: 27 45% 23%;
     --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 243 75% 58%;
+    --sidebar-ring: 173 58% 31%;
   }
 
   .dark {
@@ -42,27 +41,27 @@
     --card-foreground: 210 40% 96%;
     --popover: 222.2 47% 8%;
     --popover-foreground: 210 40% 96%;
-    --primary: 243 75% 66%;
+    --primary: 172 54% 46%;
     --primary-foreground: 0 0% 100%;
     --secondary: 217.2 32.6% 17.5%;
     --secondary-foreground: 210 40% 98%;
     --muted: 217.2 32.6% 14%;
     --muted-foreground: 215 20.2% 65.1%;
-    --accent: 243 40% 20%;
-    --accent-foreground: 226 100% 90%;
+    --accent: 36 60% 18%;
+    --accent-foreground: 39 90% 86%;
     --destructive: 0 72% 55%;
     --destructive-foreground: 0 0% 100%;
     --border: 217.2 32.6% 18%;
     --input: 217.2 32.6% 18%;
-    --ring: 243 75% 66%;
+    --ring: 172 54% 46%;
     --sidebar-background: 222.2 47% 8%;
     --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 243 75% 66%;
+    --sidebar-primary: 172 54% 46%;
     --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 243 40% 20%;
-    --sidebar-accent-foreground: 226 100% 90%;
+    --sidebar-accent: 36 60% 18%;
+    --sidebar-accent-foreground: 39 90% 86%;
     --sidebar-border: 217.2 32.6% 18%;
-    --sidebar-ring: 243 75% 66%;
+    --sidebar-ring: 172 54% 46%;
   }
 
   /*
@@ -78,18 +77,18 @@
     --card-foreground: 222 47% 11%;
     --popover: 0 0% 100%;
     --popover-foreground: 222 47% 11%;
-    --primary: 252 72% 60%;
+    --primary: 173 58% 31%;
     --primary-foreground: 0 0% 100%;
-    --accent: 162 72% 41%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 38 92% 46%;
+    --accent-foreground: 24 10% 10%;
     --muted: 250 30% 96%;
     --muted-foreground: 222 12% 42%;
     --border: 250 24% 90%;
     --input: 250 24% 90%;
-    --ring: 252 72% 60%;
+    --ring: 173 58% 31%;
     --destructive: 0 72% 51%;
     --destructive-foreground: 0 0% 100%;
-    --radius: 0.875rem;
+    --radius: 0.5rem;
   }
 
   .dark .theme-student {
@@ -99,25 +98,59 @@
     --card-foreground: 220 30% 96%;
     --popover: 250 30% 9%;
     --popover-foreground: 220 30% 96%;
-    --primary: 252 78% 70%;
+    --primary: 172 54% 46%;
     --primary-foreground: 0 0% 100%;
-    --accent: 162 64% 46%;
-    --accent-foreground: 0 0% 100%;
+    --accent: 39 90% 64%;
+    --accent-foreground: 24 10% 10%;
     --muted: 250 24% 14%;
     --muted-foreground: 220 14% 66%;
     --border: 250 24% 18%;
     --input: 250 24% 18%;
-    --ring: 252 78% 70%;
+    --ring: 172 54% 46%;
     --destructive: 0 72% 56%;
     --destructive-foreground: 0 0% 100%;
-    --radius: 0.875rem;
+    --radius: 0.5rem;
   }
 
   * {
     @apply border-border;
   }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
-    font-feature-settings: "tnum" 1; /* tabular numerals for data-dense admin tables */
+    font-feature-settings: "tnum" 1;
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: hsl(var(--primary) / 0.16);
+    color: hsl(var(--foreground));
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    html {
+      scroll-behavior: auto;
+    }
+
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      scroll-behavior: auto !important;
+      transition-duration: 0.01ms !important;
+    }
+  }
+}
+
+@layer utilities {
+  @keyframes shimmer {
+    100% {
+      transform: translateX(100%);
+    }
   }
 }

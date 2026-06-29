@@ -224,13 +224,10 @@ export function LearningResourcesManager({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <button
-          type="button"
-          className="inline-flex items-center gap-1.5 rounded-md border px-2 py-1 text-xs"
-        >
+        <Button type="button" variant="outline" size="sm">
           <BookOpen className="size-3.5" aria-hidden="true" />
           Resources
-        </button>
+        </Button>
       </DialogTrigger>
       <DialogContent className="max-h-[90vh] max-w-5xl overflow-y-auto">
         <DialogHeader>

@@ -37,6 +37,9 @@ export type CourseInput = {
   stream: string;
   careerClusters: string[]; // cluster keys
   requiredSubjects: string[];
+  description?: string;
+  eligibilityCriteria?: string;
+  entranceExams?: string[];
   eligibility: {
     minAggregate?: number;
     minBySubject?: Record<string, number>;

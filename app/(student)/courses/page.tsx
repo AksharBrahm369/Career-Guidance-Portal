@@ -1,10 +1,11 @@
 import { Suspense } from "react";
 import Link from "next/link";
-import { Compass, SearchX } from "lucide-react";
+import { ClipboardCheck, Compass, SearchX } from "lucide-react";
 import { CatalogueFilters } from "@/components/student/catalogue-filters";
 import { CourseCard } from "@/components/student/course-card";
 import { Pagination } from "@/components/pagination";
 import { Button } from "@/components/ui/button";
+import { PageHeader } from "@/components/ui/page-header";
 import {
   Empty,
   EmptyDescription,
@@ -55,26 +56,29 @@ export default async function CoursesCataloguePage({ searchParams }: PageProps) 
 
   return (
     <div className="flex flex-col gap-6">
-      <header className="flex flex-col gap-1.5">
-        <h1 className="font-heading text-2xl font-bold tracking-tight sm:text-3xl">
-          Explore courses
-        </h1>
-        <p className="text-pretty text-sm text-muted-foreground sm:text-base">
-          Browse paths across every stream. Open any course to see where it&apos;s
-          taught, what it costs, and ask anything you&apos;re curious about.
-        </p>
-      </header>
+      <PageHeader
+        eyebrow="Course catalogue"
+        title="Explore courses"
+        description={
+          <>
+            Browse paths across every stream. Open any course to see where it&apos;s taught, what it
+            costs, and ask anything you&apos;re curious about.
+          </>
+        }
+        actions={
+          <Button asChild variant="outline">
+            <Link href="/assessment">
+              <ClipboardCheck aria-hidden />
+              Find my fit
+            </Link>
+          </Button>
+        }
+      />
 
       <CatalogueFilters />
 
       <Suspense key={resultsKey} fallback={<ResultsSkeleton />}>
-        <Results
-          q={q}
-          stream={stream}
-          aiSafety={aiSafety}
-          cluster={cluster}
-          page={page}
-        />
+        <Results q={q} stream={stream} aiSafety={aiSafety} cluster={cluster} page={page} />
       </Suspense>
     </div>
   );
@@ -115,8 +119,8 @@ async function Results({
           </EmptyMedia>
           <EmptyTitle>No matches yet</EmptyTitle>
           <EmptyDescription>
-            We couldn&apos;t find a course for these filters. Try a different
-            stream or clear your filters to see everything.
+            We couldn&apos;t find a course for these filters. Try a different stream or clear your
+            filters to see everything.
           </EmptyDescription>
         </EmptyHeader>
         <EmptyContent>
@@ -133,15 +137,9 @@ async function Results({
 
   return (
     <div className="flex flex-col gap-4">
-      <p
-        className="text-sm text-muted-foreground"
-        role="status"
-        aria-live="polite"
-      >
-        <span className="font-medium text-foreground tabular-nums">
-          {data.total}
-        </span>{" "}
-        course{data.total === 1 ? "" : "s"} found
+      <p className="text-sm text-muted-foreground" role="status" aria-live="polite">
+        <span className="font-medium tabular-nums text-foreground">{data.total}</span> course
+        {data.total === 1 ? "" : "s"} found
       </p>
 
       <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
